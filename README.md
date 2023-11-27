@@ -1,2 +1,12 @@
-# keep-it-in-sight
-A game made with OpenGL API in C++ for Computer Graphics class at UFRGS's Computer Science course
+# About the game:
+Keep It in Sight is a short horror game inspired by the indie game Slender and ambientation of Backrooms creepypasta.
+---
+You were going home after a long day at school [bla bla bla]
+
+# How to play
+## Compilation
+## Gameplay
+
+# Project requirements
+- pipipi
+- popopo
