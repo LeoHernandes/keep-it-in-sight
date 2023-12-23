@@ -31,8 +31,12 @@
  * policies, either expressed or implied, of Nicolas P. Rougier.
  * ============================================================================
  */
-#include <stddef.h>
+
+#ifndef _DEJAVUFONT_H
+#define _DEJAVUFONT_H
+
 #include <stdint.h>
+#include <stddef.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -2222,3 +2226,5 @@ texture_font_t dejavufont = {
 #ifdef __cplusplus
 }
 #endif
+
+#endif // DEJAVUFONT_H
