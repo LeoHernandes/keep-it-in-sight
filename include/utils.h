@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <cstdio>
+#include <glad/glad.h>
 
 static GLenum glCheckError_(const char *file, int line)
 {
@@ -42,5 +43,14 @@ static GLenum glCheckError_(const char *file, int line)
     return errorCode;
 }
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
+
+static void PrintGpuInfo()
+{
+    const GLubyte *vendor = glGetString(GL_VENDOR);
+    const GLubyte *renderer = glGetString(GL_RENDERER);
+    const GLubyte *glversion = glGetString(GL_VERSION);
+    const GLubyte *glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
+}
 
 #endif // UTILS_H

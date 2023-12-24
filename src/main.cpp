@@ -23,9 +23,8 @@
 #include "matrices.h"
 #include "textrendering.h"
 
-// Declaração de funções utilizadas para pilha de matrizes de modelagem.
-void PushMatrix(glm::mat4 M);
-void PopMatrix(glm::mat4 &M);
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
 
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
 // logo após a definição de main() neste arquivo.
@@ -37,13 +36,8 @@ GLuint LoadShader_Fragment(const char *filename);                            // 
 void LoadShader(const char *filename, GLuint shader_id);                     // Função utilizada pelas duas acima
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id); // Cria um programa de GPU
 
-// Funções callback para comunicação com o sistema operacional e interação do
-// usuário. Veja mais comentários nas definições das mesmas, abaixo.
-void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
-void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
-void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
-void CursorPosCallback(GLFWwindow *window, double xpos, double ypos);
-void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
+GLFWwindow *InitializeAppWindow();
+void SetupOpenGl();
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -66,13 +60,7 @@ std::map<const char *, SceneObject> g_VirtualScene;
 // Pilha que guardará as matrizes de modelagem.
 std::stack<glm::mat4> g_MatrixStack;
 
-// Razão de proporção da janela (largura/altura). Veja função FramebufferSizeCallback().
-float g_ScreenRatio = 1.0f;
-
-// Ângulos de Euler que controlam a rotação de um dos cubos da cena virtual
-float g_AngleX = 0.0f;
-float g_AngleY = 0.0f;
-float g_AngleZ = 0.0f;
+float g_ScreenRatio = (float)WINDOW_WIDTH / WINDOW_HEIGHT; //
 
 // "g_LeftMouseButtonPressed = true" se o usuário está com o botão esquerdo do mouse
 // pressionado no momento atual. Veja função MouseButtonCallback().
@@ -87,10 +75,6 @@ bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mous
 float g_CameraTheta = 0.0f;    // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;      // Ângulo em relação ao eixo Y
 float g_CameraDistance = 3.5f; // Distância da câmera para a origem
-
-// Variáveis que controlam rotação do antebraço
-float g_ForearmAngleZ = 0.0f;
-float g_ForearmAngleX = 0.0f;
 
 // Variáveis que controlam translação do torso
 float g_TorsoPositionX = 0.0f;
@@ -107,96 +91,24 @@ GLuint g_GpuProgramID = 0;
 
 int main()
 {
-    int success = glfwInit();
-    if (!success)
-    {
-        fprintf(stderr, "ERROR: glfwInit() failed.\n");
-        std::exit(EXIT_FAILURE);
-    }
-
-    glfwSetErrorCallback([](int error, const char *description)
-                         { fprintf(stderr, "ERROR: GLFW: %s\n", description); });
-
-    // OpenGL version >= 3.3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    // Require OpenGL core profile
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     // App window creation
-    GLFWwindow *window;
-    window = glfwCreateWindow(800, 800, "Keep It In Sight", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
-        std::exit(EXIT_FAILURE);
-    }
+    GLFWwindow *window = InitializeAppWindow();
 
-    // Definimos a função de callback que será chamada sempre que o usuário
-    // pressionar alguma tecla do teclado ...
-    glfwSetKeyCallback(window, KeyCallback);
-    // ... ou clicar os botões do mouse ...
-    glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    // ... ou movimentar o cursor do mouse em cima da janela ...
-    glfwSetCursorPosCallback(window, CursorPosCallback);
-    // ... ou rolar a "rodinha" do mouse.
-    glfwSetScrollCallback(window, ScrollCallback);
+    SetupOpenGl();
 
-    // Definimos a função de callback que será chamada sempre que a janela for
-    // redimensionada, por consequência alterando o tamanho do "framebuffer"
-    // (região de memória onde são armazenados os pixels da imagem).
-    glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
-    glfwSetWindowSize(window, 800, 800); // Forçamos a chamada do callback acima, para definir g_ScreenRatio.
+    PrintGpuInfo();
 
-    // Indicamos que as chamadas OpenGL deverão renderizar nesta janela
-    glfwMakeContextCurrent(window);
-
-    // Carregamento de todas funções definidas por OpenGL 3.3, utilizando a
-    // biblioteca GLAD.
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-    // Imprimimos no terminal informações sobre a GPU do sistema
-    const GLubyte *vendor = glGetString(GL_VENDOR);
-    const GLubyte *renderer = glGetString(GL_RENDERER);
-    const GLubyte *glversion = glGetString(GL_VERSION);
-    const GLubyte *glslversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-    printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
-
-    // Carregamos os shaders de vértices e de fragmentos que serão utilizados
-    // para renderização. Veja slides 180-200 do documento Aula_03_Rendering_Pipeline_Grafico.pdf.
-    //
     LoadShadersFromFiles();
 
-    // Construímos a representação de um triângulo
-    GLuint vertex_array_object_id = BuildTriangles();
-
-    // Inicializamos o código para renderização de texto.
     TextRendering_Init();
 
-    // Buscamos o endereço das variáveis definidas dentro do Vertex Shader.
-    // Utilizaremos estas variáveis para enviar dados para a placa de vídeo
-    // (GPU)! Veja arquivo "shader_vertex.glsl".
-    GLint model_uniform = glGetUniformLocation(g_GpuProgramID, "model");                     // Variável da matriz "model"
-    GLint view_uniform = glGetUniformLocation(g_GpuProgramID, "view");                       // Variável da matriz "view" em shader_vertex.glsl
-    GLint projection_uniform = glGetUniformLocation(g_GpuProgramID, "projection");           // Variável da matriz "projection" em shader_vertex.glsl
-    GLint render_as_black_uniform = glGetUniformLocation(g_GpuProgramID, "render_as_black"); // Variável booleana em shader_vertex.glsl
+    GLuint vertex_array_object_id = BuildTriangles();
+    // Get variables addresses from Vertex Shader file.
+    GLint model_uniform = glGetUniformLocation(g_GpuProgramID, "model");
+    GLint view_uniform = glGetUniformLocation(g_GpuProgramID, "view");
+    GLint projection_uniform = glGetUniformLocation(g_GpuProgramID, "projection");
+    GLint render_as_black_uniform = glGetUniformLocation(g_GpuProgramID, "render_as_black");
 
-    // Habilitamos o Z-buffer. Veja slides 104-116 do documento Aula_09_Projecoes.pdf.
-    glEnable(GL_DEPTH_TEST);
-
-    // Habilitamos o Backface Culling. Veja slides 23-34 do documento Aula_13_Clipping_and_Culling.pdf e slides 112-123 do documento Aula_14_Laboratorio_3_Revisao.pdf.
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
-    // Ficamos em um loop infinito, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
         // Aqui executamos as operações de renderização
@@ -277,74 +189,12 @@ int main()
         glUniformMatrix4fv(view_uniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
 
-        // ##### TAREFAS DO LABORATÓRIO 3
-
-        // Cada cópia do cubo possui uma matriz de modelagem independente,
-        // já que cada cópia estará em uma posição (rotação, escala, ...)
-        // diferente em relação ao espaço global (World Coordinates). Veja
-        // slides 2-14 e 184-190 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
-        //
-        // Entretanto, neste laboratório as matrizes de modelagem dos cubos
-        // serão construídas de maneira hierárquica, tal que operações em
-        // alguns objetos influenciem outros objetos. Por exemplo: ao
-        // transladar o torso, a cabeça deve se movimentar junto.
-        // Veja slides 243-273 do documento Aula_08_Sistemas_de_Coordenadas.pdf
-        //
-        glm::mat4 model = Matrix_Identity(); // Transformação inicial = identidade.
-
-        // Translação inicial do torso
+        glm::mat4 model = Matrix_Identity();
         model = model * Matrix_Translate(g_TorsoPositionX - 1.0f, g_TorsoPositionY + 1.0f, 0.0f);
-        // Guardamos matriz model atual na pilha
-        PushMatrix(model);
-        // Atualizamos a matriz model (multiplicação à direita) para fazer um escalamento do torso
-        model = model * Matrix_Scale(0.8f, 1.0f, 0.2f);
-        // Enviamos a matriz "model" para a placa de vídeo (GPU). Veja o
-        // arquivo "shader_vertex.glsl", onde esta é efetivamente
-        // aplicada em todos os pontos.
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-        // Desenhamos um cubo. Esta renderização irá executar o Vertex
-        // Shader definido no arquivo "shader_vertex.glsl", e o mesmo irá
-        // utilizar as matrizes "model", "view" e "projection" definidas
-        // acima e já enviadas para a placa de vídeo (GPU).
-        DrawCube(render_as_black_uniform); // #### TORSO
-        // Tiramos da pilha a matriz model guardada anteriormente
-        PopMatrix(model);
+        DrawCube(render_as_black_uniform);
 
-        PushMatrix(model);                                                     // Guardamos matriz model atual na pilha
-        model = model * Matrix_Translate(-0.55f, 0.0f, 0.0f);                  // Atualizamos matriz model (multiplicação à direita) com uma translação para o braço direito
-        PushMatrix(model);                                                     // Guardamos matriz model atual na pilha
-        model = model                                                          // Atualizamos matriz model (multiplicação à direita) com a rotação do braço direito
-                * Matrix_Rotate_Z(g_AngleZ)                                    // TERCEIRO rotação Z de Euler
-                * Matrix_Rotate_Y(g_AngleY)                                    // SEGUNDO rotação Y de Euler
-                * Matrix_Rotate_X(g_AngleX);                                   // PRIMEIRO rotação X de Euler
-        PushMatrix(model);                                                     // Guardamos matriz model atual na pilha
-        model = model * Matrix_Scale(0.2f, 0.6f, 0.2f);                        // Atualizamos matriz model (multiplicação à direita) com um escalamento do braço direito
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model)); // Enviamos matriz model atual para a GPU
-        DrawCube(render_as_black_uniform);                                     // #### BRAÇO DIREITO // Desenhamos o braço direito
-        PopMatrix(model);                                                      // Tiramos da pilha a matriz model guardada anteriormente
-        PushMatrix(model);                                                     // Guardamos matriz model atual na pilha
-        model = model * Matrix_Translate(0.0f, -0.65f, 0.0f);                  // Atualizamos matriz model (multiplicação à direita) com a translação do antebraço direito
-        model = model                                                          // Atualizamos matriz model (multiplicação à direita) com a rotação do antebraço direito
-                * Matrix_Rotate_Z(g_ForearmAngleZ)                             // SEGUNDO rotação Z de Euler
-                * Matrix_Rotate_X(g_ForearmAngleX);                            // PRIMEIRO rotação X de Euler
-        PushMatrix(model);                                                     // Guardamos matriz model atual na pilha
-        model = model * Matrix_Scale(0.2f, 0.6f, 0.2f);                        // Atualizamos matriz model (multiplicação à direita) com um escalamento do antebraço direito
-        glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model)); // Enviamos matriz model atual para a GPU
-        DrawCube(render_as_black_uniform);                                     // #### ANTEBRAÇO DIREITO // Desenhamos o antebraço direito
-        PopMatrix(model);                                                      // Tiramos da pilha a matriz model guardada anteriormente
-        PopMatrix(model);                                                      // Tiramos da pilha a matriz model guardada anteriormente
-        PopMatrix(model);                                                      // Tiramos da pilha a matriz model guardada anteriormente
-        PopMatrix(model);                                                      // Tiramos da pilha a matriz model guardada anteriormente
-
-        // Neste ponto a matriz model recuperada é a matriz inicial (translação do torso)
-
-        // Agora queremos desenhar os eixos XYZ de coordenadas GLOBAIS.
-        // Para tanto, colocamos a matriz de modelagem igual à identidade.
-        // Veja slides 2-14 e 184-190 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         model = Matrix_Identity();
-
-        // Enviamos a nova matriz "model" para a placa de vídeo (GPU). Veja o
-        // arquivo "shader_vertex.glsl".
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
 
         // Pedimos para OpenGL desenhar linhas com largura de 10 pixels.
@@ -394,26 +244,6 @@ int main()
 
     // Fim do programa
     return 0;
-}
-
-// Função que pega a matriz M e guarda a mesma no topo da pilha
-void PushMatrix(glm::mat4 M)
-{
-    g_MatrixStack.push(M);
-}
-
-// Função que remove a matriz atualmente no topo da pilha e armazena a mesma na variável M
-void PopMatrix(glm::mat4 &M)
-{
-    if (g_MatrixStack.empty())
-    {
-        M = Matrix_Identity();
-    }
-    else
-    {
-        M = g_MatrixStack.top();
-        g_MatrixStack.pop();
-    }
 }
 
 // Função que desenha um cubo com arestas em preto, definido dentro da função BuildTriangles().
@@ -906,27 +736,6 @@ GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id)
     return program_id;
 }
 
-// Definição da função que será chamada sempre que a janela do sistema
-// operacional for redimensionada, por consequência alterando o tamanho do
-// "framebuffer" (região de memória onde são armazenados os pixels da imagem).
-void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
-{
-    // Indicamos que queremos renderizar em toda região do framebuffer. A
-    // função "glViewport" define o mapeamento das "normalized device
-    // coordinates" (NDC) para "pixel coordinates".  Essa é a operação de
-    // "Screen Mapping" ou "Viewport Mapping" vista em aula ({+ViewportMapping2+}).
-    glViewport(0, 0, width, height);
-
-    // Atualizamos também a razão que define a proporção da janela (largura /
-    // altura), a qual será utilizada na definição das matrizes de projeção,
-    // tal que não ocorra distorções durante o processo de "Screen Mapping"
-    // acima, quando NDC é mapeado para coordenadas de pixels. Veja slides 205-215 do documento Aula_09_Projecoes.pdf.
-    //
-    // O cast para float é necessário pois números inteiros são arredondados ao
-    // serem divididos!
-    g_ScreenRatio = (float)width / height;
-}
-
 // Variáveis globais que armazenam a última posição do cursor do mouse, para
 // que possamos calcular quanto que o mouse se movimentou entre dois instantes
 // de tempo. Utilizadas no callback CursorPosCallback() abaixo.
@@ -1024,12 +833,8 @@ void CursorPosCallback(GLFWwindow *window, double xpos, double ypos)
     if (g_RightMouseButtonPressed)
     {
         // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
-
-        // Atualizamos parâmetros da antebraço com os deslocamentos
-        g_ForearmAngleZ -= 0.01f * dx;
-        g_ForearmAngleX += 0.01f * dy;
+        // float dx = xpos - g_LastCursorPosX;
+        // float dy = ypos - g_LastCursorPosY;
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
@@ -1075,50 +880,13 @@ void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 // tecla do teclado. Veja http://www.glfw.org/docs/latest/input_guide.html#input_key
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mod)
 {
-    // ===================
-    // Não modifique este loop! Ele é utilizando para correção automatizada dos
-    // laboratórios. Deve ser sempre o primeiro comando desta função KeyCallback().
-    for (int i = 0; i < 10; ++i)
-        if (key == GLFW_KEY_0 + i && action == GLFW_PRESS && mod == GLFW_MOD_SHIFT)
-            std::exit(100 + i);
-    // ===================
-
     // Se o usuário pressionar a tecla ESC, fechamos a janela.
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
-    // O código abaixo implementa a seguinte lógica:
-    //   Se apertar tecla X       então g_AngleX += delta;
-    //   Se apertar tecla shift+X então g_AngleX -= delta;
-    //   Se apertar tecla Y       então g_AngleY += delta;
-    //   Se apertar tecla shift+Y então g_AngleY -= delta;
-    //   Se apertar tecla Z       então g_AngleZ += delta;
-    //   Se apertar tecla shift+Z então g_AngleZ -= delta;
-
-    float delta = 3.141592 / 16; // 22.5 graus, em radianos.
-
-    if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-    {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
     // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        g_ForearmAngleX = 0.0f;
-        g_ForearmAngleZ = 0.0f;
         g_TorsoPositionX = 0.0f;
         g_TorsoPositionY = 0.0f;
     }
@@ -1140,4 +908,66 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mod)
     {
         g_ShowInfoText = !g_ShowInfoText;
     }
+}
+
+GLFWwindow *InitializeAppWindow()
+{
+    if (!glfwInit())
+    {
+        fprintf(stderr, "ERROR: glfwInit() failed.\n");
+        std::exit(EXIT_FAILURE);
+    }
+
+    glfwSetErrorCallback([](int error, const char *description)
+                         { fprintf(stderr, "ERROR: GLFW: %s\n", description); });
+
+    // OpenGL version >= 3.3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    // Require OpenGL core profile
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // App window creation
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Keep It In Sight", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
+        std::exit(EXIT_FAILURE);
+    }
+
+    // Player inputs callbacks
+    glfwSetKeyCallback(window, KeyCallback);
+    glfwSetMouseButtonCallback(window, MouseButtonCallback);
+    glfwSetCursorPosCallback(window, CursorPosCallback);
+    glfwSetScrollCallback(window, ScrollCallback);
+    // Window resize callback
+    glfwSetFramebufferSizeCallback(window,
+                                   [](GLFWwindow *window, int width, int height)
+                                   {
+                                       glViewport(0, 0, width, height);
+                                       g_ScreenRatio = (float)width / height;
+                                   });
+    glfwMakeContextCurrent(window);
+
+    return window;
+}
+
+void SetupOpenGl()
+{
+    // Load OpenGL 3.3 functions
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+    // Enable Z-buffer
+    glEnable(GL_DEPTH_TEST);
+
+    // Enable Backface Culling
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 }
