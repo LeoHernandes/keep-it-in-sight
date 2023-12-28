@@ -1,5 +1,5 @@
-// Based on http://hamelot.io/visualization/opengl-text-without-any-external-libraries/
-//   and on https://github.com/rougier/freetype-gl
+#ifndef _TEXTRENDERING_H
+#define _TEXTRENDERING_H
 
 #include <string>
 
@@ -254,3 +254,5 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow *window)
 
     TextRendering_PrintString(window, buffer, 1.0f - (numchars + 1) * charwidth, 1.0f - lineheight, 1.0f);
 }
+
+#endif //_TEXTRENDERING_H
