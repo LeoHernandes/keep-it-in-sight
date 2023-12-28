@@ -38,7 +38,7 @@ GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id); // 
 
 GLFWwindow *InitializeAppWindow();
 void SetupOpenGl();
-void UpdateCamera();
+void UpdateCamera(GLint view_uniform, GLint projection_uniform);
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -107,6 +107,8 @@ int main()
     // Get variables addresses from Vertex Shader file.
     GLint model_uniform = glGetUniformLocation(g_GpuProgramID, "model");
     GLint render_as_black_uniform = glGetUniformLocation(g_GpuProgramID, "render_as_black");
+    GLint view_uniform = glGetUniformLocation(g_GpuProgramID, "view");
+    GLint projection_uniform = glGetUniformLocation(g_GpuProgramID, "projection");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -133,7 +135,7 @@ int main()
         // comentários detalhados dentro da definição de BuildTriangles().
         glBindVertexArray(vertex_array_object_id);
 
-        UpdateCamera();
+        UpdateCamera(view_uniform, projection_uniform);
 
         glm::mat4 model = Matrix_Identity();
         model = model * Matrix_Translate(g_TorsoPositionX - 1.0f, g_TorsoPositionY + 1.0f, 0.0f);
@@ -918,12 +920,8 @@ void SetupOpenGl()
     glFrontFace(GL_CCW);
 }
 
-void UpdateCamera()
+void UpdateCamera(GLint view_uniform, GLint projection_uniform)
 {
-    // Get variables addresses from Vertex Shader file.
-    GLint view_uniform = glGetUniformLocation(g_GpuProgramID, "view");
-    GLint projection_uniform = glGetUniformLocation(g_GpuProgramID, "projection");
-
     // Computamos a posição da câmera utilizando coordenadas esféricas.  As
     // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
     // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
