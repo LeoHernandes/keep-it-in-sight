@@ -8,16 +8,13 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
-
 // OpenGL libs
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 // GLM: vectors and matrices
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 // Custom headers
 #include "utils.h"
 #include "matrices.h"
@@ -26,66 +23,42 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
-// Declaração de várias funções utilizadas em main().  Essas estão definidas
-// logo após a definição de main() neste arquivo.
 void DrawCube(GLint render_as_black_uniform);                                // Desenha um cubo
 GLuint BuildTriangles();                                                     // Constrói triângulos para renderização
-void LoadShadersFromFiles();                                                 // Carrega os shaders de vértice e fragmento, criando um programa de GPU
+GLuint LoadShadersFromFiles();                                               // Carrega os shaders de vértice e fragmento, criando um programa de GPU
 GLuint LoadShader_Vertex(const char *filename);                              // Carrega um vertex shader
 GLuint LoadShader_Fragment(const char *filename);                            // Carrega um fragment shader
 void LoadShader(const char *filename, GLuint shader_id);                     // Função utilizada pelas duas acima
 GLuint CreateGpuProgram(GLuint vertex_shader_id, GLuint fragment_shader_id); // Cria um programa de GPU
-
 GLFWwindow *InitializeAppWindow();
 void SetupOpenGl();
 void UpdateCamera(GLint view_uniform, GLint projection_uniform);
 
-// Definimos uma estrutura que armazenará dados necessários para renderizar
-// cada objeto da cena virtual.
+// TODO: extract this concept of object (entity) and scene
 struct SceneObject
 {
-    const char *name;      // Nome do objeto
-    void *first_index;     // Índice do primeiro vértice dentro do vetor indices[] definido em BuildTriangles()
-    int num_indices;       // Número de índices do objeto dentro do vetor indices[] definido em BuildTriangles()
-    GLenum rendering_mode; // Modo de rasterização (GL_TRIANGLES, GL_TRIANGLE_STRIP, etc.)
+    const char *name;
+    void *first_index;
+    int num_indices;
+    GLenum rendering_mode;
 };
-
-// Abaixo definimos variáveis globais utilizadas em várias funções do código.
-
-// A cena virtual é uma lista de objetos nomeados, guardados em um dicionário
-// (map).  Veja dentro da função BuildTriangles() como que são incluídos
-// objetos dentro da variável g_VirtualScene, e veja na função main() como
-// estes são acessados.
 std::map<const char *, SceneObject> g_VirtualScene;
 
-// Pilha que guardará as matrizes de modelagem.
-std::stack<glm::mat4> g_MatrixStack;
+// TODO: pass this value as parameters in functions, don't use it as global
+float g_ScreenRatio = (float)WINDOW_WIDTH / WINDOW_HEIGHT;
 
-float g_ScreenRatio = (float)WINDOW_WIDTH / WINDOW_HEIGHT; //
-
-// "g_LeftMouseButtonPressed = true" se o usuário está com o botão esquerdo do mouse
-// pressionado no momento atual. Veja função MouseButtonCallback().
 bool g_LeftMouseButtonPressed = false;
-bool g_RightMouseButtonPressed = false;  // Análogo para botão direito do mouse
-bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mouse
+bool g_RightMouseButtonPressed = false;
+bool g_MiddleMouseButtonPressed = false;
 
-// Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
-// usuário através do mouse (veja função CursorPosCallback()). A posição
-// efetiva da câmera é calculada dentro da função main(), dentro do loop de
-// renderização.
-float g_CameraTheta = 0.0f;    // Ângulo no plano ZX em relação ao eixo Z
-float g_CameraPhi = 0.0f;      // Ângulo em relação ao eixo Y
-float g_CameraDistance = 3.5f; // Distância da câmera para a origem
+float g_CameraTheta = 0.0f;    // Angle between ZX plane and Z axis
+float g_CameraPhi = 0.0f;      // Angle with respect to the Y axis
+float g_CameraDistance = 3.5f; // Distance to origin
 
-// Variáveis que controlam translação do torso
-float g_TorsoPositionX = 0.0f;
-float g_TorsoPositionY = 0.0f;
+float g_CubePositionX = 0.0f;
+float g_CubePositionY = 0.0f;
 
-// Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
-
-// Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
-GLuint g_GpuProgramID = 0;
 
 int main()
 {
@@ -96,98 +69,57 @@ int main()
 
     PrintGpuInfo();
 
-    LoadShadersFromFiles();
+    GLuint gpu_program_id = LoadShadersFromFiles();
 
     TextRendering_Init();
 
     GLuint vertex_array_object_id = BuildTriangles();
     // Get variables addresses from Vertex Shader file.
-    GLint model_uniform = glGetUniformLocation(g_GpuProgramID, "model");
-    GLint render_as_black_uniform = glGetUniformLocation(g_GpuProgramID, "render_as_black");
-    GLint view_uniform = glGetUniformLocation(g_GpuProgramID, "view");
-    GLint projection_uniform = glGetUniformLocation(g_GpuProgramID, "projection");
+    GLint model_uniform = glGetUniformLocation(gpu_program_id, "model");
+    GLint render_as_black_uniform = glGetUniformLocation(gpu_program_id, "render_as_black");
+    GLint view_uniform = glGetUniformLocation(gpu_program_id, "view");
+    GLint projection_uniform = glGetUniformLocation(gpu_program_id, "projection");
 
     while (!glfwWindowShouldClose(window))
     {
-        // Aqui executamos as operações de renderização
-
-        // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
-        // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
-        // Vermelho, Verde, Azul, Alpha (valor de transparência).
-        // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
-        //
-        //           R     G     B     A
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-        // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
-        // e também resetamos todos os pixels do Z-buffer (depth buffer).
+        // Reset screen pixels data
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
-        // os shaders de vértice e fragmentos).
-        glUseProgram(g_GpuProgramID);
-
-        // "Ligamos" o VAO. Informamos que queremos utilizar os atributos de
-        // vértices apontados pelo VAO criado pela função BuildTriangles(). Veja
-        // comentários detalhados dentro da definição de BuildTriangles().
-        glBindVertexArray(vertex_array_object_id);
+        // Specifies the handle of the program object whose executables
+        // are to be used in GPU as part of current rendering state
+        glUseProgram(gpu_program_id);
 
         UpdateCamera(view_uniform, projection_uniform);
 
-        glm::mat4 model = Matrix_Identity();
-        model = model * Matrix_Translate(g_TorsoPositionX - 1.0f, g_TorsoPositionY + 1.0f, 0.0f);
+        // ************ Draw cube ************
+        glBindVertexArray(vertex_array_object_id);
+        glm::mat4 model = Matrix_Identity() * Matrix_Translate(g_CubePositionX - 1.0f, g_CubePositionY + 1.0f, 0.0f);
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
         DrawCube(render_as_black_uniform);
 
         model = Matrix_Identity();
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-
-        // Pedimos para OpenGL desenhar linhas com largura de 10 pixels.
         glLineWidth(10.0f);
-
-        // Informamos para a placa de vídeo (GPU) que a variável booleana
-        // "render_as_black" deve ser colocada como "false". Veja o arquivo
-        // "shader_vertex.glsl".
         glUniform1i(render_as_black_uniform, false);
-
-        // Pedimos para a GPU rasterizar os vértices dos eixos XYZ
-        // apontados pelo VAO como linhas. Veja a definição de
-        // g_VirtualScene["axes"] dentro da função BuildTriangles(), e veja
-        // a documentação da função glDrawElements() em
-        // http://docs.gl/gl3/glDrawElements.
         glDrawElements(
             g_VirtualScene["axes"].rendering_mode,
             g_VirtualScene["axes"].num_indices,
             GL_UNSIGNED_INT,
             (void *)g_VirtualScene["axes"].first_index);
-
-        // "Desligamos" o VAO, evitando assim que operações posteriores venham a
-        // alterar o mesmo. Isso evita bugs.
         glBindVertexArray(0);
+        // ************************
 
-        // Imprimimos na tela informação sobre o número de quadros renderizados
-        // por segundo (frames per second).
-        TextRendering_ShowFramesPerSecond(window);
+        if (g_ShowInfoText)
+            TextRendering_ShowFramesPerSecond(window);
 
-        // O framebuffer onde OpenGL executa as operações de renderização não
-        // é o mesmo que está sendo mostrado para o usuário, caso contrário
-        // seria possível ver artefatos conhecidos como "screen tearing". A
-        // chamada abaixo faz a troca dos buffers, mostrando para o usuário
-        // tudo que foi renderizado pelas funções acima.
-        // Veja o link: https://en.wikipedia.org/w/index.php?title=Multiple_buffering&oldid=793452829#Double_buffering_in_computer_graphics
+        // Double buffering swap to avoid screen tearing
         glfwSwapBuffers(window);
 
-        // Verificamos com o sistema operacional se houve alguma interação do
-        // usuário (teclado, mouse, ...). Caso positivo, as funções de callback
-        // definidas anteriormente usando glfwSet*Callback() serão chamadas
-        // pela biblioteca GLFW.
+        // User interaction poll
         glfwPollEvents();
     }
 
-    // Finalizamos o uso dos recursos do sistema operacional
+    // Destroys and frees all GLFW resources
     glfwTerminate();
-
-    // Fim do programa
     return 0;
 }
 
@@ -600,38 +532,12 @@ void LoadShader(const char *filename, GLuint shader_id)
     delete[] log;
 }
 
-// Função que carrega os shaders de vértices e de fragmentos que serão
-// utilizados para renderização. Veja slides 180-200 do documento Aula_03_Rendering_Pipeline_Grafico.pdf.
-//
-void LoadShadersFromFiles()
+GLuint LoadShadersFromFiles()
 {
-    // Note que o caminho para os arquivos "shader_vertex.glsl" e
-    // "shader_fragment.glsl" estão fixados, sendo que assumimos a existência
-    // da seguinte estrutura no sistema de arquivos:
-    //
-    //    + FCG_Lab_01/
-    //    |
-    //    +--+ bin/
-    //    |  |
-    //    |  +--+ Release/  (ou Debug/ ou Linux/)
-    //    |     |
-    //    |     o-- main.exe
-    //    |
-    //    +--+ src/
-    //       |
-    //       o-- shader_vertex.glsl
-    //       |
-    //       o-- shader_fragment.glsl
-    //
     GLuint vertex_shader_id = LoadShader_Vertex("../../src/shader_vertex.glsl");
     GLuint fragment_shader_id = LoadShader_Fragment("../../src/shader_fragment.glsl");
 
-    // Deletamos o programa de GPU anterior, caso ele exista.
-    if (g_GpuProgramID != 0)
-        glDeleteProgram(g_GpuProgramID);
-
-    // Criamos um programa de GPU utilizando os shaders carregados acima.
-    g_GpuProgramID = CreateGpuProgram(vertex_shader_id, fragment_shader_id);
+    return CreateGpuProgram(vertex_shader_id, fragment_shader_id);
 }
 
 // Esta função cria um programa de GPU, o qual contém obrigatoriamente um
@@ -794,8 +700,8 @@ void CursorPosCallback(GLFWwindow *window, double xpos, double ypos)
         float dy = ypos - g_LastCursorPosY;
 
         // Atualizamos parâmetros da antebraço com os deslocamentos
-        g_TorsoPositionX += 0.01f * dx;
-        g_TorsoPositionY -= 0.01f * dy;
+        g_CubePositionX += 0.01f * dx;
+        g_CubePositionY -= 0.01f * dy;
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
@@ -832,8 +738,8 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mod)
     // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
-        g_TorsoPositionX = 0.0f;
-        g_TorsoPositionY = 0.0f;
+        g_CubePositionX = 0.0f;
+        g_CubePositionY = 0.0f;
     }
 
     // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
@@ -903,6 +809,8 @@ void SetupOpenGl()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void UpdateCamera(GLint view_uniform, GLint projection_uniform)
