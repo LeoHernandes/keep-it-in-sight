@@ -4,10 +4,10 @@
 #include <list>
 
 // =========== TODO: IMPLEMENTAR ESSA CLASSE ===========
-//#include "Entity.h" 
+#include "Entity.h" 
 
 // =========== TODO: IMPLEMENTAR ESSA CLASSE ===========
-//#include "Camera.h"
+#include "Camera.h"
 
 class Scene
 {
