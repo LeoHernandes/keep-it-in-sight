@@ -1,16 +1,13 @@
-#include "Entity.h"
+#include "entity.h"
 
 Entity::~Entity()
 {
-
 }
 
 void Entity::Update(float deltaTime)
 {
-
 }
 
-void Entity::Render(Camera* camera)
+void Entity::Render(Camera *camera)
 {
-    
 }

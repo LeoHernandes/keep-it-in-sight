@@ -8,6 +8,8 @@
 set(SOURCES
   src/main.cpp
   src/glad.c
+  src/scene.cpp
+  src/entity.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

@@ -1,21 +1,21 @@
-#include "Scene.h"
+#include "scene.h"
 
 Scene::Scene()
 {
-    //não sei
+    // não sei
 }
 
 Scene::~Scene()
 {
-    for (Entity* entity : this->entities)
+    for (Entity *entity : this->entities)
     {
         delete entity;
     }
 }
 
-Scene* Scene::Update(float deltaTime)
+Scene *Scene::Update(float deltaTime)
 {
-    for (Entity* entity : this->entities)
+    for (Entity *entity : this->entities)
     {
         entity->Update(deltaTime);
     }
@@ -24,13 +24,13 @@ Scene* Scene::Update(float deltaTime)
 
 void Scene::Render()
 {
-    for (Entity* entity : this->entities)
+    for (Entity *entity : this->entities)
     {
         entity->Render(this->camera);
     }
 }
 
-void Scene::RemoveEntity(Entity* entity)
+void Scene::RemoveEntity(Entity *entity)
 {
     this->entities.remove(entity);
     delete entity;
