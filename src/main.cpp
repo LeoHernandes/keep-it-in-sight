@@ -17,21 +17,28 @@
 #include <glm/gtc/type_ptr.hpp>
 // Custom headers
 #include "utils.h"
-#include "matrices.h"
 #include "textrendering.h"
 #include "shaders.h"
 #include "input.h"
+#include "lookAtCamera.h"
+#include <functional>
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
 void DrawCube(GLint render_as_black_uniform);
 GLuint BuildTriangles();
-GLFWwindow *InitializeAppWindow();
+GLFWwindow *InitializeAppWindow(LookAtCamera *camera);
 void SetupOpenGl();
-void UpdateCamera(GLint view_uniform, GLint projection_uniform);
 
-// TODO: extract this concept of object (entity) and scene
+// Temporary workaround for cross lib includes problems
+// In the future, this matrices functions will be called only inside other classes, not directly in main
+glm::mat4 Matrix_Identity();
+glm::mat4 Matrix_Translate(float tx, float ty, float tz);
+glm::mat4 Matrix_Camera_View(glm::vec4 position_c, glm::vec4 view_vector, glm::vec4 up_vector);
+glm::mat4 Matrix_Perspective(float field_of_view, float aspect, float n, float f);
+
+// TODO: Refactor this to use our Entity and Scene classes
 struct SceneObject
 {
     const char *name;
@@ -41,13 +48,6 @@ struct SceneObject
 };
 std::map<const char *, SceneObject> g_VirtualScene;
 
-// TODO: pass this value as parameters in functions, don't use it as global
-float g_ScreenRatio = (float)WINDOW_WIDTH / WINDOW_HEIGHT;
-
-extern float g_CameraTheta;    // Angle between ZX plane and Z axis
-extern float g_CameraPhi;      // Angle with respect to the Y axis
-extern float g_CameraDistance; // Distance to origin
-
 extern float g_CubePositionX;
 extern float g_CubePositionY;
 
@@ -55,8 +55,10 @@ extern bool g_ShowInfoText;
 
 int main()
 {
+    LookAtCamera camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
+
     // App window creation
-    GLFWwindow *window = InitializeAppWindow();
+    GLFWwindow *window = InitializeAppWindow(&camera);
 
     SetupOpenGl();
 
@@ -81,7 +83,8 @@ int main()
         // are to be used in GPU as part of current rendering state
         glUseProgram(gpu_program_id);
 
-        UpdateCamera(view_uniform, projection_uniform);
+        // UpdateCamera(view_uniform, projection_uniform);
+        camera.Update(view_uniform, projection_uniform);
 
         // ************ Draw cube ************
         glBindVertexArray(vertex_array_object_id);
@@ -424,7 +427,7 @@ GLuint BuildTriangles()
     return vertex_array_object_id;
 }
 
-GLFWwindow *InitializeAppWindow()
+GLFWwindow *InitializeAppWindow(LookAtCamera *camera)
 {
     if (!glfwInit())
     {
@@ -439,9 +442,9 @@ GLFWwindow *InitializeAppWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-    #ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
     // Require OpenGL core profile
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -457,16 +460,42 @@ GLFWwindow *InitializeAppWindow()
 
     // Player inputs callbacks
     glfwSetKeyCallback(window, KeyCallback);
-    glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    glfwSetCursorPosCallback(window, CursorPosCallback);
-    glfwSetScrollCallback(window, ScrollCallback);
+
+    // ISSO AQUI É BRUXARIA, DEPOIS EU TE EXPLICO
+    glfwSetWindowUserPointer(window, camera);
+
+    auto scrollCallBack = [](GLFWwindow *window, double xoffset, double yoffset)
+    {
+        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
+        assert(camera);
+        camera->ScrollCallback(window, xoffset, yoffset);
+    };
+    glfwSetScrollCallback(window, scrollCallBack);
+
+    auto mouseButtonCallBack = [](GLFWwindow *window, int button, int action, int mods)
+    {
+        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
+        assert(camera);
+        camera->MouseButtonCallback(window, button, action, mods);
+    };
+    glfwSetMouseButtonCallback(window, mouseButtonCallBack);
+
+    auto cursorPosCallBack = [](GLFWwindow *window, double xpos, double ypos)
+    {
+        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
+        assert(camera);
+        camera->CursorPosCallback(window, xpos, ypos);
+    };
+    glfwSetCursorPosCallback(window, cursorPosCallBack);
+
     // Window resize callback
-    glfwSetFramebufferSizeCallback(window,
-                                   [](GLFWwindow *window, int width, int height)
-                                   {
-                                       glViewport(0, 0, width, height);
-                                       g_ScreenRatio = (float)width / height;
-                                   });
+    auto screenRatioCallback = [](GLFWwindow *window, int width, int height)
+    {
+        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
+        assert(camera);
+        camera->ScreenRatioCallback(window, width, height);
+    };
+    glfwSetFramebufferSizeCallback(window, screenRatioCallback);
     glfwMakeContextCurrent(window);
 
     return window;
@@ -486,27 +515,4 @@ void SetupOpenGl()
     glFrontFace(GL_CCW);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-void UpdateCamera(GLint view_uniform, GLint projection_uniform)
-{
-    // Look at camera position
-    float r = g_CameraDistance;
-    float y = r * sin(g_CameraPhi);
-    float z = r * cos(g_CameraPhi) * cos(g_CameraTheta);
-    float x = r * cos(g_CameraPhi) * sin(g_CameraTheta);
-
-    glm::vec4 camera_position_c = glm::vec4(x, y, z, 1.0f);
-    glm::vec4 camera_lookat_l = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
-    glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-    glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
-
-    float nearplane = -0.1f;
-    float farplane = -10.0f;
-    float field_of_view = 3.141592 / 3.0f;
-    glm::mat4 projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
-
-    glUniformMatrix4fv(view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
 }

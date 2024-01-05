@@ -8,6 +8,6 @@ void Entity::Update(float deltaTime)
 {
 }
 
-void Entity::Render(Camera *camera)
+void Entity::Render(LookAtCamera *camera)
 {
 }

@@ -10,6 +10,7 @@ set(SOURCES
   src/glad.c
   src/scene.cpp
   src/entity.cpp
+  src/lookAtCamera.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

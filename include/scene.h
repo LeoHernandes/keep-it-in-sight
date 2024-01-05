@@ -3,7 +3,7 @@
 
 #include <list>
 #include "entity.h"
-#include "camera.h"
+#include "lookAtCamera.h"
 
 class Scene
 {
@@ -11,7 +11,7 @@ protected:
     std::list<Entity *> entities;
 
 public:
-    Camera *camera;
+    LookAtCamera *camera;
 
     Scene();
     virtual ~Scene();
