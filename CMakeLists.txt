@@ -11,6 +11,7 @@ set(SOURCES
   src/scene.cpp
   src/entity.cpp
   src/lookAtCamera.cpp
+  src/player.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

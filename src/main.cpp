@@ -8,6 +8,7 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
+#include <functional>
 // OpenGL libs
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -19,16 +20,15 @@
 #include "utils.h"
 #include "textrendering.h"
 #include "shaders.h"
-#include "input.h"
 #include "lookAtCamera.h"
-#include <functional>
+#include "player.h"
 
 #define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
+#define WINDOW_HEIGHT 600
 
 void DrawCube(GLint render_as_black_uniform);
 GLuint BuildTriangles();
-GLFWwindow *InitializeAppWindow(LookAtCamera *camera);
+GLFWwindow *InitializeAppWindow(Player *player);
 void SetupOpenGl();
 
 // Temporary workaround for cross lib includes problems
@@ -48,17 +48,13 @@ struct SceneObject
 };
 std::map<const char *, SceneObject> g_VirtualScene;
 
-extern float g_CubePositionX;
-extern float g_CubePositionY;
-
-extern bool g_ShowInfoText;
-
 int main()
 {
     LookAtCamera camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
+    Player player(&camera);
 
     // App window creation
-    GLFWwindow *window = InitializeAppWindow(&camera);
+    GLFWwindow *window = InitializeAppWindow(&player);
 
     SetupOpenGl();
 
@@ -83,12 +79,12 @@ int main()
         // are to be used in GPU as part of current rendering state
         glUseProgram(gpu_program_id);
 
-        // UpdateCamera(view_uniform, projection_uniform);
-        camera.Update(view_uniform, projection_uniform);
+        // Update camera projection matrix
+        player.RenderView(view_uniform, projection_uniform);
 
         // ************ Draw cube ************
         glBindVertexArray(vertex_array_object_id);
-        glm::mat4 model = Matrix_Identity() * Matrix_Translate(g_CubePositionX - 1.0f, g_CubePositionY + 1.0f, 0.0f);
+        glm::mat4 model = Matrix_Identity() * Matrix_Translate(1.0f, 1.0f, 0.0f);
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
         DrawCube(render_as_black_uniform);
 
@@ -104,7 +100,7 @@ int main()
         glBindVertexArray(0);
         // ************************
 
-        if (g_ShowInfoText)
+        if (player.show_info_text)
             TextRendering_ShowFramesPerSecond(window);
 
         // Double buffering swap to avoid screen tearing
@@ -427,7 +423,7 @@ GLuint BuildTriangles()
     return vertex_array_object_id;
 }
 
-GLFWwindow *InitializeAppWindow(LookAtCamera *camera)
+GLFWwindow *InitializeAppWindow(Player *player)
 {
     if (!glfwInit())
     {
@@ -459,41 +455,41 @@ GLFWwindow *InitializeAppWindow(LookAtCamera *camera)
     }
 
     // Player inputs callbacks
-    glfwSetKeyCallback(window, KeyCallback);
+    glfwSetWindowUserPointer(window, player);
 
-    // ISSO AQUI É BRUXARIA, DEPOIS EU TE EXPLICO
-    glfwSetWindowUserPointer(window, camera);
+    auto keyCallBack = [](GLFWwindow *window, int key, int scancode, int action, int mod)
+    {
+        Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
+        player->KeyCallback(window, key, scancode, action, mod);
+    };
+    glfwSetKeyCallback(window, keyCallBack);
 
     auto scrollCallBack = [](GLFWwindow *window, double xoffset, double yoffset)
     {
-        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
-        assert(camera);
-        camera->ScrollCallback(window, xoffset, yoffset);
+        Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
+        player->ScrollCallback(window, xoffset, yoffset);
     };
     glfwSetScrollCallback(window, scrollCallBack);
 
     auto mouseButtonCallBack = [](GLFWwindow *window, int button, int action, int mods)
     {
-        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
-        assert(camera);
-        camera->MouseButtonCallback(window, button, action, mods);
+        Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
+        player->MouseButtonCallback(window, button, action, mods);
     };
     glfwSetMouseButtonCallback(window, mouseButtonCallBack);
 
     auto cursorPosCallBack = [](GLFWwindow *window, double xpos, double ypos)
     {
-        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
-        assert(camera);
-        camera->CursorPosCallback(window, xpos, ypos);
+        Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
+        player->CursorPosCallback(window, xpos, ypos);
     };
     glfwSetCursorPosCallback(window, cursorPosCallBack);
 
     // Window resize callback
     auto screenRatioCallback = [](GLFWwindow *window, int width, int height)
     {
-        LookAtCamera *camera = static_cast<LookAtCamera *>(glfwGetWindowUserPointer(window));
-        assert(camera);
-        camera->ScreenRatioCallback(window, width, height);
+        Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
+        player->ScreenRatioCallback(window, width, height);
     };
     glfwSetFramebufferSizeCallback(window, screenRatioCallback);
     glfwMakeContextCurrent(window);

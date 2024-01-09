@@ -7,7 +7,6 @@
 #include <glm/gtc/type_ptr.hpp>
 // OpenGl
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 class LookAtCamera
 {
@@ -27,10 +26,6 @@ public:
 
     LookAtCamera(float initial_screen_ratio);
     void Update(GLint view_uniform, GLint projection_uniform);
-    void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
-    void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
-    void CursorPosCallback(GLFWwindow *window, double xpos, double ypos);
-    void ScreenRatioCallback(GLFWwindow *window, int width, int height);
 };
 
 #endif // _LOOKATCAMERA_H
