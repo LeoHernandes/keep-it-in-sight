@@ -449,6 +449,9 @@ GLFWwindow *InitializeAppWindow(Player *player)
         std::exit(EXIT_FAILURE);
     }
 
+    // Locks mouse inside window
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // Player inputs callbacks
     glfwSetWindowUserPointer(window, player);
 

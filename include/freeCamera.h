@@ -20,7 +20,7 @@ public:
     glm::mat4 projection;
 
     FreeCamera(float screen_ratio);
-    void Update(GLint view_uniform, GLint projection_uniform);
+    void Update(GLint view_uniform, GLint projection_uniform, bool is_pressing_W, bool is_pressing_A, bool is_pressing_S, bool is_pressing_D);
 };
 
 #endif // _FREECAMERA_H

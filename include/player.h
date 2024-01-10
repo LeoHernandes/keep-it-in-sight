@@ -18,8 +18,13 @@ class Player
 {
 private:
     CameraMode camera_mode;
-    bool _isLeftMouseButtonPressed = false;
-    bool _isRightMouseButtonPressed = false;
+    bool _is_left_mouse_button_pressed;
+
+    bool _is_pressing_W_key;
+    bool _is_pressing_A_key;
+    bool _is_pressing_S_key;
+    bool _is_pressing_D_key;
+
     double _lastCursorPosX, _lastCursorPosY;
 
 public:
