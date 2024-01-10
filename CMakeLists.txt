@@ -11,6 +11,8 @@ set(SOURCES
   src/scene.cpp
   src/entity.cpp
   src/lookAtCamera.cpp
+  src/freeCamera.cpp
+  src/matrices.cpp
   src/player.cpp
 )
 

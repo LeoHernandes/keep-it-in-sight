@@ -22,6 +22,7 @@
 #include "shaders.h"
 #include "lookAtCamera.h"
 #include "player.h"
+#include "matrices.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -30,13 +31,6 @@ void DrawCube(GLint render_as_black_uniform);
 GLuint BuildTriangles();
 GLFWwindow *InitializeAppWindow(Player *player);
 void SetupOpenGl();
-
-// Temporary workaround for cross lib includes problems
-// In the future, this matrices functions will be called only inside other classes, not directly in main
-glm::mat4 Matrix_Identity();
-glm::mat4 Matrix_Translate(float tx, float ty, float tz);
-glm::mat4 Matrix_Camera_View(glm::vec4 position_c, glm::vec4 view_vector, glm::vec4 up_vector);
-glm::mat4 Matrix_Perspective(float field_of_view, float aspect, float n, float f);
 
 // TODO: Refactor this to use our Entity and Scene classes
 struct SceneObject
@@ -50,8 +44,9 @@ std::map<const char *, SceneObject> g_VirtualScene;
 
 int main()
 {
-    LookAtCamera camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
-    Player player(&camera);
+    FreeCamera free_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
+    LookAtCamera look_at_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
+    Player player(&free_camera, &look_at_camera);
 
     // App window creation
     GLFWwindow *window = InitializeAppWindow(&player);
@@ -84,11 +79,11 @@ int main()
 
         // ************ Draw cube ************
         glBindVertexArray(vertex_array_object_id);
-        glm::mat4 model = Matrix_Identity() * Matrix_Translate(1.0f, 1.0f, 0.0f);
+        glm::mat4 model = Matrices::Identity() * Matrices::Translate(1.0f, 1.0f, 0.0f);
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
         DrawCube(render_as_black_uniform);
 
-        model = Matrix_Identity();
+        model = Matrices::Identity();
         glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
         glLineWidth(10.0f);
         glUniform1i(render_as_black_uniform, false);

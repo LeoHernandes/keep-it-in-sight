@@ -1,9 +1,10 @@
 #include "player.h"
 
-Player::Player(LookAtCamera *look_at_camera)
+Player::Player(FreeCamera *free_camera, LookAtCamera *look_at_camera)
 {
     this->camera_mode = CameraMode::LookAt;
     this->look_at_camera = look_at_camera;
+    this->free_camera = free_camera;
 }
 
 void Player::RenderView(GLint view_uniform, GLint projection_uniform)

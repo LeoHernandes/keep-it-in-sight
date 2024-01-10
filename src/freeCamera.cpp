@@ -1,21 +1,20 @@
-#include "lookAtCamera.h"
+#include "freeCamera.h"
 #include "matrices.h"
 
-LookAtCamera::LookAtCamera(float screen_ratio)
+FreeCamera::FreeCamera(float screen_ratio)
 {
     this->view_angle_theta = 0.0f;
     this->view_angle_phi = 0.0f;
-    this->distance = 3.5f;
+    this->position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     this->screen_ratio = screen_ratio;
 }
 
-void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform)
+void FreeCamera::Update(GLint view_uniform, GLint projection_uniform)
 {
-    // Look at camera position
-    float r = distance;
-    float y = r * sin(view_angle_phi);
-    float z = r * cos(view_angle_phi) * cos(view_angle_theta);
-    float x = r * cos(view_angle_phi) * sin(view_angle_theta);
+    // TODO: ta igual à camera look_at, tem q implementar ela
+    float y = 1 * sin(view_angle_phi);
+    float z = 1 * cos(view_angle_phi) * cos(view_angle_theta);
+    float x = 1 * cos(view_angle_phi) * sin(view_angle_theta);
 
     glm::vec4 camera_position_c = glm::vec4(x, y, z, 1.0f);
     glm::vec4 camera_lookat_l = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

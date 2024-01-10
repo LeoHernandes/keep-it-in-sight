@@ -2,6 +2,7 @@
 #define _PLAYER_H
 
 #include "lookAtCamera.h"
+#include "freeCamera.h"
 
 // OpenGl
 #include <glad/glad.h>
@@ -24,8 +25,9 @@ private:
 public:
     bool show_info_text;
     LookAtCamera *look_at_camera;
+    FreeCamera *free_camera;
 
-    Player(LookAtCamera *look_at_camera);
+    Player(FreeCamera *free_camera, LookAtCamera *look_at_camera);
     void RenderView(GLint view_uniform, GLint projection_uniform);
     void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
     void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);

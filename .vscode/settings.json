@@ -1,6 +1,7 @@
 {
-    "files.associations": {
-        "sstream": "cpp",
-        "iterator": "cpp"
-    }
+  "files.associations": {
+    "sstream": "cpp",
+    "iterator": "cpp",
+    "cmath": "cpp"
+  }
 }
