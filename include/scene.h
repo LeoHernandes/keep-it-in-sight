@@ -1,30 +1,24 @@
 #ifndef _SCENE_H
 #define _SCENE_H
 
-#include <list>
+#include <unordered_map>
+#include <iostream>
 #include "entity.h"
-#include "lookAtCamera.h"
+
+#include <glad/glad.h>
 
 class Scene
 {
-protected:
-    std::list<Entity *> entities;
+private:
+    std::unordered_map<std::string, Entity *> entities;
 
 public:
-    LookAtCamera *camera;
+    ~Scene();
 
-    Scene();
-    virtual ~Scene();
+    void Update(float deltaTime);
+    void Render(GLint model_uniform);
 
-    virtual Scene *Update(float deltaTime);
-    virtual void Render();
-
-    template <typename T>
-    T *AddEntity(T *entity)
-    {
-        this->entities.push_back(entity);
-        return entity;
-    }
+    void AddEntity(Entity *entity);
     void RemoveEntity(Entity *entity);
 };
 

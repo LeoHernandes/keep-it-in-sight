@@ -11,8 +11,6 @@ out vec4 color;
 
 void main()
 {
-    // Definimos a cor final de cada fragmento utilizando a cor interpolada
-    // pelo rasterizador.
     color = cor_interpolada_pelo_rasterizador;
 } 
 

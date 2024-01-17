@@ -1,37 +1,41 @@
 #include "scene.h"
 
-Scene::Scene()
-{
-    // não sei
-}
-
 Scene::~Scene()
 {
-    for (Entity *entity : this->entities)
+    entities.clear();
+}
+
+void Scene::Update(float deltaTime)
+{
+    for (const auto &entity : entities)
     {
-        delete entity;
+        entity.second->Update(deltaTime);
     }
 }
 
-Scene *Scene::Update(float deltaTime)
+void Scene::AddEntity(Entity *entity)
 {
-    for (Entity *entity : this->entities)
+    if (entities.find(entity->name) == entities.end())
     {
-        entity->Update(deltaTime);
+        entities[entity->name] = entity;
     }
-    return this;
+    else
+    {
+        std::cerr << "[ERROR] AddEntity: an entity of name " << entity->name << "already exists in the scene" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 }
 
-void Scene::Render()
+// TODO: get the model_uniform address from an adapter class for GPU methods
+void Scene::Render(GLint model_uniform)
 {
-    for (Entity *entity : this->entities)
+    for (const auto &entity : entities)
     {
-        entity->Render(this->camera);
+        entity.second->Render(model_uniform);
     }
 }
 
 void Scene::RemoveEntity(Entity *entity)
 {
-    this->entities.remove(entity);
-    delete entity;
+    entities.erase(entity->name);
 }

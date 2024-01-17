@@ -10,6 +10,7 @@ set(SOURCES
   src/glad.c
   src/scene.cpp
   src/entity.cpp
+  src/cubeEntity.cpp
   src/lookAtCamera.cpp
   src/freeCamera.cpp
   src/matrices.cpp

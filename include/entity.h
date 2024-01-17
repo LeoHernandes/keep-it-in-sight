@@ -1,14 +1,16 @@
 #ifndef _ENTITY_H
 #define _ENTITY_H
 
-#include "lookAtCamera.h"
+#include <string>
+#include <glad/glad.h>
 
 class Entity
 {
 public:
-    virtual ~Entity();
+    std::string name;
+
     virtual void Update(float deltaTime);
-    virtual void Render(LookAtCamera *camera);
+    virtual void Render(GLint model_uniform);
 };
 
 #endif
