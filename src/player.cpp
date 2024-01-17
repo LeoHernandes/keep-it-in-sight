@@ -32,11 +32,9 @@ void Player::UpdatePlayerPosition()
 ///////////////
 // Constructor
 ///////////////
-Player::Player(FreeCamera *free_camera, LookAtCamera *look_at_camera)
+Player::Player()
 {
     this->camera_mode = CameraMode::Free;
-    this->look_at_camera = look_at_camera;
-    this->free_camera = free_camera;
     this->velocity = 0.002f;
     this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
 
@@ -50,18 +48,31 @@ Player::Player(FreeCamera *free_camera, LookAtCamera *look_at_camera)
 }
 
 /////////////
+// Cameras
+/////////////
+void Player::AddFreeCamera(FreeCamera *camera)
+{
+    this->free_camera = camera;
+}
+
+void Player::AddLookAtCamera(LookAtCamera *camera)
+{
+    this->look_at_camera = camera;
+}
+
+/////////////
 // On Update
 /////////////
-void Player::OnUpdate(GLint view_uniform, GLint projection_uniform)
+void Player::OnUpdate()
 {
     switch (camera_mode)
     {
     case CameraMode::LookAt:
-        look_at_camera->Update(view_uniform, projection_uniform, position);
+        look_at_camera->Update(position);
         break;
     case CameraMode::Free:
         UpdatePlayerPosition();
-        free_camera->Update(view_uniform, projection_uniform, position);
+        free_camera->Update(position);
         break;
     default:
         break;

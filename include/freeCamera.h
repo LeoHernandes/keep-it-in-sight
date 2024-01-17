@@ -1,6 +1,8 @@
 #ifndef _FREECAMERA_H
 #define _FREECAMERA_H
 
+#include "gpuProgramController.h"
+
 // Matrices
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
@@ -10,6 +12,9 @@
 
 class FreeCamera
 {
+private:
+    GpuProgramController *gpu_controller;
+
 public:
     float view_angle_phi;   // Angle between ZX plane and Z axis
     float view_angle_theta; // Angle with respect to the Y axis
@@ -20,8 +25,8 @@ public:
     glm::mat4 view;
     glm::mat4 projection;
 
-    FreeCamera(float screen_ratio);
-    void Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position);
+    FreeCamera(float screen_ratio, GpuProgramController *gpu_controller);
+    void Update(glm::vec4 player_position);
 };
 
 #endif // _FREECAMERA_H

@@ -1,8 +1,10 @@
 #include "freeCamera.h"
 #include "matrices.h"
 
-FreeCamera::FreeCamera(float screen_ratio)
+FreeCamera::FreeCamera(float screen_ratio, GpuProgramController *gpu_controller)
 {
+    this->gpu_controller = gpu_controller;
+
     this->view_angle_theta = 3.141592 / 2;
     this->view_angle_phi = 0.0f;
     this->screen_ratio = screen_ratio;
@@ -10,7 +12,7 @@ FreeCamera::FreeCamera(float screen_ratio)
     this->view_vector = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void FreeCamera::Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position)
+void FreeCamera::Update(glm::vec4 player_position)
 {
     // View direction
     float y = sin(view_angle_phi);
@@ -32,6 +34,6 @@ void FreeCamera::Update(GLint view_uniform, GLint projection_uniform, glm::vec4 
     float field_of_view = 3.141592 / 3.0f;
     glm::mat4 projection = Matrices::Perspective(field_of_view, screen_ratio, nearplane, farplane);
 
-    glUniformMatrix4fv(view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(gpu_controller->view_uniform, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(gpu_controller->projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
 }

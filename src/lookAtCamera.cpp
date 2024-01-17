@@ -1,15 +1,17 @@
 #include "lookAtCamera.h"
 #include "matrices.h"
 
-LookAtCamera::LookAtCamera(float screen_ratio)
+LookAtCamera::LookAtCamera(float screen_ratio, GpuProgramController *gpu_controller)
 {
+    this->gpu_controller = gpu_controller;
+
     this->view_angle_theta = 0.0f;
     this->view_angle_phi = 0.0f;
     this->distance = 3.5f;
     this->screen_ratio = screen_ratio;
 }
 
-void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position)
+void LookAtCamera::Update(glm::vec4 player_position)
 {
     // Look at camera position
     float r = distance;
@@ -27,6 +29,6 @@ void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform, glm::vec
     float field_of_view = 3.141592 / 3.0f;
     glm::mat4 projection = Matrices::Perspective(field_of_view, screen_ratio, nearplane, farplane);
 
-    glUniformMatrix4fv(view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(gpu_controller->view_uniform, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(gpu_controller->projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
 }

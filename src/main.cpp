@@ -34,30 +34,25 @@ void SetupOpenGl();
 
 int main()
 {
-    FreeCamera free_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
-    LookAtCamera look_at_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT);
-    Player player(&free_camera, &look_at_camera);
-
-    // App window creation
+    Player player;
     GLFWwindow *window = InitializeAppWindow(&player);
 
     SetupOpenGl();
-
     PrintGpuInfo();
 
     GLuint gpu_program_id = LoadShadersFromFiles();
     GpuProgramController gpu_controller(gpu_program_id);
+
+    FreeCamera free_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT, &gpu_controller);
+    LookAtCamera look_at_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT, &gpu_controller);
+    player.AddFreeCamera(&free_camera);
+    player.AddLookAtCamera(&look_at_camera);
 
     TextRendering_Init();
 
     Scene scene;
     CubeEntity cube("cube1", &gpu_controller);
     scene.AddEntity(&cube);
-
-    // GLuint vertex_array_object_id = BuildTriangles();
-    // Get variables addresses from Vertex Shader file.
-    GLint view_uniform = glGetUniformLocation(gpu_program_id, "view");
-    GLint projection_uniform = glGetUniformLocation(gpu_program_id, "projection");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -68,7 +63,7 @@ int main()
         glUseProgram(gpu_program_id);
 
         // Update camera projection matrix
-        player.OnUpdate(view_uniform, projection_uniform);
+        player.OnUpdate();
         scene.Render();
 
         if (player.show_info_text)

@@ -38,8 +38,10 @@ public:
     FreeCamera *free_camera;
     glm::vec4 position;
 
-    Player(FreeCamera *free_camera, LookAtCamera *look_at_camera);
-    void OnUpdate(GLint view_uniform, GLint projection_uniform);
+    Player();
+    void AddFreeCamera(FreeCamera *camera);
+    void AddLookAtCamera(LookAtCamera *camera);
+    void OnUpdate();
     void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
     void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
     void CursorPosCallback(GLFWwindow *window, double xpos, double ypos);
