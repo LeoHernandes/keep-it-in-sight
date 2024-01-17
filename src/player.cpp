@@ -1,37 +1,70 @@
 #include "player.h"
+#include <iostream>
 
+//////////////////////
+// Auxiliar functions
+//////////////////////
+void Player::UpdatePlayerPosition()
+{
+    glm::vec4 foward_vector = free_camera->view_vector;
+    foward_vector.y = 0.0f; // Disable movement in y axis
+
+    glm::vec4 camera_side_vec = Matrices::CrossProduct(free_camera->up_vector, foward_vector);
+    glm::vec4 normalized_side = camera_side_vec / Matrices::Norm(camera_side_vec);
+    glm::vec4 normalized_foward = foward_vector / Matrices::Norm(foward_vector);
+
+    if (_is_pressing_W_key)
+        position = position + velocity * normalized_foward;
+    if (_is_pressing_S_key)
+        position = position - velocity * normalized_foward;
+    if (_is_pressing_A_key)
+        position = position + velocity * normalized_side;
+    if (_is_pressing_D_key)
+        position = position - velocity * normalized_side;
+}
+
+///////////////
+// Constructor
+///////////////
 Player::Player(FreeCamera *free_camera, LookAtCamera *look_at_camera)
 {
-    this->_is_left_mouse_button_pressed = false;
+    this->camera_mode = CameraMode::Free;
+    this->look_at_camera = look_at_camera;
+    this->free_camera = free_camera;
+    this->velocity = 0.002f;
+    this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
 
+    this->_is_left_mouse_button_pressed = false;
     this->_is_pressing_W_key = false;
     this->_is_pressing_A_key = false;
     this->_is_pressing_S_key = false;
     this->_is_pressing_D_key = false;
-
     this->_lastCursorPosX = 0.0;
     this->_lastCursorPosY = 0.0;
-
-    this->camera_mode = CameraMode::LookAt;
-    this->look_at_camera = look_at_camera;
-    this->free_camera = free_camera;
 }
 
-void Player::RenderView(GLint view_uniform, GLint projection_uniform)
+/////////////
+// On Update
+/////////////
+void Player::OnUpdate(GLint view_uniform, GLint projection_uniform)
 {
     switch (camera_mode)
     {
     case CameraMode::LookAt:
-        look_at_camera->Update(view_uniform, projection_uniform);
+        look_at_camera->Update(view_uniform, projection_uniform, position);
         break;
     case CameraMode::Free:
-        free_camera->Update(view_uniform, projection_uniform, _is_pressing_W_key, _is_pressing_A_key, _is_pressing_S_key, _is_pressing_D_key);
+        UpdatePlayerPosition();
+        free_camera->Update(view_uniform, projection_uniform, position);
         break;
     default:
         break;
     }
 }
 
+/////////////
+// Callbacks
+/////////////
 void Player::KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mod)
 {
     // Close game
@@ -145,8 +178,8 @@ void Player::CursorPosCallback(GLFWwindow *window, double xpos, double ypos)
         }
         break;
     case CameraMode::Free:
-        free_camera->view_angle_theta -= 0.005f * dx;
-        free_camera->view_angle_phi -= 0.005f * dy;
+        free_camera->view_angle_theta -= 0.001f * dx;
+        free_camera->view_angle_phi -= 0.001f * dy;
 
         if (free_camera->view_angle_phi > phimax)
             free_camera->view_angle_phi = phimax;

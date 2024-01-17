@@ -75,7 +75,7 @@ int main()
         glUseProgram(gpu_program_id);
 
         // Update camera projection matrix
-        player.RenderView(view_uniform, projection_uniform);
+        player.OnUpdate(view_uniform, projection_uniform);
 
         // ************ Draw cube ************
         glBindVertexArray(vertex_array_object_id);

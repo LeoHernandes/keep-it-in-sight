@@ -20,7 +20,7 @@ public:
     glm::mat4 projection;
 
     LookAtCamera(float screen_ratio);
-    void Update(GLint view_uniform, GLint projection_uniform);
+    void Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position);
 };
 
 #endif // _LOOKATCAMERA_H

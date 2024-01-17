@@ -14,13 +14,14 @@ public:
     float view_angle_phi;   // Angle between ZX plane and Z axis
     float view_angle_theta; // Angle with respect to the Y axis
     float screen_ratio;     // User window width by height ratio
-    glm::vec4 position;
+    glm::vec4 up_vector;
+    glm::vec4 view_vector;
 
     glm::mat4 view;
     glm::mat4 projection;
 
     FreeCamera(float screen_ratio);
-    void Update(GLint view_uniform, GLint projection_uniform, bool is_pressing_W, bool is_pressing_A, bool is_pressing_S, bool is_pressing_D);
+    void Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position);
 };
 
 #endif // _FREECAMERA_H

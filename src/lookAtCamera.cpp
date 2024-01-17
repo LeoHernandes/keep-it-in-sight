@@ -9,7 +9,7 @@ LookAtCamera::LookAtCamera(float screen_ratio)
     this->screen_ratio = screen_ratio;
 }
 
-void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform)
+void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform, glm::vec4 player_position)
 {
     // Look at camera position
     float r = distance;
@@ -18,8 +18,7 @@ void LookAtCamera::Update(GLint view_uniform, GLint projection_uniform)
     float x = r * cos(view_angle_phi) * sin(view_angle_theta);
 
     glm::vec4 camera_position_c = glm::vec4(x, y, z, 1.0f);
-    glm::vec4 camera_lookat_l = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
+    glm::vec4 camera_view_vector = player_position - camera_position_c;
     glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     glm::mat4 view = Matrices::CameraView(camera_position_c, camera_view_vector, camera_up_vector);
 
