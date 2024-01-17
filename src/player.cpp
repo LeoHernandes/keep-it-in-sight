@@ -10,17 +10,23 @@ void Player::UpdatePlayerPosition()
     foward_vector.y = 0.0f; // Disable movement in y axis
 
     glm::vec4 camera_side_vec = Matrices::CrossProduct(free_camera->up_vector, foward_vector);
-    glm::vec4 normalized_side = camera_side_vec / Matrices::Norm(camera_side_vec);
-    glm::vec4 normalized_foward = foward_vector / Matrices::Norm(foward_vector);
+    glm::vec4 movement_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     if (_is_pressing_W_key)
-        position = position + velocity * normalized_foward;
+        movement_vec = movement_vec + foward_vector;
     if (_is_pressing_S_key)
-        position = position - velocity * normalized_foward;
+        movement_vec = movement_vec - foward_vector;
     if (_is_pressing_A_key)
-        position = position + velocity * normalized_side;
+        movement_vec = movement_vec + camera_side_vec;
     if (_is_pressing_D_key)
-        position = position - velocity * normalized_side;
+        movement_vec = movement_vec - camera_side_vec;
+
+    // Allways move 1 unit in any direction
+    if (!Matrices::IsVectorNull(movement_vec))
+    {
+        glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
+        position = position + velocity * normalized_movement_vec;
+    }
 }
 
 ///////////////

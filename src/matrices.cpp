@@ -103,6 +103,17 @@ glm::mat4 Matrices::Rotate(float angle, glm::vec4 axis)
         0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+bool Matrices::IsVectorNull(glm::vec4 vector)
+{
+    if (vector.w != 0.0f)
+    {
+        fprintf(stderr, "[ERROR] IsVectorNull: input is a point\n");
+        std::exit(EXIT_FAILURE);
+    }
+
+    return vector.x == 0.0f && vector.y == 0.0f && vector.z == 0.0f;
+}
+
 glm::vec4 Matrices::CrossProduct(glm::vec4 u, glm::vec4 v)
 {
     float u1 = u.x;
@@ -132,7 +143,7 @@ float Matrices::DotProduct(glm::vec4 u, glm::vec4 v)
 
     if (u4 != 0.0f || v4 != 0.0f)
     {
-        fprintf(stderr, "ERROR: Produto escalar não definido para pontos.\n");
+        fprintf(stderr, "[ERROR] DotProduct: this operation is undefined for points.\n");
         std::exit(EXIT_FAILURE);
     }
 
