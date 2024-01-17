@@ -1,9 +1,7 @@
 #include "entity.h"
 
-void Entity::Update(float deltaTime)
+Entity::Entity(std::string name, GpuProgramController *gpu_controller)
 {
-}
-
-void Entity::Render(GLint model_uniform)
-{
+    this->name = name;
+    this->gpu_controller = gpu_controller;
 }

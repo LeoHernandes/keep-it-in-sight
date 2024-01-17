@@ -1,9 +1,7 @@
 #include "cubeEntity.h"
 
-CubeEntity::CubeEntity(std::string name)
+CubeEntity::CubeEntity(std::string name, GpuProgramController *gpu_controller) : Entity(name, gpu_controller)
 {
-    this->name = name;
-
     GLfloat model_coefficients[] = {
         -0.5f, 0.0f, 0.5f, 1.0f,   // vertex 0
         -0.5f, -1.0f, 0.5f, 1.0f,  // vertex 1
@@ -83,11 +81,11 @@ void CubeEntity::Update(float deltaTime)
 {
 }
 
-void CubeEntity::Render(GLint model_uniform)
+void CubeEntity::Render()
 {
     glBindVertexArray(vertex_array_object_id);
     glm::mat4 model = Matrices::Identity() * Matrices::Translate(1.0f, 1.0f, 0.0f);
-    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(gpu_controller->model_uniform, 1, GL_FALSE, glm::value_ptr(model));
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)0);
 

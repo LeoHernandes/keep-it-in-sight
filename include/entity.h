@@ -4,13 +4,18 @@
 #include <string>
 #include <glad/glad.h>
 
+#include "gpuProgramController.h"
 class Entity
 {
+protected:
+    GpuProgramController *gpu_controller;
+    Entity(std::string name, GpuProgramController *gpu_controller);
+
 public:
     std::string name;
 
-    virtual void Update(float deltaTime);
-    virtual void Render(GLint model_uniform);
+    virtual void Update(float deltaTime) = 0;
+    virtual void Render() = 0;
 };
 
 #endif

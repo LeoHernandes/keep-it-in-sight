@@ -16,7 +16,7 @@ public:
     ~Scene();
 
     void Update(float deltaTime);
-    void Render(GLint model_uniform);
+    void Render();
 
     void AddEntity(Entity *entity);
     void RemoveEntity(Entity *entity);

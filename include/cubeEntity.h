@@ -15,11 +15,9 @@ private:
     GLuint vertex_array_object_id;
 
 public:
-    std::string name;
-
-    CubeEntity(std::string name);
-    void Update(float deltaTime);
-    void Render(GLint model_uniform);
+    CubeEntity(std::string name, GpuProgramController *gpu_controller);
+    void Update(float deltaTime) override;
+    void Render() override;
 };
 
 #endif

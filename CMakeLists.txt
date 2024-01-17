@@ -15,6 +15,7 @@ set(SOURCES
   src/freeCamera.cpp
   src/matrices.cpp
   src/player.cpp
+  src/gpuProgramController.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

@@ -26,12 +26,11 @@ void Scene::AddEntity(Entity *entity)
     }
 }
 
-// TODO: get the model_uniform address from an adapter class for GPU methods
-void Scene::Render(GLint model_uniform)
+void Scene::Render()
 {
     for (const auto &entity : entities)
     {
-        entity.second->Render(model_uniform);
+        entity.second->Render();
     }
 }
 

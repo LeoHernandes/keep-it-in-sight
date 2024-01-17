@@ -20,11 +20,11 @@
 #include "utils.h"
 #include "textrendering.h"
 #include "shaders.h"
-#include "lookAtCamera.h"
 #include "player.h"
 #include "matrices.h"
 #include "scene.h"
 #include "cubeEntity.h"
+#include "gpuProgramController.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -46,16 +46,16 @@ int main()
     PrintGpuInfo();
 
     GLuint gpu_program_id = LoadShadersFromFiles();
+    GpuProgramController gpu_controller(gpu_program_id);
 
     TextRendering_Init();
 
     Scene scene;
-    CubeEntity cube("cube1");
+    CubeEntity cube("cube1", &gpu_controller);
     scene.AddEntity(&cube);
 
     // GLuint vertex_array_object_id = BuildTriangles();
     // Get variables addresses from Vertex Shader file.
-    GLint model_uniform = glGetUniformLocation(gpu_program_id, "model");
     GLint view_uniform = glGetUniformLocation(gpu_program_id, "view");
     GLint projection_uniform = glGetUniformLocation(gpu_program_id, "projection");
 
@@ -69,7 +69,7 @@ int main()
 
         // Update camera projection matrix
         player.OnUpdate(view_uniform, projection_uniform);
-        scene.Render(model_uniform);
+        scene.Render();
 
         if (player.show_info_text)
             TextRendering_ShowFramesPerSecond(window);
