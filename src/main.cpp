@@ -25,6 +25,7 @@
 #include "scene.h"
 #include "cubeEntity.h"
 #include "gpuProgramController.h"
+#include "objEntity.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -51,8 +52,10 @@ int main()
     TextRendering_Init();
 
     Scene scene;
-    CubeEntity cube("cube1", &gpu_controller);
-    scene.AddEntity(&cube);
+    // CubeEntity cube("cube1", &gpu_controller);
+    // scene.AddEntity(&cube);
+    ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
+    scene.AddEntity(&bunnymodel);
 
     while (!glfwWindowShouldClose(window))
     {
