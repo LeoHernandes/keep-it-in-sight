@@ -85,6 +85,13 @@ float Matrices::Norm(glm::vec4 v)
     return sqrt(vx * vx + vy * vy + vz * vz);
 }
 
+glm::vec4 Matrices::Vectorize(glm::vec4 point)
+{
+    glm::vec4 vector = point;
+    vector.w = 0.0f;
+    return vector;
+}
+
 glm::mat4 Matrices::Rotate(float angle, glm::vec4 axis)
 {
     float c = cos(angle);

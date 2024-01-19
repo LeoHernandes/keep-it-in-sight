@@ -19,7 +19,7 @@ void LookAtCamera::Update(glm::vec4 player_position)
     float z = r * cos(view_angle_phi) * cos(view_angle_theta);
     float x = r * cos(view_angle_phi) * sin(view_angle_theta);
 
-    glm::vec4 camera_position_c = glm::vec4(x, y, z, 1.0f);
+    glm::vec4 camera_position_c = glm::vec4(x, y, z, 1.0f) + Matrices::Vectorize(player_position);
     glm::vec4 camera_view_vector = player_position - camera_position_c;
     glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     glm::mat4 view = Matrices::CameraView(camera_position_c, camera_view_vector, camera_up_vector);
