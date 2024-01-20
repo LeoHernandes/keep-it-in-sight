@@ -126,11 +126,11 @@ void ObjEntity::BuildVAO()
 
         size_t last_index = indices.size() - 1;
 
-        first_index = first_index;
-        num_indices = last_index - first_index + 1;
-        vertex_array_object_id = vertex_array_object_id;
-        bbox_min = bbox_min;
-        bbox_max = bbox_max;
+        this->first_index = first_index;
+        this->num_indices = last_index - first_index + 1;
+        this->vertex_array_object_id = vertex_array_object_id;
+        this->bbox_min = bbox_min;
+        this->bbox_max = bbox_max;
     }
 
     GLuint VBO_model_coefficients_id;
@@ -182,7 +182,8 @@ void ObjEntity::BuildVAO()
     glBindVertexArray(0);
 }
 
-ObjEntity::ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller) : Entity(name, gpu_controller)
+ObjEntity::ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller)
+    : Entity(name, gpu_controller)
 {
 
     std::string fullpath(filename);
@@ -232,10 +233,6 @@ void ObjEntity::Render()
     glBindVertexArray(vertex_array_object_id);
     glUniform4f(gpu_controller->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
     glUniform4f(gpu_controller->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
-    glDrawElements(
-        GL_TRIANGLES,
-        num_indices,
-        GL_UNSIGNED_INT,
-        (void *)(first_index * sizeof(GLuint)));
+    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void *)(first_index * sizeof(GLuint)));
     glBindVertexArray(0);
 }

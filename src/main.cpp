@@ -2,32 +2,33 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <functional>
+#include <limits>
 #include <map>
+#include <sstream>
 #include <stack>
 #include <string>
-#include <limits>
-#include <fstream>
-#include <sstream>
-#include <functional>
 // OpenGL libs
 #include <glad/glad.h>
+// Window manager
 #include <GLFW/glfw3.h>
 // GLM: vectors and matrices
-#include <glm/mat4x4.hpp>
-#include <glm/vec4.hpp>
-#include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 // Custom headers
-#include "utils.h"
-#include "textrendering.h"
-#include "shaders.h"
-#include "player.h"
-#include "matrices.h"
-#include "scene.h"
 #include "cubeEntity.h"
 #include "cubeEntity2.h"
 #include "gpuProgramController.h"
+#include "matrices.h"
 #include "objEntity.h"
+#include "player.h"
+#include "scene.h"
+#include "shaders.h"
+#include "textrendering.h"
+#include "utils.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -56,10 +57,11 @@ int main()
     Scene scene;
     CubeEntity cube("cube1", &gpu_controller);
     scene.AddEntity(&cube);
-    CubeEntity2 cube2("cube2", &gpu_controller, 10.0f, glm::vec3(2.0, 0.0, 0.0), glm::vec3(2.0, 1.0, 0.0), glm::vec3(2.0, 2.0, 0.0), glm::vec3(2.0, 3.0, 0.0));
+    CubeEntity2 cube2("cube2", &gpu_controller, 10.0f, glm::vec3(2.0, 0.0, 0.0), glm::vec3(2.0, 1.0, 0.0),
+                      glm::vec3(2.0, 2.0, 0.0), glm::vec3(2.0, 3.0, 0.0));
     scene.AddEntity(&cube2);
-    // ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
-    // scene.AddEntity(&bunnymodel);
+    ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
+    scene.AddEntity(&bunnymodel);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
@@ -106,8 +108,7 @@ GLFWwindow *InitializeAppWindow(Player *player)
         std::exit(EXIT_FAILURE);
     }
 
-    glfwSetErrorCallback([](int error, const char *description)
-                         { fprintf(stderr, "ERROR: GLFW: %s\n", description); });
+    glfwSetErrorCallback([](int error, const char *description) { fprintf(stderr, "ERROR: GLFW: %s\n", description); });
 
     // OpenGL version >= 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -135,37 +136,32 @@ GLFWwindow *InitializeAppWindow(Player *player)
     // Player inputs callbacks
     glfwSetWindowUserPointer(window, player);
 
-    auto keyCallBack = [](GLFWwindow *window, int key, int scancode, int action, int mod)
-    {
+    auto keyCallBack = [](GLFWwindow *window, int key, int scancode, int action, int mod) {
         Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
         player->KeyCallback(window, key, scancode, action, mod);
     };
     glfwSetKeyCallback(window, keyCallBack);
 
-    auto scrollCallBack = [](GLFWwindow *window, double xoffset, double yoffset)
-    {
+    auto scrollCallBack = [](GLFWwindow *window, double xoffset, double yoffset) {
         Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
         player->ScrollCallback(window, xoffset, yoffset);
     };
     glfwSetScrollCallback(window, scrollCallBack);
 
-    auto mouseButtonCallBack = [](GLFWwindow *window, int button, int action, int mods)
-    {
+    auto mouseButtonCallBack = [](GLFWwindow *window, int button, int action, int mods) {
         Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
         player->MouseButtonCallback(window, button, action, mods);
     };
     glfwSetMouseButtonCallback(window, mouseButtonCallBack);
 
-    auto cursorPosCallBack = [](GLFWwindow *window, double xpos, double ypos)
-    {
+    auto cursorPosCallBack = [](GLFWwindow *window, double xpos, double ypos) {
         Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
         player->CursorPosCallback(window, xpos, ypos);
     };
     glfwSetCursorPosCallback(window, cursorPosCallBack);
 
     // Window resize callback
-    auto screenRatioCallback = [](GLFWwindow *window, int width, int height)
-    {
+    auto screenRatioCallback = [](GLFWwindow *window, int width, int height) {
         Player *player = static_cast<Player *>(glfwGetWindowUserPointer(window));
         player->ScreenRatioCallback(window, width, height);
     };
