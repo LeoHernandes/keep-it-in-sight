@@ -15,6 +15,7 @@
 // GLM: vectors and matrices
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 // Custom headers
 #include "utils.h"
@@ -24,6 +25,7 @@
 #include "matrices.h"
 #include "scene.h"
 #include "cubeEntity.h"
+#include "cubeEntity2.h"
 #include "gpuProgramController.h"
 #include "objEntity.h"
 
@@ -54,6 +56,8 @@ int main()
     Scene scene;
     CubeEntity cube("cube1", &gpu_controller);
     scene.AddEntity(&cube);
+    CubeEntity2 cube2("cube2", &gpu_controller, 10.0f, glm::vec3(2.0, 0.0, 0.0), glm::vec3(2.0, 1.0, 0.0), glm::vec3(2.0, 2.0, 0.0), glm::vec3(2.0, 3.0, 0.0));
+    scene.AddEntity(&cube2);
     // ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
     // scene.AddEntity(&bunnymodel);
 
@@ -76,6 +80,8 @@ int main()
         // Update camera projection matrix
         player.OnUpdate(deltaTime);
         scene.Render();
+
+        cube2.Update(deltaTime);
 
         if (player.show_info_text)
             TextRendering_ShowFramesPerSecond(window);

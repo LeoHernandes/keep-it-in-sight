@@ -11,6 +11,7 @@ set(SOURCES
   src/scene.cpp
   src/entity.cpp
   src/cubeEntity.cpp
+  src/cubeEntity2.cpp
   src/objEntity.cpp
   src/lookAtCamera.cpp
   src/freeCamera.cpp
@@ -18,6 +19,7 @@ set(SOURCES
   src/player.cpp
   src/gpuProgramController.cpp
   src/tiny_obj_loader.cpp
+  src/cubicBezier.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)
