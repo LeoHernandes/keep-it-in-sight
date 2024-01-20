@@ -19,14 +19,8 @@ void FreeCamera::Update(glm::vec4 player_position)
     float z = cos(view_angle_phi) * cos(view_angle_theta);
     float x = cos(view_angle_phi) * sin(view_angle_theta);
 
-    glm::vec4 camera_look_at_point = glm::vec4(
-        x + player_position.x,
-        y + player_position.y,
-        z + player_position.z,
-        1.0f);
-    view_vector = camera_look_at_point - player_position;
+    view_vector = glm::vec4(x, y, z, 0.0f);
     up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-
     glm::mat4 view = Matrices::CameraView(player_position, view_vector, up_vector);
 
     float nearplane = -0.1f;
