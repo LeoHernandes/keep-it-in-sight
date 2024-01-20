@@ -4,7 +4,7 @@
 //////////////////////
 // Auxiliar functions
 //////////////////////
-void Player::UpdatePlayerPosition()
+void Player::UpdatePlayerPosition(float deltaTime)
 {
     glm::vec4 foward_vector = free_camera->view_vector;
     foward_vector.y = 0.0f; // Disable movement in y axis
@@ -13,19 +13,19 @@ void Player::UpdatePlayerPosition()
     glm::vec4 movement_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     if (_is_pressing_W_key)
-        movement_vec = movement_vec + foward_vector;
+        movement_vec = movement_vec + foward_vector * deltaTime;
     if (_is_pressing_S_key)
-        movement_vec = movement_vec - foward_vector;
+        movement_vec = movement_vec - foward_vector * deltaTime;
     if (_is_pressing_A_key)
-        movement_vec = movement_vec + camera_side_vec;
+        movement_vec = movement_vec + camera_side_vec * deltaTime;
     if (_is_pressing_D_key)
-        movement_vec = movement_vec - camera_side_vec;
+        movement_vec = movement_vec - camera_side_vec * deltaTime;
 
     // Allways move 1 unit in any direction
     if (!Matrices::IsVectorNull(movement_vec))
     {
         glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-        position = position + velocity * normalized_movement_vec;
+        position = position + velocity * normalized_movement_vec * deltaTime;
     }
 }
 
@@ -35,7 +35,7 @@ void Player::UpdatePlayerPosition()
 Player::Player()
 {
     this->camera_mode = CameraMode::Free;
-    this->velocity = 0.002f;
+    this->velocity = 5.0f;
     this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
 
     this->_is_left_mouse_button_pressed = false;
@@ -63,7 +63,7 @@ void Player::AddLookAtCamera(LookAtCamera *camera)
 /////////////
 // On Update
 /////////////
-void Player::OnUpdate()
+void Player::OnUpdate(float deltaTime)
 {
     switch (camera_mode)
     {
@@ -71,7 +71,7 @@ void Player::OnUpdate()
         look_at_camera->Update(position);
         break;
     case CameraMode::Free:
-        UpdatePlayerPosition();
+        UpdatePlayerPosition(deltaTime);
         free_camera->Update(position);
         break;
     default:

@@ -30,7 +30,7 @@ private:
     bool _is_pressing_D_key;
     double _lastCursorPosX, _lastCursorPosY;
 
-    void UpdatePlayerPosition();
+    void UpdatePlayerPosition(float deltaTime);
 
 public:
     bool show_info_text;
@@ -41,7 +41,7 @@ public:
     Player();
     void AddFreeCamera(FreeCamera *camera);
     void AddLookAtCamera(LookAtCamera *camera);
-    void OnUpdate();
+    void OnUpdate(float deltaTime);
     void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
     void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
     void CursorPosCallback(GLFWwindow *window, double xpos, double ypos);

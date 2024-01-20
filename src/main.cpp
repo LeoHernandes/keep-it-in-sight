@@ -57,6 +57,10 @@ int main()
     // ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
     // scene.AddEntity(&bunnymodel);
 
+    float prevTime = glfwGetTime();
+    float currentTime = 0.0f;
+    float deltaTime = 0.0f;
+
     while (!glfwWindowShouldClose(window))
     {
         // Reset screen pixels data
@@ -65,8 +69,12 @@ int main()
         // are to be used in GPU as part of current rendering state
         glUseProgram(gpu_program_id);
 
+        currentTime = glfwGetTime();
+        deltaTime = currentTime - prevTime;
+        prevTime = currentTime;
+
         // Update camera projection matrix
-        player.OnUpdate();
+        player.OnUpdate(deltaTime);
         scene.Render();
 
         if (player.show_info_text)
