@@ -20,6 +20,17 @@ void Player::UpdatePlayerPosition(float deltaTime)
     if (_is_pressing_D_key)
         movement_vec = movement_vec - camera_side_vec;
 
+    if (!_is_pressing_SHIFT_key)
+    {
+        velocity = walkVelocity;
+    }
+    else
+    {
+        if (velocity + 0.01f < runVelocity)
+            velocity += 0.01f;
+    }
+    printf("VELOCIDADE: %f\n", velocity);
+
     // Allways move 1 unit in any direction
     if (!Matrices::IsVectorNull(movement_vec))
     {
@@ -147,6 +158,14 @@ void Player::KeyCallback(GLFWwindow *window, int key, int scancode, int action, 
     if (key == GLFW_KEY_D && action == GLFW_RELEASE)
     {
         _is_pressing_D_key = false;
+    }
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS)
+    {
+        _is_pressing_SHIFT_key = true;
+    }
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE)
+    {
+        _is_pressing_SHIFT_key = false;
     }
 }
 
