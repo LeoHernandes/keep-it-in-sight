@@ -16,7 +16,7 @@ set(SOURCES
   src/main.cpp
   src/matrices.cpp
   src/object.cpp
-  src/objEntity.cpp
+  src/staticEntity.cpp
   src/player.cpp
   src/scene.cpp
   src/stb_image.cpp

@@ -9,7 +9,6 @@
 
 #include <cassert>
 #include <string>
-#include "entity.h"
 #include "matrices.h"
 #include "collisions.h"
 

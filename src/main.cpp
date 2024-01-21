@@ -21,7 +21,7 @@
 // Custom headers
 #include "gpuProgramController.h"
 #include "matrices.h"
-#include "objEntity.h"
+#include "staticEntity.h"
 #include "player.h"
 #include "scene.h"
 #include "shaders.h"
@@ -58,9 +58,9 @@ int main()
     Object bunny("../../data/bunny.obj");
 
     Scene scene;
-    ObjEntity bunnymodel("bunny", &gpu_controller, Matrices::Translate(5.0f, 1.0f, 0.0f), &bunny);
+    StaticEntity bunnymodel("bunny", &gpu_controller, Matrices::Translate(5.0f, 1.0f, 0.0f), &bunny);
     scene.AddEntity(&bunnymodel);
-    ObjEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Translate(-3.0f, 1.0f, 2.0f), &bunny);
+    StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Translate(-3.0f, 1.0f, 2.0f), &bunny);
     scene.AddEntity(&bunnymodel2);
 
     float prevTime = glfwGetTime();
