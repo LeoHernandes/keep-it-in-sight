@@ -3,13 +3,15 @@
 
 #include <string>
 #include <glad/glad.h>
+#include <glm/mat4x4.hpp>
 
 #include "gpuProgramController.h"
 class Entity
 {
 protected:
     GpuProgramController *gpu_controller;
-    Entity(std::string name, GpuProgramController *gpu_controller);
+    glm::mat4 model;
+    Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model);
 
 public:
     std::string name;

@@ -56,8 +56,10 @@ int main()
     TextRendering_Init();
 
     Scene scene;
-    ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller);
+    ObjEntity bunnymodel("../../data/bunny.obj", "bunny", &gpu_controller, Matrices::Translate(5.0f, 1.0f, 0.0f));
     scene.AddEntity(&bunnymodel);
+    ObjEntity bunnymodel2("../../data/bunny.obj", "bunny2", &gpu_controller, Matrices::Translate(-3.0f, 1.0f, 2.0f));
+    scene.AddEntity(&bunnymodel2);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;

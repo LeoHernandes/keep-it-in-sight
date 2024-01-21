@@ -182,12 +182,12 @@ void ObjEntity::BuildVAO()
     glBindVertexArray(0);
 }
 
-ObjEntity::ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller)
-    : Entity(name, gpu_controller)
+ObjEntity::ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller, glm::mat4 model)
+    : Entity(name, gpu_controller, model)
 {
     float radius = 1.2f;
     glm::vec4 center = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-    HitSphere* hs = new HitSphere(center, radius);
+    HitSphere *hs = new HitSphere(center, radius);
     Collisions::AddHitSphere(hs);
 
     std::string fullpath(filename);
@@ -235,7 +235,6 @@ void ObjEntity::Update(float deltaTime)
 void ObjEntity::Render()
 {
     glBindVertexArray(vertex_array_object_id);
-    glm::mat4 model = Matrices::Identity() * Matrices::Translate(1.0f, 1.0f, 0.0f);
     glUniformMatrix4fv(gpu_controller->model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform4f(gpu_controller->bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
     glUniform4f(gpu_controller->bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);

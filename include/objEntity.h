@@ -31,7 +31,7 @@ private:
     void BuildVAO();
 
 public:
-    ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller);
+    ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };
