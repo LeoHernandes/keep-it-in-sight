@@ -1,13 +1,60 @@
 #version 330 core
 
 in vec4 position_world;
+in vec4 position_model;
 in vec4 normal;
+in vec2 texcoords;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec4 bbox_min;
+uniform vec4 bbox_max;
+
+uniform sampler2D TextureImage0;
+uniform sampler2D TextureImage1;
+uniform sampler2D TextureImage2;
 
 out vec4 color;
+
+#define M_PI   3.14159265358979323846
+#define M_PI_2 1.57079632679489661923
+
+struct TextureCoordinates
+{
+    float u;
+    float v;
+};
+
+TextureCoordinates GetTextureCoordinatesFromSphereProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
+{
+    vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+
+    float theta = atan(position_model.x, position_model.z);
+    float phi = asin(position_model.y/length(position_model - bbox_center));
+
+    float u = (theta + M_PI)/(2*M_PI);
+    float v = (phi + M_PI_2)/M_PI;
+
+    return TextureCoordinates(u, v);
+}
+
+TextureCoordinates GetTextureCoordinatesFromPlaneProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
+{
+    float minx = bbox_min.x;
+    float maxx = bbox_max.x;
+
+    float miny = bbox_min.y;
+    float maxy = bbox_max.y;
+
+    float minz = bbox_min.z;
+    float maxz = bbox_max.z;
+
+    float u = (position_model.x - minx)/(maxx - minx);
+    float v = (position_model.y - miny)/(maxy - miny);
+
+    return TextureCoordinates(u, v);
+}
 
 void main()
 {
@@ -26,30 +73,20 @@ void main()
     // Specular light
     vec4 r = -l + 2.0 * n * dot(n, l);
 
-    vec3 Kd = vec3(0.08,0.4,0.8);
+    TextureCoordinates text_coords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
+    vec3 Kd0 = texture(TextureImage0, vec2(text_coords.u,text_coords.v)).rgb;
     vec3 Ks = vec3(0.8,0.8,0.8);
-    vec3 Ka = vec3(0.04,0.2,0.4);
     float q = 32.0;
 
-    // Light spectrum
-    vec3 I = vec3(1.0,1.0,1.0);
-
-    // Ambient light
-    vec3 Ia = vec3(0.2,0.2,0.2);
-
     // Diffuse light
-    vec3 lambert_diffuse_term = Kd * I * max(0, dot(n, l));
-
-    // Ambient term
-    vec3 ambient_term = Ka * Ia;
+    vec3 lambert_diffuse_term = Kd0 * (max(0, dot(n, l)) + 0.01);
 
     // Specular term
-    vec3 phong_specular_term  = Ks * I * pow(max(0, dot(r, v)), q);
+    vec3 phong_specular_term  = Ks * pow(max(0, dot(r, v)), q);
 
     // Alpha component
     color.a = 1;
-
-    color.rgb = lambert_diffuse_term + ambient_term + phong_specular_term;
+    color.rgb = lambert_diffuse_term + phong_specular_term;
 
     // Gamma correction (sRGB monitor)
     color.rgb = pow(color.rgb, vec3(1.0,1.0,1.0)/2.2);

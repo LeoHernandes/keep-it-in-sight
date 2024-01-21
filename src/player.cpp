@@ -49,6 +49,7 @@ Player::Player()
     this->camera_mode = CameraMode::Free;
     this->velocity = 5.0f;
     this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
+    this->show_info_text = false;
 
     this->_is_left_mouse_button_pressed = false;
     this->_is_pressing_W_key = false;

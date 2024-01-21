@@ -118,10 +118,11 @@ void TextRendering_Init()
     texttex_uniform = glGetUniformLocation(textprogram_id, "tex");
     glCheckError();
 
-    glActiveTexture(GL_TEXTURE0);
+    GLuint textureunit = 31;
+    glActiveTexture(GL_TEXTURE0 + textureunit);
     glBindTexture(GL_TEXTURE_2D, texttexture_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, dejavufont.tex_width, dejavufont.tex_height, 0, GL_RED, GL_UNSIGNED_BYTE, dejavufont.tex_data);
-    glBindSampler(0, sampler);
+    glBindSampler(textureunit, sampler);
     glCheckError();
 
     glBindVertexArray(textVAO);
@@ -133,16 +134,13 @@ void TextRendering_Init()
     glCheckError();
 
     glUseProgram(textprogram_id);
-    glUniform1i(texttex_uniform, 0);
+    glUniform1i(texttex_uniform, textureunit);
     glUseProgram(0);
     glCheckError();
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glCheckError();
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 float textscale = 1.5f;
@@ -193,6 +191,9 @@ void TextRendering_PrintString(GLFWwindow *window, const std::string &str, float
             {x1, y1, s1, t1},
             {x1, y0, s1, t0}};
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDepthFunc(GL_ALWAYS);
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
@@ -201,14 +202,14 @@ void TextRendering_PrintString(GLFWwindow *window, const std::string &str, float
 
         glUseProgram(textprogram_id);
         glBindVertexArray(textVAO);
-        glBindTexture(GL_TEXTURE_2D, texttexture_id);
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
         glDepthFunc(GL_LESS);
+
+        glDisable(GL_BLEND);
 
         x += (glyph->advance_x * sx);
     }

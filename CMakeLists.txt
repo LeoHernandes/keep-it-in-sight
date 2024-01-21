@@ -6,21 +6,22 @@
 # Arquivos fonte C/C++. Inclua nesta lista todos os arquivos que devem
 # ser compilados.
 set(SOURCES
-  src/main.cpp
-  src/glad.c
-  src/scene.cpp
-  src/entity.cpp
+  src/collisions.cpp
   src/cubeEntity.cpp
   src/cubeEntity2.cpp
-  src/objEntity.cpp
-  src/lookAtCamera.cpp
-  src/freeCamera.cpp
-  src/matrices.cpp
-  src/player.cpp
-  src/gpuProgramController.cpp
-  src/tiny_obj_loader.cpp
   src/cubicBezier.cpp
-  src/collisions.cpp
+  src/entity.cpp
+  src/freeCamera.cpp
+  src/glad.c
+  src/gpuProgramController.cpp
+  src/lookAtCamera.cpp
+  src/main.cpp
+  src/matrices.cpp
+  src/objEntity.cpp
+  src/player.cpp
+  src/scene.cpp
+  src/stb_image.cpp
+  src/tiny_obj_loader.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

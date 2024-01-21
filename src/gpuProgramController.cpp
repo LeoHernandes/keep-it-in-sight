@@ -7,4 +7,10 @@ GpuProgramController::GpuProgramController(GLuint gpu_program_id)
     this->projection_uniform = glGetUniformLocation(gpu_program_id, "projection");
     this->bbox_min_uniform = glGetUniformLocation(gpu_program_id, "bbox_min");
     this->bbox_max_uniform = glGetUniformLocation(gpu_program_id, "bbox_max");
+
+    glUseProgram(gpu_program_id);
+    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage0"), 0);
+    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage1"), 1);
+    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage2"), 2);
+    glUseProgram(0);
 }
