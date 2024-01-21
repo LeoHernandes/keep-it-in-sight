@@ -1,19 +1,22 @@
 #version 330 core
 
-// Atributos de vértice recebidos como entrada ("in") pelo Vertex Shader.
-// Veja a função BuildTriangle() em "main.cpp".
 layout (location = 0) in vec4 model_coefficients;
-layout (location = 1) in vec4 color_coefficients;
-
-out vec4 cor_interpolada_pelo_rasterizador;
+layout (location = 1) in vec4 normal_coefficients;
+layout (location = 2) in vec2 texture_coefficients;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec4 position_world;
+out vec4 normal;
+
 void main()
 {
     gl_Position = projection * view * model * model_coefficients;
-    cor_interpolada_pelo_rasterizador = color_coefficients;
+
+    position_world = model * model_coefficients;
+    normal = inverse(transpose(model)) * normal_coefficients;
+    normal.w = 0.0;
 }
 
