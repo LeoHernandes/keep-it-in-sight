@@ -19,8 +19,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 // Custom headers
-#include "cubeEntity.h"
-#include "cubeEntity2.h"
 #include "gpuProgramController.h"
 #include "matrices.h"
 #include "objEntity.h"

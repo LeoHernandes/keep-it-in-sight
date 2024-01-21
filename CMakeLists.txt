@@ -7,8 +7,6 @@
 # ser compilados.
 set(SOURCES
   src/collisions.cpp
-  src/cubeEntity.cpp
-  src/cubeEntity2.cpp
   src/cubicBezier.cpp
   src/entity.cpp
   src/freeCamera.cpp
