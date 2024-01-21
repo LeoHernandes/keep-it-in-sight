@@ -4,6 +4,7 @@
 #include "lookAtCamera.h"
 #include "freeCamera.h"
 #include "matrices.h"
+#include "collisions.h"
 
 // OpenGl
 #include <glad/glad.h>

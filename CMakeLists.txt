@@ -20,6 +20,7 @@ set(SOURCES
   src/gpuProgramController.cpp
   src/tiny_obj_loader.cpp
   src/cubicBezier.cpp
+  src/collisions.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

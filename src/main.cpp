@@ -167,6 +167,7 @@ GLFWwindow *InitializeAppWindow(Player *player)
     };
     glfwSetFramebufferSizeCallback(window, screenRatioCallback);
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(0);
 
     return window;
 }

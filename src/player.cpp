@@ -13,19 +13,31 @@ void Player::UpdatePlayerPosition(float deltaTime)
     glm::vec4 movement_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     if (_is_pressing_W_key)
-        movement_vec = movement_vec + foward_vector * deltaTime;
+        movement_vec = movement_vec + foward_vector;
     if (_is_pressing_S_key)
-        movement_vec = movement_vec - foward_vector * deltaTime;
+        movement_vec = movement_vec - foward_vector;
     if (_is_pressing_A_key)
-        movement_vec = movement_vec + camera_side_vec * deltaTime;
+        movement_vec = movement_vec + camera_side_vec;
     if (_is_pressing_D_key)
-        movement_vec = movement_vec - camera_side_vec * deltaTime;
+        movement_vec = movement_vec - camera_side_vec;
 
     // Allways move 1 unit in any direction
     if (!Matrices::IsVectorNull(movement_vec))
     {
         glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-        position = position + velocity * normalized_movement_vec * deltaTime;
+        
+        glm::vec4 newPosition = position + velocity * normalized_movement_vec * deltaTime;
+
+        // TODO: achar uma hitbox boa
+        HitBox hitboxPlayer(
+            glm::vec3(newPosition.x, newPosition.y, newPosition.z) + glm::vec3(0.5f, -2.0f, 0.5f),
+            glm::vec3(newPosition.x, newPosition.y, newPosition.z) + glm::vec3(-0.5f, 2.0f, -0.5f)
+        );
+
+        if (!Collisions::CubeCubeTest(hitboxPlayer))
+        {
+            position = newPosition;
+        }
     }
 }
 
