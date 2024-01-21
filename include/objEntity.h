@@ -12,26 +12,15 @@
 #include "entity.h"
 #include "matrices.h"
 #include "collisions.h"
+#include "object.h"
 
 class ObjEntity : public Entity
 {
 private:
-    tinyobj::attrib_t attrib;
-    std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
-
-    GLuint vertex_array_object_id;
-
-    size_t first_index;
-    size_t num_indices;
-    glm::vec3 bbox_min;
-    glm::vec3 bbox_max;
-
-    void ComputeNormals();
-    void BuildVAO();
+    Object *object;
 
 public:
-    ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity());
+    ObjEntity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity(), Object *object = NULL);
     void Update(float deltaTime) override;
     void Render() override;
 };
