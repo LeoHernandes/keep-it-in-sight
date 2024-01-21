@@ -185,6 +185,10 @@ void ObjEntity::BuildVAO()
 ObjEntity::ObjEntity(const char *filename, std::string name, GpuProgramController *gpu_controller)
     : Entity(name, gpu_controller)
 {
+    float radius = 1.2f;
+    glm::vec4 center = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    HitSphere* hs = new HitSphere(center, radius);
+    Collisions::AddHitSphere(hs);
 
     std::string fullpath(filename);
     auto i = fullpath.find_last_of("/");

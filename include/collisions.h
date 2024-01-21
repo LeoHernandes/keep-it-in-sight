@@ -1,7 +1,7 @@
 #ifndef _COLLISIONS_H
 #define _COLLISIONS_H
 
-#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <list>
 
 class HitBox;
@@ -22,17 +22,18 @@ class Collisions
         static void RemoveHitSphere(HitSphere* hitSphere);
 
         static bool CubeCubeTest(HitBox hitBox);
+        static bool PointSphereTest(glm::vec4 position);
         // TODO: fazer outros tipos de testes de colisão
 };
 
 class HitBox
 {
 private:
-    glm::vec3 rigthFrontBotton;
-    glm::vec3 leftBackTop;
+    glm::vec4 rigthFrontBotton;
+    glm::vec4 leftBackTop;
 
 public:
-    HitBox(glm::vec3 rigthFrontBotton, glm::vec3 leftBackTop);
+    HitBox(glm::vec4 rigthFrontBotton, glm::vec4 leftBackTop);
 
     // this function can get private attributes because of reserved word 'friend'
     friend bool Collisions::CubeCubeTest(HitBox hitBox);
@@ -41,11 +42,14 @@ public:
 class HitSphere
 {
 private:
-    glm::vec3 center;
+    glm::vec4 center;
     float radius;
 
 public:
-    HitSphere(glm::vec3 center, float radius);
+    HitSphere(glm::vec4 center, float radius);
+
+    // this function can get private attributes because of reserved word 'friend'
+    friend bool Collisions::PointSphereTest(glm::vec4 position);
 };
 
 #endif

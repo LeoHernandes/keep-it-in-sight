@@ -1,5 +1,4 @@
 #include "player.h"
-#include <iostream>
 
 //////////////////////
 // Auxiliar functions
@@ -25,16 +24,9 @@ void Player::UpdatePlayerPosition(float deltaTime)
     if (!Matrices::IsVectorNull(movement_vec))
     {
         glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-        
         glm::vec4 newPosition = position + velocity * normalized_movement_vec * deltaTime;
 
-        // TODO: achar uma hitbox boa
-        HitBox hitboxPlayer(
-            glm::vec3(newPosition.x, newPosition.y, newPosition.z) + glm::vec3(0.5f, -2.0f, 0.5f),
-            glm::vec3(newPosition.x, newPosition.y, newPosition.z) + glm::vec3(-0.5f, 2.0f, -0.5f)
-        );
-
-        if (!Collisions::CubeCubeTest(hitboxPlayer))
+        if (!Collisions::PointSphereTest(newPosition))
         {
             position = newPosition;
         }
