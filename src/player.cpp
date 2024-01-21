@@ -29,7 +29,6 @@ void Player::UpdatePlayerPosition(float deltaTime)
         if (velocity + 0.01f < runVelocity)
             velocity += 0.01f;
     }
-    printf("VELOCIDADE: %f\n", velocity);
 
     // Allways move 1 unit in any direction
     if (!Matrices::IsVectorNull(movement_vec))

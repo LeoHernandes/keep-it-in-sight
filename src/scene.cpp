@@ -21,7 +21,7 @@ void Scene::AddEntity(Entity *entity)
     }
     else
     {
-        std::cerr << "[ERROR] AddEntity: an entity of name " << entity->name << "already exists in the scene" << std::endl;
+        std::cerr << "[ERROR] AddEntity: an entity of name " << entity->name << " already exists in the scene" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 }

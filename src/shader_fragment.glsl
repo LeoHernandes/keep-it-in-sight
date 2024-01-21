@@ -11,6 +11,14 @@ uniform mat4 projection;
 uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
+// Which texture projection should use for this object
+#define TEXTURE_PROJECTION_SPHERE 0
+#define TEXTURE_PROJECTION_PLANE 1
+uniform int texture_projection_type;
+
+#define TEXTURE_SKYBOX 0
+uniform int texture_id;
+
 uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
@@ -73,20 +81,40 @@ void main()
     // Specular light
     vec4 r = -l + 2.0 * n * dot(n, l);
 
-    TextureCoordinates text_coords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
-    vec3 Kd0 = texture(TextureImage0, vec2(text_coords.u,text_coords.v)).rgb;
-    vec3 Ks = vec3(0.8,0.8,0.8);
-    float q = 32.0;
+    TextureCoordinates text_coords;
+    if ( texture_projection_type == TEXTURE_PROJECTION_SPHERE )
+    {
+        text_coords = GetTextureCoordinatesFromSphereProjection(bbox_min, bbox_max, position_model);
+    }
+    else if ( texture_projection_type == TEXTURE_PROJECTION_PLANE )
+    {
+        text_coords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
+    }
+    else
+    {
+        text_coords = TextureCoordinates(0.0, 0.0);
+    }
 
-    // Diffuse light
-    vec3 lambert_diffuse_term = Kd0 * (max(0, dot(n, l)) + 0.01);
+    if(texture_id == TEXTURE_SKYBOX)
+    {
+        color.rgb = texture(TextureImage0, vec2(text_coords.u,text_coords.v)).rgb;
+    }
+    else
+    {
+        vec3 Kd0 = texture(TextureImage1, vec2(text_coords.u,text_coords.v)).rgb;
+        vec3 Ks = vec3(0.8,0.8,0.8);
+        float q = 32.0;
 
-    // Specular term
-    vec3 phong_specular_term  = Ks * pow(max(0, dot(r, v)), q);
+        // Diffuse light
+        vec3 lambert_diffuse_term = Kd0 * (max(0, dot(n, l)) + 0.01);
 
-    // Alpha component
-    color.a = 1;
-    color.rgb = lambert_diffuse_term + phong_specular_term;
+        // Specular term
+        vec3 phong_specular_term  = Ks * pow(max(0, dot(r, v)), q);
+        // Alpha component
+
+        color.a = 1;
+        color.rgb = lambert_diffuse_term + phong_specular_term;
+    }
 
     // Gamma correction (sRGB monitor)
     color.rgb = pow(color.rgb, vec3(1.0,1.0,1.0)/2.2);

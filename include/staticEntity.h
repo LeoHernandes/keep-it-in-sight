@@ -13,6 +13,7 @@
 #include "matrices.h"
 #include "collisions.h"
 #include "object.h"
+#include "textureLoader.h"
 
 class StaticEntity : public Entity
 {

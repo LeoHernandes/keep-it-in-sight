@@ -28,6 +28,7 @@
 #include "textrendering.h"
 #include "utils.h"
 #include "textureLoader.h"
+#include "skybox.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -45,6 +46,7 @@ int main()
     PrintGpuInfo();
 
     GLuint gpu_program_id = LoadShadersFromFiles();
+    texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg");
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");
     GpuProgramController gpu_controller(gpu_program_id);
 
@@ -56,12 +58,15 @@ int main()
     TextRendering_Init();
 
     Object bunny("../../data/bunny.obj");
+    Object sphere("../../data/sphere.obj");
 
     Scene scene;
     StaticEntity bunnymodel("bunny", &gpu_controller, Matrices::Translate(5.0f, 1.0f, 0.0f), &bunny);
     scene.AddEntity(&bunnymodel);
     StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Translate(-3.0f, 1.0f, 2.0f), &bunny);
     scene.AddEntity(&bunnymodel2);
+    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
+    scene.AddEntity(&skybox);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
@@ -81,6 +86,7 @@ int main()
 
         // Update camera projection matrix
         player.OnUpdate(deltaTime);
+        scene.Update(deltaTime);
         scene.Render();
 
         if (player.show_info_text)

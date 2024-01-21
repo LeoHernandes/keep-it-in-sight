@@ -19,6 +19,7 @@ set(SOURCES
   src/staticEntity.cpp
   src/player.cpp
   src/scene.cpp
+  src/skybox.cpp
   src/stb_image.cpp
   src/tiny_obj_loader.cpp
   src/textureLoader.cpp
