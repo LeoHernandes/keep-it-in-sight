@@ -20,27 +20,42 @@ void Player::UpdatePlayerPosition(float deltaTime)
     if (_is_pressing_D_key)
         movement_vec = movement_vec - camera_side_vec;
 
+    float newVelocity;
     if (!_is_pressing_SHIFT_key)
     {
-        velocity = walkVelocity;
+        newVelocity = velocity - desacceleration * deltaTime;
+        if (newVelocity >= min_run_velocity)
+            velocity = newVelocity;
     }
     else
     {
-        if (velocity + 0.01f < runVelocity)
-            velocity += 0.01f;
+        newVelocity = velocity + acceleration * deltaTime;
+        if (newVelocity < max_run_velocity)
+            velocity = newVelocity;
     }
+    printf("velocity: %f\n", velocity);
 
     // Allways move 1 unit in any direction
     if (!Matrices::IsVectorNull(movement_vec))
     {
         glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-        glm::vec4 newPosition = position + velocity * normalized_movement_vec * deltaTime;
+        glm::vec4 velocity_vec = normalized_movement_vec * velocity;
+        glm::vec4 new_position = position + velocity_vec * deltaTime;
 
-        if (!Collisions::PointSphereTest(newPosition))
+        float min_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * min_run_velocity);
+        float max_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * max_run_velocity);
+        float current_run_velocity_vec_norm = Matrices::Norm(velocity_vec);
+
+        free_camera->field_of_view = free_camera->min_field_of_view + 
+        ((free_camera->max_field_of_view - free_camera->min_field_of_view) / (max_run_velocity_vec_norm - min_run_velocity_vec_norm)) *
+        (current_run_velocity_vec_norm - min_run_velocity_vec_norm);
+
+        if (!Collisions::PointSphereTest(new_position))
         {
-            position = newPosition;
+            position = new_position;
         }
     }
+
 }
 
 ///////////////

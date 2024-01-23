@@ -23,15 +23,17 @@ class Player
 private:
     CameraMode camera_mode;
     float velocity;
-    const float walkVelocity = 5.0f;
-    const float runVelocity = 10.0f;
+    const float min_run_velocity = 5.0f;
+    const float max_run_velocity = 10.0f;
+    const float acceleration = 2.5f;
+    const float desacceleration = 5.0f;
 
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;
     bool _is_pressing_A_key;
     bool _is_pressing_S_key;
     bool _is_pressing_D_key;
-    bool _is_pressing_SHIFT_key;
+    bool _is_pressing_SHIFT_key = false;
     double _lastCursorPosX, _lastCursorPosY;
 
     void UpdatePlayerPosition(float deltaTime);
