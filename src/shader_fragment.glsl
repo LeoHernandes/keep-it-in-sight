@@ -108,11 +108,13 @@ void main()
         // Diffuse light
         vec3 lambert_diffuse_term = Kd0 * (max(0, dot(n, l)) + 0.01);
 
-        // Specular term
-        vec3 phong_specular_term  = Ks * pow(max(0, dot(r, v)), q);
-        // Alpha component
+        // Specular term (Blinn-Phong)          
+        vec4 half_vector = normalize(v + l);
+        vec3 phong_specular_term  = Ks * pow(max(0, dot(n, half_vector)), q);
 
+        // Alpha component
         color.a = 1;
+
         color.rgb = lambert_diffuse_term + phong_specular_term;
     }
 
