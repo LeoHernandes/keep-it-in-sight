@@ -62,11 +62,16 @@ int main()
 
     Scene scene;
     StaticEntity bunnymodel("bunny", &gpu_controller, Matrices::Translate(5.0f, 1.0f, 0.0f), &bunny);
-    scene.AddEntity(&bunnymodel);
     StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Translate(-3.0f, 1.0f, 2.0f), &bunny);
-    scene.AddEntity(&bunnymodel2);
+    StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Translate(1.0f, 1.0f, 1.0f), &bunny);
+    StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Translate(-3.0f, 3.0f, 2.0f), &bunny);
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
-    scene.AddEntity(&skybox);
+
+    scene.AddEntity(&bunnymodel);
+    scene.AddEntity(&bunnymodel2);
+    scene.AddSkybox(&skybox);
+    scene.AddEntity(&bunnymodel3);
+    scene.AddEntity(&bunnymodel4);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;

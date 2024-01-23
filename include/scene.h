@@ -11,14 +11,17 @@ class Scene
 {
 private:
     std::unordered_map<std::string, Entity *> entities;
+    Entity *skybox;
 
 public:
+    Scene();
     ~Scene();
 
     void Update(float deltaTime);
     void Render();
 
     void AddEntity(Entity *entity);
+    void AddSkybox(Entity *skybox);
     void RemoveEntity(Entity *entity);
 };
 

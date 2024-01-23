@@ -1,5 +1,10 @@
 #include "scene.h"
 
+Scene::Scene()
+{
+    this->skybox = NULL;
+}
+
 Scene::~Scene()
 {
     entities.clear();
@@ -7,10 +12,20 @@ Scene::~Scene()
 
 void Scene::Update(float deltaTime)
 {
+    if (skybox != NULL)
+    {
+        skybox->Update(deltaTime);
+    }
+
     for (const auto &entity : entities)
     {
         entity.second->Update(deltaTime);
     }
+}
+
+void Scene::AddSkybox(Entity *skybox)
+{
+    this->skybox = skybox;
 }
 
 void Scene::AddEntity(Entity *entity)
@@ -28,6 +43,11 @@ void Scene::AddEntity(Entity *entity)
 
 void Scene::Render()
 {
+    if (skybox != NULL)
+    {
+        skybox->Render();
+    }
+
     for (const auto &entity : entities)
     {
         entity.second->Render();
