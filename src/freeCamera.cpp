@@ -24,7 +24,7 @@ void FreeCamera::Update(glm::vec4 player_position)
     glm::mat4 view = Matrices::CameraView(player_position, view_vector, up_vector);
 
     float nearplane = -0.1f;
-    float farplane = -10.0f;
+    float farplane = -20.0f;
     float field_of_view = 3.141592 / 3.0f;
     glm::mat4 projection = Matrices::Perspective(field_of_view, screen_ratio, nearplane, farplane);
 
