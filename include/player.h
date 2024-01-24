@@ -30,6 +30,14 @@ private:
     const float RUN_ACCELERATION = 50.0f;
     const float FRICTION_FACTOR = 50.0f;
 
+    float stamina = 0.0f;
+    bool has_stamina = true;
+    float time_without_run = 0.0f;
+    const float TOTAL_STAMINA = 100.0f;
+    const float STAMINA_RECOVERY_RATE = 10.0f;
+    const float STAMINA_LOSS_RATE = 30.0f;
+    const float TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA = 3.0f;
+
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;
     bool _is_pressing_A_key;
@@ -42,6 +50,8 @@ private:
     void UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec);
     void UpdatePlayerPosition(float deltaTime);
     float GetDeltaRunVelocity();
+    void LossStamina(float deltaTime);
+    void RecoveryStamina(float deltaTime);
 
 public:
     bool show_info_text;

@@ -33,18 +33,50 @@ glm::vec4 Player::GetPlayerAccelerationVector()
     return acceleration_vec;
 }
 
+void Player::LossStamina(float deltaTime)
+{
+    float new_stamina = this->stamina - STAMINA_LOSS_RATE * deltaTime;
+
+    if (time_without_run >= TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA)
+        this->has_stamina = true;
+
+    if (new_stamina >= 0.0f)
+    {
+        this->stamina = new_stamina;
+    }
+    else
+    {
+        this->has_stamina = false;
+        time_without_run = 0.0f;
+    }
+}
+
+void Player::RecoveryStamina(float deltaTime)
+{
+    time_without_run += deltaTime;
+    float new_stamina = this->stamina + STAMINA_RECOVERY_RATE * deltaTime;
+
+    if (time_without_run >= TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA)
+        this->has_stamina = true;
+
+    if (new_stamina <= TOTAL_STAMINA)
+        this->stamina = new_stamina;
+}
+
 void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec)
 {
     if (!Matrices::IsVectorNull(acceleration_vec))
     {
         glm::vec4 normalized_acceleration_vec = Matrices::Normalize(acceleration_vec);
-        if (_is_pressing_SHIFT_key)
+        if (_is_pressing_SHIFT_key && has_stamina)
         {
             glm::vec4 new_velocity_vec = this->velocity_vec + normalized_acceleration_vec * deltaTime * RUN_ACCELERATION;
             float current_velocity = Matrices::Norm(new_velocity_vec);
 
             if (current_velocity <= MAX_RUN_VELOCITY)
                 this->velocity_vec = new_velocity_vec;
+
+            LossStamina(deltaTime);
         }
         else
         {
@@ -59,6 +91,8 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
                 glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
                 this->velocity_vec += friction_vec;
             }
+
+            RecoveryStamina(deltaTime);
         }
     }
     else
@@ -74,7 +108,11 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
             else
                 this->velocity_vec += friction_vec;
         }
+
+        RecoveryStamina(deltaTime);
     }
+
+    //printf("stamina: %f, time_without_run: %f\n", this->stamina, time_without_run);
 }
 
 void Player::UpdatePlayerPosition(float deltaTime)
