@@ -77,6 +77,9 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
                 this->velocity_vec = new_velocity_vec;
 
             LossStamina(deltaTime);
+
+            this->cubic_bezier_head_movement->Update(deltaTime);
+            this->head_movement = cubic_bezier_head_movement->GetPoint();
         }
         else
         {
@@ -141,6 +144,12 @@ Player::Player()
     this->_is_pressing_D_key = false;
     this->_lastCursorPosX = 0.0;
     this->_lastCursorPosY = 0.0;
+    
+    this->cubic_bezier_head_movement = new CubicBezier(ANIMATION_TIME_HEAD_MOVEMENT,
+                                                       glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),
+                                                       glm::vec4(0.0f, DELTA_HEAD_MOVEMENT_POSITION / 3, 0.0f, 0.0f),
+                                                       glm::vec4(0.0f, DELTA_HEAD_MOVEMENT_POSITION / 3 * 2, 0.0f, 0.0f),
+                                                       glm::vec4(0.0f, DELTA_HEAD_MOVEMENT_POSITION, 0.0f, 0.0f));
 }
 
 /////////////
@@ -168,7 +177,7 @@ void Player::OnUpdate(float deltaTime)
         break;
     case CameraMode::Free:
         UpdatePlayerPosition(deltaTime);
-        free_camera->Update(position, GetDeltaRunVelocity());
+        free_camera->Update(position, GetDeltaRunVelocity(), this->head_movement);
         break;
     default:
         break;

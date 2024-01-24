@@ -1,8 +1,7 @@
 #ifndef _CUBICBEZIER_H
 #define _CUBICBEZIER_H
 
-#include <glm/vec3.hpp>
-#include <cmath>
+#include <glm/vec4.hpp>
 
 class CubicBezier
 {
@@ -11,15 +10,15 @@ private:
     float timer;
     bool isIncreasing;
 
-    glm::vec3 p1;
-    glm::vec3 p2;
-    glm::vec3 p3;
-    glm::vec3 p4;
+    glm::vec4 p1;
+    glm::vec4 p2;
+    glm::vec4 p3;
+    glm::vec4 p4;
 
 public:
-    CubicBezier(float totalDuration, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4);
+    CubicBezier(float totalDuration, glm::vec4 p1, glm::vec4 p2, glm::vec4 p3, glm::vec4 p4);
     void Update(float deltaTime);
-    glm::vec3 GetPoint();
+    glm::vec4 GetPoint();
 };
 
 #endif

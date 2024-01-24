@@ -5,6 +5,7 @@
 #include "freeCamera.h"
 #include "matrices.h"
 #include "collisions.h"
+#include "cubicBezier.h"
 
 // OpenGl
 #include <glad/glad.h>
@@ -37,6 +38,11 @@ private:
     const float STAMINA_RECOVERY_RATE = 10.0f;
     const float STAMINA_LOSS_RATE = 30.0f;
     const float TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA = 3.0f;
+
+    CubicBezier* cubic_bezier_head_movement;
+    glm::vec4 head_movement;
+    const float DELTA_HEAD_MOVEMENT_POSITION = 0.15f;
+    const float ANIMATION_TIME_HEAD_MOVEMENT = 0.15f;
 
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;

@@ -29,7 +29,7 @@ public:
     glm::mat4 projection;
 
     FreeCamera(float screen_ratio, GpuProgramController *gpu_controller);
-    void Update(glm::vec4 player_position, float delta_run_velocity);
+    void Update(glm::vec4 player_position, float delta_run_velocity, glm::vec4 head_movement);
 };
 
 #endif // _FREECAMERA_H
