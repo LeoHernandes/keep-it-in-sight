@@ -12,7 +12,7 @@ FreeCamera::FreeCamera(float screen_ratio, GpuProgramController *gpu_controller)
     this->view_vector = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void FreeCamera::Update(glm::vec4 player_position)
+void FreeCamera::Update(glm::vec4 player_position, float delta_run_velocity)
 {
     // View direction
     float y = sin(view_angle_phi);
@@ -25,8 +25,8 @@ void FreeCamera::Update(glm::vec4 player_position)
 
     float nearplane = -0.1f;
     float farplane = -20.0f;
-    float field_of_view = 3.141592 / 3.0f;
-    glm::mat4 projection = Matrices::Perspective(field_of_view, screen_ratio, nearplane, farplane);
+    this->field_of_view = MIN_FIELD_OF_VIEW + (MAX_FIELD_OF_VIEW - MIN_FIELD_OF_VIEW) * delta_run_velocity;
+    glm::mat4 projection = Matrices::Perspective(this->field_of_view, screen_ratio, nearplane, farplane);
 
     glUniformMatrix4fv(gpu_controller->view_uniform, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(gpu_controller->projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));

@@ -3,6 +3,16 @@
 //////////////////////
 // Auxiliar functions
 //////////////////////
+float Player::GetDeltaRunVelocity()
+{
+    // How much percent is the current velocity between MAX_WALK_VELOCITY and MAX_RUN_VELOCITY
+    float delta_run_velocity = (Matrices::Norm(velocity_vec) - MAX_WALK_VELOCITY) / (MAX_RUN_VELOCITY - MAX_WALK_VELOCITY);
+    if (delta_run_velocity < 0)
+        return 0;
+
+    return delta_run_velocity;
+}
+
 glm::vec4 Player::GetPlayerAccelerationVector()
 {
     glm::vec4 foward_vector = free_camera->view_vector;
@@ -33,36 +43,36 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
             glm::vec4 new_velocity_vec = this->velocity_vec + normalized_acceleration_vec * deltaTime * RUN_ACCELERATION;
             float current_velocity = Matrices::Norm(new_velocity_vec);
 
-            if (current_velocity < MAX_RUN_VELOCITY)
+            if (current_velocity <= MAX_RUN_VELOCITY)
                 this->velocity_vec = new_velocity_vec;
-            else
-                // Makes Norm(current_velocity) be equal to MAX_RUN_VELOCITY
-                // PROOF:
-                // Let 'k' be a scalar positive value and 'vec' a vector of any dimension 'n':
-                //     Norm(vec * k) = Norm(vec) * k
-                //
-                // It is necessary that Norm(vec) = q, 'q' as a positive integer:
-                //     Norm(vec) * (q / Norm(vec)) = q
-                // To make Norm(vec) be multiplied by (q / Norm(vec)), multiply the vector by this factor:
-                //     vec * (q / Norm(vec))
-                //     Norm(vec * (q / Norm(vec))) = Norm(vec) * (q / Norm(vec)) = q
-                //
-                // In this case, Norm(current_velocity) != 0, because:
-                //     Norm(normalized_acceleration_vec) > 0 && deltaTime > 0 && RUN_FORCE > 0 <===>
-                //     Norm(velocity_vec + normalized_acceleration_vec * deltaTime * RUN_FORCE) > 0
-                // Divison by zero will NEVER happen!
-                this->velocity_vec = this->velocity_vec * (MAX_RUN_VELOCITY / current_velocity);
         }
         else
         {
             glm::vec4 new_velocity_vec = this->velocity_vec + normalized_acceleration_vec * deltaTime * WALK_ACCELERATION;
             float current_velocity = Matrices::Norm(new_velocity_vec);
 
-            if (current_velocity < MAX_WALK_VELOCITY)
+            if (current_velocity <= MAX_WALK_VELOCITY)
                 this->velocity_vec = new_velocity_vec;
             else
-                // Same operation as above
-                this->velocity_vec = this->velocity_vec * (MAX_WALK_VELOCITY / current_velocity);
+            {
+                glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
+                glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
+                this->velocity_vec += friction_vec;
+            }
+        }
+    }
+    else
+    {
+        // If there is no acceleration, apply friction on velocity vec
+        if (!Matrices::IsVectorNull(this->velocity_vec))
+        {
+            glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
+            glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
+
+            if (Matrices::Norm(velocity_vec) <= Matrices::Norm(friction_vec))
+                this->velocity_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+            else
+                this->velocity_vec += friction_vec;
         }
     }
 }
@@ -73,36 +83,7 @@ void Player::UpdatePlayerPosition(float deltaTime)
     UpdatePlayerVelocityVector(deltaTime, acceleration_vec);
 
     // Update player position
-    if (!Matrices::IsVectorNull(velocity_vec))
-    {
-        glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
-        glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
-
-        if (Matrices::Norm(velocity_vec) <= Matrices::Norm(friction_vec))
-            this->velocity_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-        else
-            this->velocity_vec += friction_vec;
-
-        this->position += velocity_vec * deltaTime;
-    }
-
-    // TODO: CHANGE FOV BASED ON PLAYER VELOCITY
-    // glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-    // glm::vec4 velocity_vec = normalized_movement_vec * velocity;
-    // glm::vec4 new_position = position + velocity_vec * deltaTime;
-
-    // float min_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * min_run_velocity);
-    // float max_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * max_run_velocity);
-    // float current_run_velocity_vec_norm = Matrices::Norm(velocity_vec);
-
-    // free_camera->field_of_view = free_camera->min_field_of_view +
-    //                              ((free_camera->max_field_of_view - free_camera->min_field_of_view) / (max_run_velocity_vec_norm - min_run_velocity_vec_norm)) *
-    //                                  (current_run_velocity_vec_norm - min_run_velocity_vec_norm);
-
-    // if (!Collisions::PointSphereTest(new_position))
-    // {
-    //     position = new_position;
-    // }
+    this->position += velocity_vec * deltaTime;
 }
 
 ///////////////
@@ -149,7 +130,7 @@ void Player::OnUpdate(float deltaTime)
         break;
     case CameraMode::Free:
         UpdatePlayerPosition(deltaTime);
-        free_camera->Update(position);
+        free_camera->Update(position, GetDeltaRunVelocity());
         break;
     default:
         break;

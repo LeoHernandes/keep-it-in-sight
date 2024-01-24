@@ -14,6 +14,9 @@ class FreeCamera
 {
 private:
     GpuProgramController *gpu_controller;
+    const float MIN_FIELD_OF_VIEW = 3.141592 / 3.0f; // 60º
+    const float MAX_FIELD_OF_VIEW = 3.141592 / 2.5f; // 72º
+    float field_of_view;
 
 public:
     float view_angle_phi;   // Angle between ZX plane and Z axis
@@ -22,15 +25,11 @@ public:
     glm::vec4 up_vector;
     glm::vec4 view_vector;
 
-    float min_field_of_view = 3.141592 / 3.0f; // 60º
-    float max_field_of_view = 3.141592 / 2.0f; // 90º
-    float field_of_view = min_field_of_view;
-
     glm::mat4 view;
     glm::mat4 projection;
 
     FreeCamera(float screen_ratio, GpuProgramController *gpu_controller);
-    void Update(glm::vec4 player_position);
+    void Update(glm::vec4 player_position, float delta_run_velocity);
 };
 
 #endif // _FREECAMERA_H

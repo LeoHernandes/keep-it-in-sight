@@ -28,7 +28,7 @@ private:
     const float MAX_RUN_VELOCITY = 10.0f;
     const float WALK_ACCELERATION = 35.0f;
     const float RUN_ACCELERATION = 50.0f;
-    const float FRICTION_FACTOR = 20.0f;
+    const float FRICTION_FACTOR = 50.0f;
 
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;
@@ -41,6 +41,7 @@ private:
     glm::vec4 GetPlayerAccelerationVector();
     void UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec);
     void UpdatePlayerPosition(float deltaTime);
+    float GetDeltaRunVelocity();
 
 public:
     bool show_info_text;
