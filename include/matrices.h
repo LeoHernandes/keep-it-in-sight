@@ -26,6 +26,7 @@ public:
     static float Norm(glm::vec4 v);
     static glm::vec4 Vectorize(glm::vec4 point);
     static bool IsVectorNull(glm::vec4 vector);
+    static glm::vec4 Normalize(glm::vec4 vector);
     static glm::mat4 Rotate(float angle, glm::vec4 axis);
     static glm::vec4 CrossProduct(glm::vec4 u, glm::vec4 v);
     static float DotProduct(glm::vec4 u, glm::vec4 v);

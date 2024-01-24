@@ -25,6 +25,37 @@ glm::mat4 Matrices::Identity()
         0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+float Matrices::Norm(glm::vec4 v)
+{
+    float vx = v.x;
+    float vy = v.y;
+    float vz = v.z;
+
+    return sqrt(vx * vx + vy * vy + vz * vz);
+}
+
+bool Matrices::IsVectorNull(glm::vec4 vector)
+{
+    if (vector.w != 0.0f)
+    {
+        fprintf(stderr, "[ERROR] IsVectorNull: input is a point\n");
+        std::exit(EXIT_FAILURE);
+    }
+
+    return vector.x == 0.0f && vector.y == 0.0f && vector.z == 0.0f;
+}
+
+glm::vec4 Matrices::Normalize(glm::vec4 v)
+{
+    if (IsVectorNull(v))
+    {
+        fprintf(stderr, "[ERROR] Normalize: vector is null, it can't be normalized\n");
+        std::exit(EXIT_FAILURE);
+    }
+
+    return v / Norm(v);
+}
+
 glm::mat4 Matrices::Translate(float tx, float ty, float tz)
 {
     return New(
@@ -76,15 +107,6 @@ glm::mat4 Matrices::RotateZ(float angle)
         0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-float Matrices::Norm(glm::vec4 v)
-{
-    float vx = v.x;
-    float vy = v.y;
-    float vz = v.z;
-
-    return sqrt(vx * vx + vy * vy + vz * vz);
-}
-
 glm::vec4 Matrices::Vectorize(glm::vec4 point)
 {
     glm::vec4 vector = point;
@@ -97,7 +119,7 @@ glm::mat4 Matrices::Rotate(float angle, glm::vec4 axis)
     float c = cos(angle);
     float s = sin(angle);
 
-    glm::vec4 v = axis / Norm(axis);
+    glm::vec4 v = Normalize(axis);
 
     float vx = v.x;
     float vy = v.y;
@@ -108,17 +130,6 @@ glm::mat4 Matrices::Rotate(float angle, glm::vec4 axis)
         vx * vy * (1.0f - c) + vz * s, vy * vy * (1.0f - c) + c, vy * vz * (1 - c) - vx * s, 0.0f,
         vx * vz * (1 - c) - vy * s, vy * vz * (1 - c) + vx * s, vz * vz * (1.0f - c) + c, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-bool Matrices::IsVectorNull(glm::vec4 vector)
-{
-    if (vector.w != 0.0f)
-    {
-        fprintf(stderr, "[ERROR] IsVectorNull: input is a point\n");
-        std::exit(EXIT_FAILURE);
-    }
-
-    return vector.x == 0.0f && vector.y == 0.0f && vector.z == 0.0f;
 }
 
 glm::vec4 Matrices::CrossProduct(glm::vec4 u, glm::vec4 v)
@@ -162,8 +173,8 @@ glm::mat4 Matrices::CameraView(glm::vec4 position_c, glm::vec4 view_vector, glm:
     glm::vec4 w = -view_vector;
     glm::vec4 u = CrossProduct(up_vector, w);
 
-    w = w / Norm(w);
-    u = u / Norm(u);
+    w = Normalize(w);
+    u = Normalize(u);
 
     glm::vec4 v = CrossProduct(w, u);
 

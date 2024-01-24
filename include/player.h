@@ -22,11 +22,13 @@ class Player
 {
 private:
     CameraMode camera_mode;
-    float velocity;
-    const float min_run_velocity = 5.0f;
-    const float max_run_velocity = 10.0f;
-    const float acceleration = 2.5f;
-    const float desacceleration = 5.0f;
+
+    glm::vec4 velocity_vec;
+    const float MAX_WALK_VELOCITY = 5.0f;
+    const float MAX_RUN_VELOCITY = 10.0f;
+    const float WALK_ACCELERATION = 35.0f;
+    const float RUN_ACCELERATION = 50.0f;
+    const float FRICTION_FACTOR = 20.0f;
 
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;
@@ -36,6 +38,8 @@ private:
     bool _is_pressing_SHIFT_key = false;
     double _lastCursorPosX, _lastCursorPosY;
 
+    glm::vec4 GetPlayerAccelerationVector();
+    void UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec);
     void UpdatePlayerPosition(float deltaTime);
 
 public:

@@ -3,59 +3,106 @@
 //////////////////////
 // Auxiliar functions
 //////////////////////
-void Player::UpdatePlayerPosition(float deltaTime)
+glm::vec4 Player::GetPlayerAccelerationVector()
 {
     glm::vec4 foward_vector = free_camera->view_vector;
     foward_vector.y = 0.0f; // Disable movement in y axis
-
     glm::vec4 camera_side_vec = Matrices::CrossProduct(free_camera->up_vector, foward_vector);
-    glm::vec4 movement_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
+    // Define acceleration vector
+    glm::vec4 acceleration_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     if (_is_pressing_W_key)
-        movement_vec = movement_vec + foward_vector;
+        acceleration_vec = acceleration_vec + foward_vector;
     if (_is_pressing_S_key)
-        movement_vec = movement_vec - foward_vector;
+        acceleration_vec = acceleration_vec - foward_vector;
     if (_is_pressing_A_key)
-        movement_vec = movement_vec + camera_side_vec;
+        acceleration_vec = acceleration_vec + camera_side_vec;
     if (_is_pressing_D_key)
-        movement_vec = movement_vec - camera_side_vec;
+        acceleration_vec = acceleration_vec - camera_side_vec;
 
-    float newVelocity;
-    if (!_is_pressing_SHIFT_key)
+    return acceleration_vec;
+}
+
+void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec)
+{
+    if (!Matrices::IsVectorNull(acceleration_vec))
     {
-        newVelocity = velocity - desacceleration * deltaTime;
-        if (newVelocity >= min_run_velocity)
-            velocity = newVelocity;
-    }
-    else
-    {
-        newVelocity = velocity + acceleration * deltaTime;
-        if (newVelocity < max_run_velocity)
-            velocity = newVelocity;
-    }
-    printf("velocity: %f\n", velocity);
-
-    // Allways move 1 unit in any direction
-    if (!Matrices::IsVectorNull(movement_vec))
-    {
-        glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
-        glm::vec4 velocity_vec = normalized_movement_vec * velocity;
-        glm::vec4 new_position = position + velocity_vec * deltaTime;
-
-        float min_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * min_run_velocity);
-        float max_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * max_run_velocity);
-        float current_run_velocity_vec_norm = Matrices::Norm(velocity_vec);
-
-        free_camera->field_of_view = free_camera->min_field_of_view + 
-        ((free_camera->max_field_of_view - free_camera->min_field_of_view) / (max_run_velocity_vec_norm - min_run_velocity_vec_norm)) *
-        (current_run_velocity_vec_norm - min_run_velocity_vec_norm);
-
-        if (!Collisions::PointSphereTest(new_position))
+        glm::vec4 normalized_acceleration_vec = Matrices::Normalize(acceleration_vec);
+        if (_is_pressing_SHIFT_key)
         {
-            position = new_position;
+            glm::vec4 new_velocity_vec = this->velocity_vec + normalized_acceleration_vec * deltaTime * RUN_ACCELERATION;
+            float current_velocity = Matrices::Norm(new_velocity_vec);
+
+            if (current_velocity < MAX_RUN_VELOCITY)
+                this->velocity_vec = new_velocity_vec;
+            else
+                // Makes Norm(current_velocity) be equal to MAX_RUN_VELOCITY
+                // PROOF:
+                // Let 'k' be a scalar positive value and 'vec' a vector of any dimension 'n':
+                //     Norm(vec * k) = Norm(vec) * k
+                //
+                // It is necessary that Norm(vec) = q, 'q' as a positive integer:
+                //     Norm(vec) * (q / Norm(vec)) = q
+                // To make Norm(vec) be multiplied by (q / Norm(vec)), multiply the vector by this factor:
+                //     vec * (q / Norm(vec))
+                //     Norm(vec * (q / Norm(vec))) = Norm(vec) * (q / Norm(vec)) = q
+                //
+                // In this case, Norm(current_velocity) != 0, because:
+                //     Norm(normalized_acceleration_vec) > 0 && deltaTime > 0 && RUN_FORCE > 0 <===>
+                //     Norm(velocity_vec + normalized_acceleration_vec * deltaTime * RUN_FORCE) > 0
+                // Divison by zero will NEVER happen!
+                this->velocity_vec = this->velocity_vec * (MAX_RUN_VELOCITY / current_velocity);
+        }
+        else
+        {
+            glm::vec4 new_velocity_vec = this->velocity_vec + normalized_acceleration_vec * deltaTime * WALK_ACCELERATION;
+            float current_velocity = Matrices::Norm(new_velocity_vec);
+
+            if (current_velocity < MAX_WALK_VELOCITY)
+                this->velocity_vec = new_velocity_vec;
+            else
+                // Same operation as above
+                this->velocity_vec = this->velocity_vec * (MAX_WALK_VELOCITY / current_velocity);
         }
     }
+}
 
+void Player::UpdatePlayerPosition(float deltaTime)
+{
+    glm::vec4 acceleration_vec = GetPlayerAccelerationVector();
+    UpdatePlayerVelocityVector(deltaTime, acceleration_vec);
+
+    // Update player position
+    if (!Matrices::IsVectorNull(velocity_vec))
+    {
+        glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
+        glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
+
+        if (Matrices::Norm(velocity_vec) <= Matrices::Norm(friction_vec))
+            this->velocity_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        else
+            this->velocity_vec += friction_vec;
+
+        this->position += velocity_vec * deltaTime;
+    }
+
+    // TODO: CHANGE FOV BASED ON PLAYER VELOCITY
+    // glm::vec4 normalized_movement_vec = movement_vec / Matrices::Norm(movement_vec);
+    // glm::vec4 velocity_vec = normalized_movement_vec * velocity;
+    // glm::vec4 new_position = position + velocity_vec * deltaTime;
+
+    // float min_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * min_run_velocity);
+    // float max_run_velocity_vec_norm = Matrices::Norm(normalized_movement_vec * max_run_velocity);
+    // float current_run_velocity_vec_norm = Matrices::Norm(velocity_vec);
+
+    // free_camera->field_of_view = free_camera->min_field_of_view +
+    //                              ((free_camera->max_field_of_view - free_camera->min_field_of_view) / (max_run_velocity_vec_norm - min_run_velocity_vec_norm)) *
+    //                                  (current_run_velocity_vec_norm - min_run_velocity_vec_norm);
+
+    // if (!Collisions::PointSphereTest(new_position))
+    // {
+    //     position = new_position;
+    // }
 }
 
 ///////////////
@@ -64,7 +111,7 @@ void Player::UpdatePlayerPosition(float deltaTime)
 Player::Player()
 {
     this->camera_mode = CameraMode::Free;
-    this->velocity = 5.0f;
+    this->velocity_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
     this->show_info_text = false;
 
