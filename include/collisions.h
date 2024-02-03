@@ -12,44 +12,37 @@ class Collisions
     private:
         Collisions();
 
-        static std::list<HitBox*> hitBoxes;
-        static std::list<HitSphere*> hitSpheres;
+        static std::list<HitBox*> hit_box_list;
+        static std::list<HitSphere*> hit_sphere_list;
 
     public:
-        static void AddHitBox(HitBox* hitBox);
-        static void RemoveHitBox(HitBox* hitBox);
+        static void AddHitBox(HitBox* hit_box);
+        static void RemoveHitBox(HitBox* hit_box);
         static void AddHitSphere(HitSphere* hitSphere);
         static void RemoveHitSphere(HitSphere* hitSphere);
 
-        static bool CubeCubeTest(HitBox hitBox);
+        static bool CubeCubeTest(HitBox hit_box);
         static bool PointSphereTest(glm::vec4 position);
+        static bool PointBoxTest(glm::vec4 position);
         // TODO: fazer outros tipos de testes de colisão
 };
 
 class HitBox
 {
-private:
-    glm::vec4 rigthFrontBotton;
-    glm::vec4 leftBackTop;
-
 public:
-    HitBox(glm::vec4 rigthFrontBotton, glm::vec4 leftBackTop);
+    glm::vec4 point_min;
+    glm::vec4 point_max;
 
-    // this function can get private attributes because of reserved word 'friend'
-    friend bool Collisions::CubeCubeTest(HitBox hitBox);
+    HitBox(glm::vec4 point_min, glm::vec4 point_max);
 };
 
 class HitSphere
 {
-private:
+public:
     glm::vec4 center;
     float radius;
 
-public:
     HitSphere(glm::vec4 center, float radius);
-
-    // this function can get private attributes because of reserved word 'friend'
-    friend bool Collisions::PointSphereTest(glm::vec4 position);
 };
 
 #endif

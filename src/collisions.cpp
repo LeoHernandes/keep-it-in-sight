@@ -1,13 +1,13 @@
 #include "collisions.h"
 #include "matrices.h"
 
-std::list<HitBox*> Collisions::hitBoxes;
-std::list<HitSphere*> Collisions::hitSpheres;
+std::list<HitBox*> Collisions::hit_box_list;
+std::list<HitSphere*> Collisions::hit_sphere_list;
 
-HitBox::HitBox(glm::vec4 rigthFrontBotton, glm::vec4 leftBackTop)
+HitBox::HitBox(glm::vec4 point_min, glm::vec4 point_max)
 {
-    this->rigthFrontBotton = rigthFrontBotton;
-    this->leftBackTop = leftBackTop;
+    this->point_min = point_min;
+    this->point_max = point_max;
 }
 
 HitSphere::HitSphere(glm::vec4 center, float radius)
@@ -16,29 +16,29 @@ HitSphere::HitSphere(glm::vec4 center, float radius)
     this->radius = radius;
 }
 
-void Collisions::AddHitBox(HitBox* hitBox)
+void Collisions::AddHitBox(HitBox* hit_box)
 {
-    hitBoxes.push_back(hitBox);
+    hit_box_list.push_back(hit_box);
 }
 
-void Collisions::RemoveHitBox(HitBox* hitBox)
+void Collisions::RemoveHitBox(HitBox* hit_box)
 {
-    hitBoxes.remove(hitBox);
+    hit_box_list.remove(hit_box);
 }
 
-void Collisions::AddHitSphere(HitSphere* hitSphere)
+void Collisions::AddHitSphere(HitSphere* hit_sphere)
 {
-    hitSpheres.push_back(hitSphere);
+    hit_sphere_list.push_back(hit_sphere);
 }
 
-void Collisions::RemoveHitSphere(HitSphere* hitSphere)
+void Collisions::RemoveHitSphere(HitSphere* hit_sphere)
 {
-    hitSpheres.remove(hitSphere);
+    hit_sphere_list.remove(hit_sphere);
 }
 
-bool Collisions::CubeCubeTest(HitBox hitBox)
+bool Collisions::CubeCubeTest(HitBox hit_box)
 {
-    for (HitBox* hb : hitBoxes)
+    for (HitBox* hb : hit_box_list)
     {
         // TODO: fazer a verificação
         //if () 
@@ -51,10 +51,22 @@ bool Collisions::CubeCubeTest(HitBox hitBox)
 
 bool Collisions::PointSphereTest(glm::vec4 position)
 {
-    for (HitSphere* hitSphere : hitSpheres)
+    for (HitSphere* hit_sphere : hit_sphere_list)
     {
-        float distance = Matrices::Norm(position - hitSphere->center);
-        if (distance <= hitSphere->radius) return true;
+        float distance = Matrices::Norm(position - hit_sphere->center);
+        if (distance <= hit_sphere->radius) return true;
+    }
+    return false;
+}
+
+bool Collisions::PointBoxTest(glm::vec4 position)
+{
+    for (HitBox* hit_box : hit_box_list)
+    {
+        if (position.x > hit_box->point_min.x && position.x < hit_box->point_max.x &&
+            position.y > hit_box->point_min.y && position.y < hit_box->point_max.y &&
+            position.z > hit_box->point_min.z && position.z < hit_box->point_max.z)
+        return true;
     }
     return false;
 }

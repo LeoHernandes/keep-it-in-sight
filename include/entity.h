@@ -10,6 +10,9 @@
 
 class Entity
 {
+private:
+    void UpdateModel();
+
 protected:
     GpuProgramController *gpu_controller;
     glm::mat4 model;
@@ -18,6 +21,10 @@ protected:
 
 public:
     std::string name;
+
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
     virtual void Update(float deltaTime) = 0;
     virtual void Render() = 0;
