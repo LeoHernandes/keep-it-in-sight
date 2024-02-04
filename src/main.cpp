@@ -59,6 +59,7 @@ int main()
 
     Object bunny("../../data/bunny.obj");
     Object sphere("../../data/sphere.obj");
+    Object door("../../data/10057_wooden_door_v3_iterations-2.obj");
 
     Scene scene;
 
@@ -76,6 +77,10 @@ int main()
     StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel4.CreateHitBox();
     bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
+
+    StaticEntity doormodel1("door1", &gpu_controller, Matrices::Identity(), &door);
+    doormodel1.CreateHitBox();
+    doormodel1.SetPosition(0.0f, -5.0f, 0.0f);
     
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
@@ -84,6 +89,7 @@ int main()
     scene.AddSkybox(&skybox);
     scene.AddEntity(&bunnymodel3);
     scene.AddEntity(&bunnymodel4);
+    scene.AddEntity(&doormodel1);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
