@@ -15,13 +15,16 @@ void Entity::UpdateModelAndCollision()
         Matrices::Scale(this->scale.x, this->scale.y, this->scale.z) *
         Matrices::RotateX(this->rotation.x) *
         Matrices::RotateY(this->rotation.y) *
-        Matrices::RotateZ(this->rotation.z);
+        Matrices::RotateZ(this->rotation.z) *
+        Matrices::Translate(this->axis_position.x, this->axis_position.y, this->axis_position.z);
 
     switch (collision_type)
     {
         case CollisionType::HITBOX:
-            this->collision.hit_box->point_min = glm::vec4(this->object->bbox_min * this->scale + this->position, 1.0f);
-            this->collision.hit_box->point_max = glm::vec4(this->object->bbox_max * this->scale + this->position, 1.0f);
+            this->collision.hit_box->point_min = model * glm::vec4(this->object->bbox_min, 1.0f);
+            this->collision.hit_box->point_max = model * glm::vec4(this->object->bbox_max, 1.0f);
+            AdjustHitboxPoints();
+
             break;
 
         case CollisionType::SPHEREBOX:
@@ -32,9 +35,34 @@ void Entity::UpdateModelAndCollision()
             
             break;
 
-        default:
+        case CollisionType::NOTHING:
 
             break;
+    }
+}
+
+void Entity::AdjustHitboxPoints()
+{
+    float temp;
+    if (collision.hit_box->point_min.x > collision.hit_box->point_max.x)
+    {
+        temp = collision.hit_box->point_min.x;
+        collision.hit_box->point_min.x = collision.hit_box->point_max.x;
+        collision.hit_box->point_max.x = temp;
+    }
+
+    if (collision.hit_box->point_min.y > collision.hit_box->point_max.y)
+    {
+        temp = collision.hit_box->point_min.y;
+        collision.hit_box->point_min.y = collision.hit_box->point_max.y;
+        collision.hit_box->point_max.y = temp;
+    }
+
+    if (collision.hit_box->point_min.z > collision.hit_box->point_max.z)
+    {
+        temp = collision.hit_box->point_min.z;
+        collision.hit_box->point_min.z = collision.hit_box->point_max.z;
+        collision.hit_box->point_max.z = temp;
     }
 }
 

@@ -128,6 +128,8 @@ void Player::UpdatePlayerPosition(float deltaTime)
     // Update player position
     if (!Collisions::PointBoxTest(this->position + velocity_vec * deltaTime))
         this->position += velocity_vec * deltaTime;
+    else
+        velocity_vec = glm::vec4(0.0f);
 }
 
 ///////////////

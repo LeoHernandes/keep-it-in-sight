@@ -23,6 +23,7 @@ set(SOURCES
   src/stb_image.cpp
   src/tiny_obj_loader.cpp
   src/textureLoader.cpp
+  src/door.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)
