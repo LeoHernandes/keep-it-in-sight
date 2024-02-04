@@ -14,8 +14,8 @@ void Entity::UpdateModelAndCollision()
         Matrices::Translate(this->position.x, this->position.y, this->position.z) *
         Matrices::Scale(this->scale.x, this->scale.y, this->scale.z) *
         Matrices::RotateX(this->rotation.x) *
-        Matrices::RotateY(this->rotation.x) *
-        Matrices::RotateZ(this->rotation.x);
+        Matrices::RotateY(this->rotation.y) *
+        Matrices::RotateZ(this->rotation.z);
 
     switch (collision_type)
     {
