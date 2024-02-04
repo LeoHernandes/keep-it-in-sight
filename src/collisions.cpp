@@ -10,10 +10,45 @@ HitBox::HitBox(glm::vec4 point_min, glm::vec4 point_max)
     this->point_max = point_max;
 }
 
+bool HitBox::PointAABBTest(glm::vec4 position)
+{
+    if (position.x > this->point_min.x && position.x < this->point_max.x &&
+        position.y > this->point_min.y && position.y < this->point_max.y &&
+        position.z > this->point_min.z && position.z < this->point_max.z)
+        return true;
+
+    return false;
+}
+
+// FONTE: https://tavianator.com/2011/ray_box.html
+bool HitBox::RayAABBTest(glm::vec4 ray_origin, glm::vec4 ray_direction, float max_distance)
+{
+    glm::vec4 inv_direction = 1.0f / ray_direction;
+
+    glm::vec4 t_min = (this->point_min - ray_origin) * inv_direction;
+    glm::vec4 t_max = (this->point_max - ray_origin) * inv_direction;
+
+    glm::vec4 t1 = glm::min(t_min, t_max);
+    glm::vec4 t2 = glm::max(t_min, t_max);
+
+    float t_near = glm::max(t1.x, glm::max(t1.y, t1.z));
+    float t_far = glm::min(t2.x, glm::min(t2.y, t2.z));
+
+    return t_near <= t_far && t_near <= max_distance;
+}
+
 HitSphere::HitSphere(glm::vec4 center, float radius)
 {
     this->center = center;
     this->radius = radius;
+}
+
+bool HitSphere::PointSphereTest(glm::vec4 position)
+{
+    float distance = Matrices::Norm(position - this->center);
+    if (distance <= this->radius) return true;
+
+    return false;
 }
 
 void Collisions::AddHitBox(HitBox* hit_box)
@@ -36,37 +71,18 @@ void Collisions::RemoveHitSphere(HitSphere* hit_sphere)
     hit_sphere_list.remove(hit_sphere);
 }
 
-bool Collisions::CubeCubeTest(HitBox hit_box)
-{
-    for (HitBox* hb : hit_box_list)
-    {
-        // TODO: fazer a verificação
-        //if () 
-        //{
-        //    return true;
-        //}
-    }
-    return false;
-}
-
-bool Collisions::PointSphereTest(glm::vec4 position)
-{
-    for (HitSphere* hit_sphere : hit_sphere_list)
-    {
-        float distance = Matrices::Norm(position - hit_sphere->center);
-        if (distance <= hit_sphere->radius) return true;
-    }
-    return false;
-}
-
-bool Collisions::PointBoxTest(glm::vec4 position)
+bool Collisions::PlayerBoxTest(glm::vec4 player_position)
 {
     for (HitBox* hit_box : hit_box_list)
-    {
-        if (position.x > hit_box->point_min.x && position.x < hit_box->point_max.x &&
-            position.y > hit_box->point_min.y && position.y < hit_box->point_max.y &&
-            position.z > hit_box->point_min.z && position.z < hit_box->point_max.z)
-        return true;
-    }
+       if (hit_box->PointAABBTest(player_position)) return true;
+
+    return false;
+}
+
+bool Collisions::PlayerSphereTest(glm::vec4 player_position)
+{
+    for (HitSphere* hit_sphere : hit_sphere_list)
+        if (hit_sphere->PointSphereTest(player_position)) return true;
+
     return false;
 }

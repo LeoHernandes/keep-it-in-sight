@@ -6,21 +6,18 @@
 
 class HitBox;
 class HitSphere;
-class Plane;
 
 union CollisionUnion
 {
     HitBox *hit_box;
     HitSphere *hit_sphere;
-    Plane *plane;
 };
 
 enum class CollisionType 
 {
     NOTHING,
     HITBOX,
-    SPHEREBOX,
-    PLANE
+    SPHEREBOX
 };
 
 class Collisions
@@ -37,10 +34,8 @@ class Collisions
         static void AddHitSphere(HitSphere* hitSphere);
         static void RemoveHitSphere(HitSphere* hitSphere);
 
-        static bool CubeCubeTest(HitBox hit_box);
-        static bool PointSphereTest(glm::vec4 position);
-        static bool PointBoxTest(glm::vec4 position);
-        // TODO: fazer outros tipos de testes de colisão
+        static bool PlayerSphereTest(glm::vec4 player_position);
+        static bool PlayerBoxTest(glm::vec4 player_position);
 };
 
 class HitBox
@@ -50,6 +45,8 @@ public:
     glm::vec4 point_max;
 
     HitBox(glm::vec4 point_min, glm::vec4 point_max);
+    bool PointAABBTest(glm::vec4 position);
+    bool RayAABBTest(glm::vec4 ray_origin, glm::vec4 ray_direction, float max_distance);
 };
 
 class HitSphere
@@ -59,14 +56,7 @@ public:
     float radius;
 
     HitSphere(glm::vec4 center, float radius);
-};
-
-class Plane
-{
-private:
-
-public:
-
+    bool PointSphereTest(glm::vec4 position);
 };
 
 #endif

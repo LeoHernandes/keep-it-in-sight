@@ -31,10 +31,6 @@ void Entity::UpdateModelAndCollision()
             
             break;
 
-        case CollisionType::PLANE:
-            
-            break;
-
         case CollisionType::NOTHING:
 
             break;
@@ -106,9 +102,4 @@ void Entity::CreateHitBox()
 void Entity::CreateSphereBox()
 {
     collision_type = CollisionType::SPHEREBOX;
-}
-
-void Entity::CreatePlane()
-{
-    collision_type = CollisionType::PLANE;
 }
