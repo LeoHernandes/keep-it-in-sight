@@ -17,17 +17,10 @@
 
 class StaticEntity : public Entity
 {
-private:
-    void UpdateModelAndHitBox();
-    HitBox *hit_box;
 public:
     StaticEntity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity(), Object *object = NULL);
     void Update(float deltaTime) override;
     void Render() override;
-
-    void SetPosition(float x, float y, float z);
-    void SetScale(float x, float y, float z);
-    void SetRotation(float x, float y, float z);
 };
 
 #endif

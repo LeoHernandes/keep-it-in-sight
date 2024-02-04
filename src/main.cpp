@@ -63,14 +63,20 @@ int main()
     Scene scene;
 
     StaticEntity bunnymodel1("bunny", &gpu_controller, Matrices::Identity(), &bunny);
+    bunnymodel1.CreateHitBox();
     bunnymodel1.SetPosition(5.0f, 1.0f, 0.0f);
+
     StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);
-    StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel3.SetPosition(1.0f, 1.0f, 1.0f);
-    StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
 
+    StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Identity(), &bunny);
+    bunnymodel3.CreateHitBox();
+    bunnymodel3.SetPosition(1.0f, 1.0f, 1.0f);
+    
+    StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
+    bunnymodel4.CreateHitBox();
+    bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
+    
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
     scene.AddEntity(&bunnymodel1);

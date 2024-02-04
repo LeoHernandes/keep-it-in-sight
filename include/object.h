@@ -10,7 +10,6 @@
 #include <cassert>
 #include <string>
 #include "matrices.h"
-#include "collisions.h"
 
 class Object
 {

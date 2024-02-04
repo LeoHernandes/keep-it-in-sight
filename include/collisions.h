@@ -6,6 +6,22 @@
 
 class HitBox;
 class HitSphere;
+class Plane;
+
+union CollisionUnion
+{
+    HitBox *hit_box;
+    HitSphere *hit_sphere;
+    Plane *plane;
+};
+
+enum class CollisionType 
+{
+    NOTHING,
+    HITBOX,
+    SPHEREBOX,
+    PLANE
+};
 
 class Collisions
 {
@@ -43,6 +59,14 @@ public:
     float radius;
 
     HitSphere(glm::vec4 center, float radius);
+};
+
+class Plane
+{
+private:
+
+public:
+
 };
 
 #endif
