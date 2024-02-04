@@ -49,7 +49,7 @@ private:
     bool _is_pressing_A_key;
     bool _is_pressing_S_key;
     bool _is_pressing_D_key;
-    bool _is_pressing_SHIFT_key = false;
+    bool _is_pressing_SHIFT_key;
     double _lastCursorPosX, _lastCursorPosY;
 
     glm::vec4 GetPlayerAccelerationVector();
@@ -61,6 +61,7 @@ private:
 
 public:
     bool show_info_text;
+    bool _is_pressing_E_key;
     LookAtCamera *look_at_camera;
     FreeCamera *free_camera;
     glm::vec4 position;

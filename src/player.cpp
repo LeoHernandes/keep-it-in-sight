@@ -147,6 +147,8 @@ Player::Player()
     this->_is_pressing_A_key = false;
     this->_is_pressing_S_key = false;
     this->_is_pressing_D_key = false;
+    this->_is_pressing_SHIFT_key = false;
+    this->_is_pressing_E_key = false;
     this->_lastCursorPosX = 0.0;
     this->_lastCursorPosY = 0.0;
     
@@ -218,6 +220,16 @@ void Player::KeyCallback(GLFWwindow *window, int key, int scancode, int action, 
         default:
             break;
         }
+    }
+
+    // Action input
+    if (key == GLFW_KEY_E && action == GLFW_PRESS)
+    {
+        _is_pressing_E_key = true;
+    }
+    if (key == GLFW_KEY_E && action == GLFW_RELEASE)
+    {
+        _is_pressing_E_key = false;
     }
 
     // Movement inputs

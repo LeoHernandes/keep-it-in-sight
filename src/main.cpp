@@ -79,7 +79,7 @@ int main()
     bunnymodel4.CreateHitBox();
     bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
 
-    Door doormodel1("door1", &gpu_controller, Matrices::Identity(), &door);
+    Door doormodel1("door1", &gpu_controller, Matrices::Identity(), &door, &player);
     doormodel1.CreateHitBox();
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
     doormodel1.SetPosition(0.0f, 0.0f, 5.0f);

@@ -1,15 +1,47 @@
 #include "door.h"
 
-Door::Door(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object)
+Door::Door(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, Player *player)
     : Entity(name, gpu_controller, model, object)
 {
+    this->player = player;
+
     this->axis_position.x = -(this->object->bbox_min.x + this->object->bbox_min.x) / 2;
+
+    this->is_opening = false;
+    this->is_closing = false;
+    this->progression_time = 0.0f;
 }
 
 void Door::Update(float deltaTime)
 {
-    this->rotation.z += 1.0f * deltaTime;
-    this->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
+    if (player->_is_pressing_E_key)
+    {
+        if (this->progression_time <= ANIMATION_TIME)
+            this->is_opening = true;
+        else
+            this->is_closing = true;
+    }
+
+    if (this->is_opening)
+    {
+        if (this->progression_time >= ANIMATION_TIME)
+            this->is_opening = false;
+
+        this->progression_time += deltaTime;
+        this->rotation.z = (progression_time / ANIMATION_TIME) * (3.141592 / 2);
+        this->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
+    }
+    else if (this->is_closing)
+    {
+        if (this->progression_time <= 0.0f)
+            this->is_closing = false;
+
+        this->progression_time -= deltaTime;
+        this->rotation.z = (progression_time / ANIMATION_TIME) * (3.141592 / 2);
+        this->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
+    }
+
+    
 }
 
 void Door::Render()
