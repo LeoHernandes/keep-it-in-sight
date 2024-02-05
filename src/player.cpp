@@ -152,6 +152,8 @@ Player::Player()
     this->_is_pressing_E_key = false;
     this->_lastCursorPosX = 0.0;
     this->_lastCursorPosY = 0.0;
+
+    this->collected_coins = 0;
     
     this->cubic_bezier_head_movement = new CubicBezier(ANIMATION_TIME_HEAD_MOVEMENT,
                                                        glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),

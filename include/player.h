@@ -65,6 +65,7 @@ public:
     LookAtCamera *look_at_camera;
     FreeCamera *free_camera;
     glm::vec4 position;
+    int collected_coins;
 
     Player();
     void AddFreeCamera(FreeCamera *camera);

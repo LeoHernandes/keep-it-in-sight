@@ -65,12 +65,13 @@ int main()
 
     Scene scene;
 
-    StaticEntity bunnymodel1("bunny", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel1.CreateHitBox();
+    StaticEntity bunnymodel1("bunny1", &gpu_controller, Matrices::Identity(), &bunny);
+    //bunnymodel1.CreateHitBox();
     bunnymodel1.SetPosition(5.0f, 1.0f, 0.0f);
 
     StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);
+    bunnymodel2.CreateHitBox();
+    bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);  
 
     StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel3.CreateHitBox();
@@ -88,17 +89,41 @@ int main()
 
     Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
     coinmodel1.CreateSphereBox();
-    coinmodel1.SetPosition(0.0f, 1.0f, 10.0f);
+    coinmodel1.SetScale(0.3f, 0.3f, 0.3f);
+    coinmodel1.SetPosition(0.0f, 0.5f, 10.0f);
+    
+    Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
+    coinmodel2.CreateSphereBox();
+    coinmodel2.SetScale(0.3f, 0.3f, 0.3f);
+    coinmodel2.SetPosition(3.0f, 0.5f, 10.0f);
+
+    Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
+    coinmodel3.CreateSphereBox();
+    coinmodel3.SetScale(0.3f, 0.3f, 0.3f);
+    coinmodel3.SetPosition(6.0f, 0.5f, 10.0f);
+
+    Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
+    coinmodel4.CreateSphereBox();
+    coinmodel4.SetScale(0.3f, 0.3f, 0.3f);
+    coinmodel4.SetPosition(9.0f, 0.5f, 10.0f);
     
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
+
+
+
+    scene.AddSkybox(&skybox);
 
     scene.AddEntity(&bunnymodel1);
     scene.AddEntity(&bunnymodel2);
     scene.AddEntity(&bunnymodel3);
-    scene.AddSkybox(&skybox);
     scene.AddEntity(&bunnymodel4);
+
     scene.AddEntity(&doormodel1);
+    
     scene.AddEntity(&coinmodel1);
+    scene.AddEntity(&coinmodel2);
+    scene.AddEntity(&coinmodel3);
+    scene.AddEntity(&coinmodel4);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
@@ -115,6 +140,8 @@ int main()
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;
         prevTime = currentTime;
+
+        //printf("collected coins: %d\n", player.collected_coins);
 
         // Update camera projection matrix
         player.OnUpdate(deltaTime);

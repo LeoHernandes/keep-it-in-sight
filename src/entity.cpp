@@ -29,7 +29,10 @@ void Entity::UpdateModelAndCollision()
 
         case CollisionType::SPHEREBOX:
             this->hit_sphere->center = glm::vec4(this->position + this->delta_position, 1.0f);
-            this->hit_sphere->radius *= this->scale.x;
+            this->hit_sphere->radius = (this->hit_sphere->center.x - this->object->bbox_min.x) * this->scale.x;
+
+            //printf("center | x: %f, y: %f, z: %d \n", hit_sphere->center.x, hit_sphere->center.y, hit_sphere->center.z);
+            //printf("radius | r: %f \n", hit_sphere->radius);
 
             break;
 

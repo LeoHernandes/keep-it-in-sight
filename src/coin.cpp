@@ -17,7 +17,7 @@ void Coin::Update(float deltaTime)
 
     if (this->hit_sphere->PointSphereTest(this->player->position))
     {
-        printf("oiiiiiiiiii\n");
+        this->player->collected_coins += 1;
         this->scene->RemoveEntity(this);
     }
 }
