@@ -11,7 +11,7 @@ Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4
 void Entity::UpdateModelAndCollision()
 {
     this->model =
-        Matrices::Translate(this->position.x, this->position.y, this->position.z) *
+        Matrices::Translate(this->position.x + this->delta_position.x, this->position.y + this->delta_position.y, this->position.z + this->delta_position.z) *
         Matrices::Scale(this->scale.x, this->scale.y, this->scale.z) *
         Matrices::RotateX(this->rotation.x) *
         Matrices::RotateY(this->rotation.y) *
@@ -21,14 +21,16 @@ void Entity::UpdateModelAndCollision()
     switch (collision_type)
     {
         case CollisionType::HITBOX:
-            this->collision.hit_box->point_min = model * glm::vec4(this->object->bbox_min, 1.0f);
-            this->collision.hit_box->point_max = model * glm::vec4(this->object->bbox_max, 1.0f);
+            this->hit_box->point_min = model * glm::vec4(this->object->bbox_min, 1.0f);
+            this->hit_box->point_max = model * glm::vec4(this->object->bbox_max, 1.0f);
             AdjustHitboxPoints();
 
             break;
 
         case CollisionType::SPHEREBOX:
-            
+            this->hit_sphere->center = glm::vec4(this->position + this->delta_position, 1.0f);
+            this->hit_sphere->radius *= this->scale.x;
+
             break;
 
         case CollisionType::NOTHING:
@@ -40,25 +42,25 @@ void Entity::UpdateModelAndCollision()
 void Entity::AdjustHitboxPoints()
 {
     float temp;
-    if (collision.hit_box->point_min.x > collision.hit_box->point_max.x)
+    if (hit_box->point_min.x > hit_box->point_max.x)
     {
-        temp = collision.hit_box->point_min.x;
-        collision.hit_box->point_min.x = collision.hit_box->point_max.x;
-        collision.hit_box->point_max.x = temp;
+        temp = hit_box->point_min.x;
+        hit_box->point_min.x = hit_box->point_max.x;
+        hit_box->point_max.x = temp;
     }
 
-    if (collision.hit_box->point_min.y > collision.hit_box->point_max.y)
+    if (hit_box->point_min.y > hit_box->point_max.y)
     {
-        temp = collision.hit_box->point_min.y;
-        collision.hit_box->point_min.y = collision.hit_box->point_max.y;
-        collision.hit_box->point_max.y = temp;
+        temp = hit_box->point_min.y;
+        hit_box->point_min.y = hit_box->point_max.y;
+        hit_box->point_max.y = temp;
     }
 
-    if (collision.hit_box->point_min.z > collision.hit_box->point_max.z)
+    if (hit_box->point_min.z > hit_box->point_max.z)
     {
-        temp = collision.hit_box->point_min.z;
-        collision.hit_box->point_min.z = collision.hit_box->point_max.z;
-        collision.hit_box->point_max.z = temp;
+        temp = hit_box->point_min.z;
+        hit_box->point_min.z = hit_box->point_max.z;
+        hit_box->point_max.z = temp;
     }
 }
 
@@ -86,20 +88,37 @@ void Entity::SetRotation(float x, float y, float z)
     UpdateModelAndCollision();
 }
 
+void Entity::SetDeltaPosition(float x, float y, float z)
+{
+    this->delta_position.x = x;
+    this->delta_position.y = y;
+    this->delta_position.z = z;
+    UpdateModelAndCollision();
+}
+
 // TODO: excluir colisão antiga
 
 void Entity::CreateHitBox()
 {
     this->collision_type = CollisionType::HITBOX;
 
-    this->collision.hit_box = new HitBox(
+    this->hit_box = new HitBox(
         glm::vec4(this->object->bbox_min, 1.0f), 
         glm::vec4(this->object->bbox_max, 1.0f)
     );
-    Collisions::AddHitBox(this->collision.hit_box);
+    Collisions::AddHitBox(this->hit_box);
 }
 
 void Entity::CreateSphereBox()
 {
     collision_type = CollisionType::SPHEREBOX;
+
+    glm::vec3 center = (this->object->bbox_min + this->object->bbox_max) / 2.0f;
+    float radius = center.x - this->object->bbox_min.x;
+
+    this->hit_sphere = new HitSphere(
+        glm::vec4(center, 1.0f), 
+        radius
+    );
+    Collisions::AddHitSphere(this->hit_sphere);
 }

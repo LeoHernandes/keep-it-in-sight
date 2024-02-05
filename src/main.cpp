@@ -30,6 +30,7 @@
 #include "textureLoader.h"
 #include "skybox.h"
 #include "door.h"
+#include "coin.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -84,15 +85,20 @@ int main()
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
     doormodel1.SetPosition(0.0f, 0.0f, 5.0f);
     doormodel1.SetRotation(-3.141592 / 2, 0.0f, 0.0f);
+
+    Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
+    coinmodel1.CreateSphereBox();
+    coinmodel1.SetPosition(0.0f, 1.0f, 10.0f);
     
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
     scene.AddEntity(&bunnymodel1);
     scene.AddEntity(&bunnymodel2);
-    scene.AddSkybox(&skybox);
     scene.AddEntity(&bunnymodel3);
+    scene.AddSkybox(&skybox);
     scene.AddEntity(&bunnymodel4);
     scene.AddEntity(&doormodel1);
+    scene.AddEntity(&coinmodel1);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
@@ -105,12 +111,6 @@ int main()
         // Specifies the handle of the program object whose executables
         // are to be used in GPU as part of current rendering state
         glUseProgram(gpu_program_id);
-
-        //printf("=========================== PLAYER POSITION ===========================\n");
-        //printf("x: %f, y: %f, z: %f\n", player->position.x, player->position.y, player->position.z);
-        //printf("=========================== COLLISION POINT MIN AND MAX ===============\n");
-        //printf("x: %f, y: %f, z: %f\n", doormodel1.collision.hit_box->point_min.x, doormodel1.collision.hit_box->point_min.y, doormodel1.collision.hit_box->point_min.z);
-        //printf("x: %f, y: %f, z: %f\n",doormodel1.collision.hit_box->point_max.x, doormodel1.collision.hit_box->point_max.y, doormodel1.collision.hit_box->point_max.z);
 
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;

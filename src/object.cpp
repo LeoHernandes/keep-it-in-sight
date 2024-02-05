@@ -186,7 +186,7 @@ Object::Object(const char *filename)
 {
     std::string fullpath(filename);
     auto i = fullpath.find_last_of("/");
-    const char *basepath;
+    const char *basepath = NULL;
     if (i != std::string::npos)
     {
         std::string dirname = fullpath.substr(0, i + 1);

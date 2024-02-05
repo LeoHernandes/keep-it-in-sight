@@ -14,7 +14,7 @@ Door::Door(std::string name, GpuProgramController *gpu_controller, glm::mat4 mod
 
 void Door::Update(float deltaTime)
 {
-    if (this->player->_is_pressing_E_key && this->collision.hit_box->RayAABBTest(player->position, player->free_camera->view_vector, MAX_DISTANCE_TO_OPEN_DOOR))
+    if (this->player->_is_pressing_E_key && this->hit_box->RayAABBTest(player->position, player->free_camera->view_vector, MAX_DISTANCE_TO_OPEN_DOOR))
     {
         if (this->progression_time <= ANIMATION_TIME)
             this->is_opening = true;

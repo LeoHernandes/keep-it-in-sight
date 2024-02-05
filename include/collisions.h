@@ -7,12 +7,6 @@
 class HitBox;
 class HitSphere;
 
-union CollisionUnion
-{
-    HitBox *hit_box;
-    HitSphere *hit_sphere;
-};
-
 enum class CollisionType 
 {
     NOTHING,

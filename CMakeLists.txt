@@ -24,6 +24,7 @@ set(SOURCES
   src/tiny_obj_loader.cpp
   src/textureLoader.cpp
   src/door.cpp
+  src/coin.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

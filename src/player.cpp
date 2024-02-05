@@ -126,8 +126,9 @@ void Player::UpdatePlayerPosition(float deltaTime)
     //printf("%d\n", Collisions::PlayerBoxTest(this->position + velocity_vec * deltaTime));
 
     // Update player position
-    if (!Collisions::PlayerBoxTest(this->position + velocity_vec * deltaTime))
-        this->position += velocity_vec * deltaTime;
+    glm::vec4 new_position = this->position + velocity_vec * deltaTime;
+    if (!Collisions::PlayerBoxTest(new_position))
+        this->position = new_position;
     else
         velocity_vec = glm::vec4(0.0f);
 }
