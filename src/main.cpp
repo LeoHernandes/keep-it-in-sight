@@ -68,44 +68,38 @@ int main()
     StaticEntity bunnymodel1("bunny1", &gpu_controller, Matrices::Identity(), &bunny);
     //bunnymodel1.CreateHitBox();
     bunnymodel1.SetPosition(5.0f, 1.0f, 0.0f);
+    bunnymodel1.UpdateModel();
 
     StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel2.CreateHitBox();
-    bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);  
+    bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);
+    bunnymodel2.UpdateModel();
+    bunnymodel2.UpdateCollision();
 
     StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel3.CreateHitBox();
     bunnymodel3.SetPosition(1.0f, 1.0f, 1.0f);
+    bunnymodel3.UpdateModel();
+    bunnymodel3.UpdateCollision();
     
     StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel4.CreateHitBox();
     bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
+    bunnymodel4.UpdateModel();
+    bunnymodel4.UpdateCollision();
 
     Door doormodel1("door1", &gpu_controller, Matrices::Identity(), &door, &player);
     doormodel1.CreateHitBox();
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
     doormodel1.SetPosition(0.0f, 0.0f, 5.0f);
     doormodel1.SetRotation(-3.141592 / 2, 0.0f, 0.0f);
+    doormodel1.UpdateModel();
+    doormodel1.UpdateCollision();
 
-    Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
-    coinmodel1.CreateSphereBox();
-    coinmodel1.SetScale(0.3f, 0.3f, 0.3f);
-    coinmodel1.SetPosition(0.0f, 0.5f, 10.0f);
-    
-    Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
-    coinmodel2.CreateSphereBox();
-    coinmodel2.SetScale(0.3f, 0.3f, 0.3f);
-    coinmodel2.SetPosition(3.0f, 0.5f, 10.0f);
-
-    Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
-    coinmodel3.CreateSphereBox();
-    coinmodel3.SetScale(0.3f, 0.3f, 0.3f);
-    coinmodel3.SetPosition(6.0f, 0.5f, 10.0f);
-
-    Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene);
-    coinmodel4.CreateSphereBox();
-    coinmodel4.SetScale(0.3f, 0.3f, 0.3f);
-    coinmodel4.SetPosition(9.0f, 0.5f, 10.0f);
+    Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 10.0f));
+    Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 10.0f));
+    Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 10.0f));
+    Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(9.0f, 0.5f, 10.0f));
     
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 

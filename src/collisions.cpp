@@ -41,12 +41,14 @@ HitSphere::HitSphere(glm::vec4 center, float radius)
 {
     this->center = center;
     this->radius = radius;
+    this->original_radius = radius;
+    this->delta_radius = 0.0f;
 }
 
 bool HitSphere::PointSphereTest(glm::vec4 position)
 {
     float distance = Matrices::Norm(position - this->center);
-    if (distance <= this->radius) return true;
+    if (distance <= this->radius + this->delta_radius) return true;
 
     return false;
 }

@@ -1,11 +1,20 @@
 #include "coin.h"
 
-Coin::Coin(std::string name, GpuProgramController* gpu_controller, glm::mat4 model, Object* object, Player* player, Scene* scene)
+Coin::Coin(std::string name, GpuProgramController* gpu_controller, glm::mat4 model, Object* object, Player* player, Scene* scene, glm::vec3 position)
     : Entity(name, gpu_controller, model, object)
 {
     this->player = player;
     this->scene = scene;
     this->cubic_bezier_movement_coin = new CubicBezier(ANIMATION_TIME_COIN, BEZIER_P1, BEZIER_P2, BEZIER_P3, BEZIER_P4);
+    this->position = position;
+
+    this->CreateSphereBox();
+    this->SetScale(COIN_SCALE, COIN_SCALE, COIN_SCALE);
+    this->SetPosition(position.x, position.y, position.z);
+    this->UpdateModel();
+
+    this->hit_sphere->delta_radius = DELTA_RADIUS_COLLISION;
+    this->UpdateCollision();
 }
 
 void Coin::Update(float deltaTime)
@@ -13,13 +22,16 @@ void Coin::Update(float deltaTime)
     this->cubic_bezier_movement_coin->Update(deltaTime);
     this->coin_movement = cubic_bezier_movement_coin->GetPoint();
 
-    SetDeltaPosition(this->coin_movement.x, this->coin_movement.y, this->coin_movement.z);
-
+    this->SetDeltaPosition(this->coin_movement.x, this->coin_movement.y, this->coin_movement.z);
+    
     if (this->hit_sphere->PointSphereTest(this->player->position))
     {
         this->player->collected_coins += 1;
         this->scene->RemoveEntity(this);
     }
+
+    // sem alterar a hitsphere da moeda, ou seja, não chamamos o UpdateCollision
+    this->UpdateModel();
 }
 
 void Coin::Render()

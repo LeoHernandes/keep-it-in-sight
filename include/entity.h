@@ -12,7 +12,6 @@
 class Entity
 {
 private:
-    void UpdateModelAndCollision();
     void AdjustHitboxPoints();
 
 protected:
@@ -39,9 +38,11 @@ public:
     void SetScale(float x, float y, float z);
     void SetRotation(float x, float y, float z);
     void SetDeltaPosition(float x, float y, float z);
+    void UpdateModel();
 
     void CreateHitBox();
     void CreateSphereBox();
+    void UpdateCollision();
 
     virtual void Update(float deltaTime) = 0;
     virtual void Render() = 0;

@@ -1,4 +1,5 @@
 #include "entity.h"
+#include <iostream>
 
 Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object)
 {
@@ -8,7 +9,7 @@ Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4
     this->object = object;
 }
 
-void Entity::UpdateModelAndCollision()
+void Entity::UpdateModel()
 {
     this->model =
         Matrices::Translate(this->position.x + this->delta_position.x, this->position.y + this->delta_position.y, this->position.z + this->delta_position.z) *
@@ -17,7 +18,10 @@ void Entity::UpdateModelAndCollision()
         Matrices::RotateY(this->rotation.y) *
         Matrices::RotateZ(this->rotation.z) *
         Matrices::Translate(this->axis_position.x, this->axis_position.y, this->axis_position.z);
+}
 
+void Entity::UpdateCollision()
+{
     switch (collision_type)
     {
         case CollisionType::HITBOX:
@@ -29,10 +33,11 @@ void Entity::UpdateModelAndCollision()
 
         case CollisionType::SPHEREBOX:
             this->hit_sphere->center = glm::vec4(this->position + this->delta_position, 1.0f);
-            this->hit_sphere->radius = (this->hit_sphere->center.x - this->object->bbox_min.x) * this->scale.x;
+            this->hit_sphere->radius = this->hit_sphere->original_radius * this->scale.x;
 
-            //printf("center | x: %f, y: %f, z: %d \n", hit_sphere->center.x, hit_sphere->center.y, hit_sphere->center.z);
-            //printf("radius | r: %f \n", hit_sphere->radius);
+            //std::cout << "===================== " + this->name + " =====================" << std::endl;
+            //printf("center | x: %f, y: %f, z: %f \n", hit_sphere->center.x, hit_sphere->center.y, hit_sphere->center.z);
+            //printf("radius | r: %f \n\n", hit_sphere->radius + hit_sphere->delta_radius);
 
             break;
 
@@ -72,7 +77,6 @@ void Entity::SetPosition(float x, float y, float z)
     this->position.x = x;
     this->position.y = y;
     this->position.z = z;
-    UpdateModelAndCollision();
 }
 
 void Entity::SetScale(float x, float y, float z)
@@ -80,7 +84,6 @@ void Entity::SetScale(float x, float y, float z)
     this->scale.x = x;
     this->scale.y = y;
     this->scale.z = z;
-    UpdateModelAndCollision();
 }
 
 void Entity::SetRotation(float x, float y, float z)
@@ -88,7 +91,6 @@ void Entity::SetRotation(float x, float y, float z)
     this->rotation.x = x;
     this->rotation.y = y;
     this->rotation.z = z;
-    UpdateModelAndCollision();
 }
 
 void Entity::SetDeltaPosition(float x, float y, float z)
@@ -96,7 +98,6 @@ void Entity::SetDeltaPosition(float x, float y, float z)
     this->delta_position.x = x;
     this->delta_position.y = y;
     this->delta_position.z = z;
-    UpdateModelAndCollision();
 }
 
 // TODO: excluir colisão antiga

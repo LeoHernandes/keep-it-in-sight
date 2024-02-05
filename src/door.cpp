@@ -26,6 +26,9 @@ void Door::Update(float deltaTime)
         OpeningDoor(deltaTime);
     else if (this->is_closing)
         ClosingDoor(deltaTime);
+    
+    this->UpdateModel();
+    this->UpdateCollision();
 }
 
 void Door::OpeningDoor(float deltaTime)

@@ -48,6 +48,8 @@ class HitSphere
 public:
     glm::vec4 center;
     float radius;
+    float original_radius;
+    float delta_radius;
 
     HitSphere(glm::vec4 center, float radius);
     bool PointSphereTest(glm::vec4 position);
