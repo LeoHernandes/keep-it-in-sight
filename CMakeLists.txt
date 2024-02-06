@@ -26,6 +26,7 @@ set(SOURCES
   src/door.cpp
   src/coin.cpp
   src/camera.cpp
+  src/monster.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

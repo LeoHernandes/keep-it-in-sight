@@ -32,6 +32,7 @@
 #include "door.h"
 #include "coin.h"
 #include "camera.h"
+#include "monster.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -73,29 +74,6 @@ int main()
     Scene scene;
 
 
-
-    StaticEntity bunnymodel1("bunny1", &gpu_controller, Matrices::Identity(), &bunny);
-    // bunnymodel1.CreateHitBox();
-    bunnymodel1.SetPosition(5.0f, 1.0f, 0.0f);
-    bunnymodel1.UpdateModel();
-
-    StaticEntity bunnymodel2("bunny2", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel2.CreateHitBox();
-    bunnymodel2.SetPosition(-3.0f, 1.0f, 2.0f);
-    bunnymodel2.UpdateModel();
-    bunnymodel2.UpdateCollision();
-
-    StaticEntity bunnymodel3("bunny3", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel3.CreateHitBox();
-    bunnymodel3.SetPosition(1.0f, 1.0f, 1.0f);
-    bunnymodel3.UpdateModel();
-    bunnymodel3.UpdateCollision();
-
-    StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
-    bunnymodel4.CreateHitBox();
-    bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
-    bunnymodel4.UpdateModel();
-    bunnymodel4.UpdateCollision();
 
     Door doormodel1("door1", &gpu_controller, Matrices::Identity(), &door, &player);
     doormodel1.CreateHitBox();
@@ -148,17 +126,16 @@ int main()
     cubemodel4.SetPosition(-10.0f, 0.0f, 0.0f);
     cubemodel4.UpdateModel();
     cubemodel4.UpdateCollision();
+
+    Monster monstermodel("monster", &gpu_controller, Matrices::Identity(), &bunny, &player);
+    monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
+    monstermodel.UpdateModel();
     
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
     
 
 
     scene.AddSkybox(&skybox);
-
-    scene.AddEntity(&bunnymodel1);
-    scene.AddEntity(&bunnymodel2);
-    scene.AddEntity(&bunnymodel3);
-    scene.AddEntity(&bunnymodel4);
 
     scene.AddEntity(&doormodel1);
 
@@ -176,7 +153,7 @@ int main()
     scene.AddEntity(&cubemodel3);
     scene.AddEntity(&cubemodel4);
 
-
+    scene.AddEntity(&monstermodel);
 
 
     float prevTime = glfwGetTime();
