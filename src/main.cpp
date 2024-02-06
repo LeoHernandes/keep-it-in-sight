@@ -56,6 +56,7 @@ int main()
     texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg");
     texture_loader.LoadTextureImage("../../data/wall_backrooms.jpg");
     texture_loader.LoadTextureImage("../../data/floor_tile.jpg");
+    texture_loader.LoadTextureImage("../../data/rusty_metal.jpg");
 
     GpuProgramController gpu_controller(gpu_program_id);
 
@@ -129,12 +130,12 @@ int main()
     cubemodel4.UpdateCollision();
 
     Monster monstermodel("monster", &gpu_controller, Matrices::Identity(), &bunny, &player);
-    //monstermodel.CreateHitBox();
+    // monstermodel.CreateHitBox();
     monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
     monstermodel.UpdateModel();
-    //monstermodel.UpdateCollision();
-    //player.AddMonsterHitbox(monstermodel.hit_box);
-    
+    // monstermodel.UpdateCollision();
+    // player.AddMonsterHitbox(monstermodel.hit_box);
+
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
     scene.AddSkybox(&skybox);

@@ -18,5 +18,6 @@ GpuProgramController::GpuProgramController(GLuint gpu_program_id)
     glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage3"), 3);
     glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage4"), 4);
     glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage5"), 5);
+    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage6"), 6);
     glUseProgram(0);
 }
