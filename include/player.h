@@ -27,9 +27,9 @@ private:
     glm::vec4 velocity_vec;
     const float MAX_WALK_VELOCITY = 5.0f;
     const float MAX_RUN_VELOCITY = 10.0f;
-    const float WALK_ACCELERATION = 35.0f;
-    const float RUN_ACCELERATION = 50.0f;
-    const float FRICTION_FACTOR = 50.0f;
+    const float WALK_ACCELERATION = 50.0f;
+    const float RUN_ACCELERATION = 60.0f;
+    const float FRICTION_FACTOR = 100.0f;
 
     float stamina = 0.0f;
     bool has_stamina = true;
@@ -39,10 +39,10 @@ private:
     const float STAMINA_LOSS_RATE = 30.0f;
     const float TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA = 3.0f;
 
-    CubicBezier* cubic_bezier_head_movement;
+    CubicBezier *cubic_bezier_head_movement;
     glm::vec4 head_movement;
     const float DELTA_HEAD_MOVEMENT_POSITION = 0.15f;
-    const float ANIMATION_TIME_HEAD_MOVEMENT = 0.15f;
+    const float ANIMATION_TIME_HEAD_MOVEMENT = 0.2f;
 
     bool _is_left_mouse_button_pressed;
     bool _is_pressing_W_key;
