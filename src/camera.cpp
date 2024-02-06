@@ -8,17 +8,12 @@ Camera::Camera(std::string name, GpuProgramController *gpu_controller, glm::mat4
 
 void Camera::Update(float deltaTime)
 {
-    /*
-    //this->position = this->player->position + this->player->free_camera->view_vector; //glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-    
-    glm::mat4 inverseViewMatrix = glm::inverse(this->player->free_camera->view);
-    glm::vec4 worldPosition = inverseViewMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    //glm::vec4 worldPosition = inverseViewMatrix * glm::vec4(relativePosition, 1.0f);
 
-    this->position = glm::vec3(worldPosition);
+    this->position = this->player->position + this->player->free_camera->view_vector * 0.8f;
+    this->position.y = 0.6f;
+    this->SetRotation(-M_PI_2, 0.0f, this->player->free_camera->view_angle_theta);
 
     this->UpdateModel();
-    */
 }
 
 void Camera::Render()
