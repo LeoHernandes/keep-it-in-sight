@@ -66,8 +66,12 @@ int main()
     Object sphere("../../data/sphere.obj");
     Object door("../../data/10057_wooden_door_v3_iterations-2.obj");
     Object camera("../../data/10124_SLR_Camera_SG_V1_Iteration2.obj");
+    Object plane("../../data/plane.obj");
+    Object cube("../../data/cube.obj");
 
     Scene scene;
+
+
 
     StaticEntity bunnymodel1("bunny1", &gpu_controller, Matrices::Identity(), &bunny);
     // bunnymodel1.CreateHitBox();
@@ -100,17 +104,53 @@ int main()
     doormodel1.UpdateModel();
     doormodel1.UpdateCollision();
 
-    Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 10.0f));
-    Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 10.0f));
-    Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 10.0f));
-    Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(9.0f, 0.5f, 10.0f));
-
+    Coin coinmodel1("coin1", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(-3.0f, 0.5f, 7.0f));
+    Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f));
+    Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f));
+    Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
+    
     Camera cameramodel1("camera1", &gpu_controller, Matrices::Identity(), &camera, &player);
     cameramodel1.SetScale(0.002f, 0.002f, 0.002f);
     cameramodel1.SetPosition(-10.0f, 1.0f, 2.0f);
     cameramodel1.UpdateModel();
 
+    StaticEntity planemodel1("plane1", &gpu_controller, Matrices::Identity(), &plane);
+    planemodel1.SetScale(10.0f, 1.0f, 10.0f);
+    planemodel1.UpdateModel();
+
+    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube);
+    cubemodel1.CreateHitBox();
+    cubemodel1.SetScale(10.0f, 3.0f, 1.0f);
+    cubemodel1.SetPosition(0.0f, 0.0f, 10.0f);
+    cubemodel1.UpdateModel();
+    cubemodel1.UpdateCollision();
+
+    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube);
+    cubemodel2.CreateHitBox();
+    cubemodel2.SetScale(10.0f, 3.0f, 1.0f);
+    cubemodel2.SetPosition(0.0f, 0.0f, -10.0f);
+    cubemodel2.UpdateModel();
+    cubemodel2.UpdateCollision();
+
+    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube);
+    cubemodel3.CreateHitBox();
+    cubemodel3.SetScale(1.0f, 3.0f, 10.0f);
+    cubemodel3.SetRotation(0.0f, -3.141592 / 2, 0.0f);
+    cubemodel3.SetPosition(10.0f, 0.0f, 0.0f);
+    cubemodel3.UpdateModel();
+    cubemodel3.UpdateCollision();
+
+    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube);
+    cubemodel4.CreateHitBox();
+    cubemodel4.SetScale(1.0f, 3.0f, 10.0f);
+    cubemodel4.SetRotation(0.0f, -3.141592 / 2, 0.0f);
+    cubemodel4.SetPosition(-10.0f, 0.0f, 0.0f);
+    cubemodel4.UpdateModel();
+    cubemodel4.UpdateCollision();
+    
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
+    
+
 
     scene.AddSkybox(&skybox);
 
@@ -127,6 +167,16 @@ int main()
     scene.AddEntity(&coinmodel4);
 
     scene.AddEntity(&cameramodel1);
+
+    scene.AddEntity(&planemodel1);
+
+    scene.AddEntity(&cubemodel1);
+    scene.AddEntity(&cubemodel2);
+    scene.AddEntity(&cubemodel3);
+    scene.AddEntity(&cubemodel4);
+
+
+
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;
