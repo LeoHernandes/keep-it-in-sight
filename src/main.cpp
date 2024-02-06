@@ -31,6 +31,7 @@
 #include "skybox.h"
 #include "door.h"
 #include "coin.h"
+#include "camera.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -62,6 +63,7 @@ int main()
     Object bunny("../../data/bunny.obj");
     Object sphere("../../data/sphere.obj");
     Object door("../../data/10057_wooden_door_v3_iterations-2.obj");
+    Object camera("../../data/10124_SLR_Camera_SG_V1_Iteration2.obj");
 
     Scene scene;
 
@@ -101,6 +103,11 @@ int main()
     Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 10.0f));
     Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(9.0f, 0.5f, 10.0f));
     
+    Camera cameramodel1("camera1", &gpu_controller, Matrices::Identity(), &camera, &player);
+    cameramodel1.SetScale(0.002f, 0.002f, 0.002f);
+    cameramodel1.SetPosition(-10.0f, 1.0f, 2.0f);
+    cameramodel1.UpdateModel();
+
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
 
@@ -118,6 +125,8 @@ int main()
     scene.AddEntity(&coinmodel2);
     scene.AddEntity(&coinmodel3);
     scene.AddEntity(&coinmodel4);
+
+    scene.AddEntity(&cameramodel1);
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;

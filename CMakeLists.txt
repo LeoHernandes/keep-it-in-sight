@@ -25,6 +25,7 @@ set(SOURCES
   src/textureLoader.cpp
   src/door.cpp
   src/coin.cpp
+  src/camera.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)
