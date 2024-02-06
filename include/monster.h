@@ -5,6 +5,7 @@
 #include "player.h"
 #include "textureLoader.h"
 #include "matrices.h"
+#include "collisions.h"
 
 class Monster : public Entity
 {

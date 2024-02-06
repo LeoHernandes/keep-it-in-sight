@@ -163,6 +163,14 @@ Player::Player()
 }
 
 /////////////
+// Monster
+/////////////
+void Player::AddMonsterHitbox(HitBox *monster_hitbox)
+{
+    this->monster_hitbox = monster_hitbox;
+}
+
+/////////////
 // Cameras
 /////////////
 void Player::AddFreeCamera(FreeCamera *camera)

@@ -8,18 +8,31 @@ Monster::Monster(std::string name, GpuProgramController *gpu_controller, glm::ma
 
 void Monster::Update(float deltaTime)
 {
-    glm::vec4 norm_direction_to_player_vec = Matrices::Normalize(this->player->position - glm::vec4(this->position, 1.0f));
+    glm::vec4 direction_to_player_vec = this->player->position - glm::vec4(this->position, 1.0f);
 
-    float angle = atan2(norm_direction_to_player_vec.x, norm_direction_to_player_vec.z);
-    this->rotation.y = angle;
+    if (!Matrices::IsVectorNull(direction_to_player_vec))
+    {
+        glm::vec4 normalized_direction_to_player_vec = Matrices::Normalize(this->player->position - glm::vec4(this->position, 1.0f));
+        float angle = atan2(normalized_direction_to_player_vec.x, normalized_direction_to_player_vec.z);
+        this->rotation.y = angle;
 
-    this->position += glm::vec3(
-        norm_direction_to_player_vec.x * deltaTime * VELOCITY,
-        0.0f,
-        norm_direction_to_player_vec.z * deltaTime * VELOCITY
-    );
-
+        this->position += glm::vec3(
+            normalized_direction_to_player_vec.x * deltaTime * VELOCITY,
+            0.0f,
+            normalized_direction_to_player_vec.z * deltaTime * VELOCITY
+        );
+    }
     this->UpdateModel();
+
+    /////////////////// QUANDO TIVER HITBOX ///////////////////
+    /*
+    this->UpdateCollision();
+
+    if (this->hit_box->PointAABBTest(this->player->position))
+    {
+        //printf("COLISAO COM O BIXO!\n");
+    }
+    */
 }
 
 void Monster::Render()

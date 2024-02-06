@@ -128,11 +128,12 @@ int main()
     cubemodel4.UpdateCollision();
 
     Monster monstermodel("monster", &gpu_controller, Matrices::Identity(), &bunny, &player);
+    //monstermodel.CreateHitBox();
     monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
     monstermodel.UpdateModel();
-
-    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
-
+    //monstermodel.UpdateCollision();
+    //player.AddMonsterHitbox(monstermodel.hit_box);
+    
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
     scene.AddSkybox(&skybox);

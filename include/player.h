@@ -64,12 +64,14 @@ public:
     bool _is_pressing_E_key;
     LookAtCamera *look_at_camera;
     FreeCamera *free_camera;
+    HitBox *monster_hitbox;
     glm::vec4 position;
     int collected_coins;
 
     Player();
     void AddFreeCamera(FreeCamera *camera);
     void AddLookAtCamera(LookAtCamera *camera);
+    void AddMonsterHitbox(HitBox *monster_hitbox);
     void OnUpdate(float deltaTime);
     void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
     void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
