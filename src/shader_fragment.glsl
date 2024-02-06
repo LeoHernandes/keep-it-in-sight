@@ -70,6 +70,22 @@ TextureCoordinates GetTextureCoordinatesFromPlaneProjection(vec4 bbox_min, vec4 
     return TextureCoordinates(u, v);
 }
 
+vec3 GetTextureColorFromTextureId(int texture_id, TextureCoordinates text_coords)
+{
+    if(texture_id == 1)
+    {
+        return texture(TextureImage1, vec2(text_coords.u,text_coords.v)).rgb;
+    }
+    else if(texture_id == 2)
+    {
+        return texture(TextureImage2, vec2(text_coords.u,text_coords.v)).rgb;
+    }
+    else
+    {
+        return vec3(0.0, 0.0, 0.0);
+    }
+}
+
 void main()
 {
     vec4 origin = vec4(0.0, 0.0, 0.0, 1.0);
@@ -107,7 +123,7 @@ void main()
     }
     else
     {
-        vec3 Kd0 = texture(TextureImage1, vec2(text_coords.u,text_coords.v)).rgb;
+        vec3 Kd0 = GetTextureColorFromTextureId(texture_id, text_coords);
         vec3 Ks = vec3(0.8,0.8,0.8);
         float q = 32.0;
 

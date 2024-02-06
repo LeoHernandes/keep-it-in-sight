@@ -51,6 +51,8 @@ int main()
     GLuint gpu_program_id = LoadShadersFromFiles();
     texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg");
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");
+    texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg");
+
     GpuProgramController gpu_controller(gpu_program_id);
 
     FreeCamera free_camera((float)WINDOW_WIDTH / WINDOW_HEIGHT, &gpu_controller);
@@ -68,7 +70,7 @@ int main()
     Scene scene;
 
     StaticEntity bunnymodel1("bunny1", &gpu_controller, Matrices::Identity(), &bunny);
-    //bunnymodel1.CreateHitBox();
+    // bunnymodel1.CreateHitBox();
     bunnymodel1.SetPosition(5.0f, 1.0f, 0.0f);
     bunnymodel1.UpdateModel();
 
@@ -83,7 +85,7 @@ int main()
     bunnymodel3.SetPosition(1.0f, 1.0f, 1.0f);
     bunnymodel3.UpdateModel();
     bunnymodel3.UpdateCollision();
-    
+
     StaticEntity bunnymodel4("bunny4", &gpu_controller, Matrices::Identity(), &bunny);
     bunnymodel4.CreateHitBox();
     bunnymodel4.SetPosition(-3.0f, 3.0f, 2.0f);
@@ -102,15 +104,13 @@ int main()
     Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 10.0f));
     Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 10.0f));
     Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(9.0f, 0.5f, 10.0f));
-    
+
     Camera cameramodel1("camera1", &gpu_controller, Matrices::Identity(), &camera, &player);
     cameramodel1.SetScale(0.002f, 0.002f, 0.002f);
     cameramodel1.SetPosition(-10.0f, 1.0f, 2.0f);
     cameramodel1.UpdateModel();
 
     Skybox skybox("skybox", &gpu_controller, &sphere, &player);
-
-
 
     scene.AddSkybox(&skybox);
 
@@ -120,7 +120,7 @@ int main()
     scene.AddEntity(&bunnymodel4);
 
     scene.AddEntity(&doormodel1);
-    
+
     scene.AddEntity(&coinmodel1);
     scene.AddEntity(&coinmodel2);
     scene.AddEntity(&coinmodel3);
@@ -144,7 +144,7 @@ int main()
         deltaTime = currentTime - prevTime;
         prevTime = currentTime;
 
-        //printf("collected coins: %d\n", player.collected_coins);
+        // printf("collected coins: %d\n", player.collected_coins);
 
         // Update camera projection matrix
         player.OnUpdate(deltaTime);
