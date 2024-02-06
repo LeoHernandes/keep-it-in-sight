@@ -54,6 +54,8 @@ int main()
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");
     texture_loader.LoadTextureImage("../../data/10124_SLR_Camera_V1_Diffuse.jpg");
     texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg");
+    texture_loader.LoadTextureImage("../../data/rusty_metal.jpg");
+    texture_loader.LoadTextureImage("../../data/floor_tile.jpg");
 
     GpuProgramController gpu_controller(gpu_program_id);
 
@@ -73,8 +75,6 @@ int main()
 
     Scene scene;
 
-
-
     Door doormodel1("door1", &gpu_controller, Matrices::Identity(), &door, &player);
     doormodel1.CreateHitBox();
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
@@ -87,31 +87,31 @@ int main()
     Coin coinmodel2("coin2", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f));
     Coin coinmodel3("coin3", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f));
     Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
-    
+
     Camera cameramodel1("camera1", &gpu_controller, Matrices::Identity(), &camera, &player);
     cameramodel1.SetScale(0.002f, 0.002f, 0.002f);
     cameramodel1.SetPosition(-10.0f, 1.0f, 2.0f);
     cameramodel1.UpdateModel();
 
-    StaticEntity planemodel1("plane1", &gpu_controller, Matrices::Identity(), &plane);
+    StaticEntity planemodel1("plane1", &gpu_controller, Matrices::Identity(), &plane, 5, LightInterpolationType::NO_LIGHT);
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);
     planemodel1.UpdateModel();
 
-    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube);
+    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube, 1);
     cubemodel1.CreateHitBox();
     cubemodel1.SetScale(10.0f, 3.0f, 1.0f);
     cubemodel1.SetPosition(0.0f, 0.0f, 10.0f);
     cubemodel1.UpdateModel();
     cubemodel1.UpdateCollision();
 
-    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube);
+    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube, 1);
     cubemodel2.CreateHitBox();
     cubemodel2.SetScale(10.0f, 3.0f, 1.0f);
     cubemodel2.SetPosition(0.0f, 0.0f, -10.0f);
     cubemodel2.UpdateModel();
     cubemodel2.UpdateCollision();
 
-    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube);
+    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube, 1);
     cubemodel3.CreateHitBox();
     cubemodel3.SetScale(1.0f, 3.0f, 10.0f);
     cubemodel3.SetRotation(0.0f, -3.141592 / 2, 0.0f);
@@ -119,7 +119,7 @@ int main()
     cubemodel3.UpdateModel();
     cubemodel3.UpdateCollision();
 
-    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube);
+    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube, 1);
     cubemodel4.CreateHitBox();
     cubemodel4.SetScale(1.0f, 3.0f, 10.0f);
     cubemodel4.SetRotation(0.0f, -3.141592 / 2, 0.0f);
@@ -130,10 +130,10 @@ int main()
     Monster monstermodel("monster", &gpu_controller, Matrices::Identity(), &bunny, &player);
     monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
     monstermodel.UpdateModel();
-    
-    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
-    
 
+    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
+
+    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
 
     scene.AddSkybox(&skybox);
 
@@ -154,7 +154,6 @@ int main()
     scene.AddEntity(&cubemodel4);
 
     scene.AddEntity(&monstermodel);
-
 
     float prevTime = glfwGetTime();
     float currentTime = 0.0f;

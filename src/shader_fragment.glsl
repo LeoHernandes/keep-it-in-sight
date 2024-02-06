@@ -15,6 +15,7 @@ uniform vec4 bbox_max;
 // Which type of light interpolation should use
 #define INTERPOLATION_TYPE_GOURAUD 0
 #define INTERPOLATION_TYPE_PHONG 1
+#define INTERPOLATION_TYPE_NO_LIGHT 2
 uniform int interpolation_type;
 
 // Which texture projection should use for this object
@@ -29,6 +30,8 @@ uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
+uniform sampler2D TextureImage4;
+uniform sampler2D TextureImage5;
 
 out vec4 color;
 
@@ -84,6 +87,14 @@ vec3 GetTextureColorFromTextureId(int texture_id, TextureCoordinates text_coords
     else if(texture_id == 3)
     {
         return texture(TextureImage3, vec2(texcoords[0],texcoords[1])).rgb;
+    }
+    else if(texture_id == 4)
+    {
+        return texture(TextureImage4, vec2(text_coords.u,text_coords.v)).rgb;
+    }
+    else if(texture_id == 5)
+    {
+        return texture(TextureImage5, vec2(texcoords[0],texcoords[1])).rgb;
     }
     else
     {
@@ -146,9 +157,13 @@ void main()
         {
             color.rgb = lambert_diffuse_term + gouraud_shading_term;
         }
-        else
+        else if ( interpolation_type == INTERPOLATION_TYPE_PHONG)
         {
             color.rgb = lambert_diffuse_term + phong_specular_term;
+        }
+        else 
+        {
+            color.rgb = lambert_diffuse_term;
         }
     }
 

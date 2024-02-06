@@ -12,7 +12,8 @@
 enum LightInterpolationType
 {
     GOURAUD,
-    PHONG
+    PHONG,
+    NO_LIGHT
 };
 
 class Entity
