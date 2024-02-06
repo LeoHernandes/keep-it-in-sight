@@ -28,6 +28,7 @@ uniform int texture_id;
 uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
+uniform sampler2D TextureImage3;
 
 out vec4 color;
 
@@ -74,11 +75,15 @@ vec3 GetTextureColorFromTextureId(int texture_id, TextureCoordinates text_coords
 {
     if(texture_id == 1)
     {
-        return texture(TextureImage1, vec2(text_coords.u,text_coords.v)).rgb;
+        return texture(TextureImage1, vec2(texcoords[0],texcoords[1])).rgb;
     }
     else if(texture_id == 2)
     {
-        return texture(TextureImage2, vec2(text_coords.u,text_coords.v)).rgb;
+        return texture(TextureImage2, vec2(texcoords[0],texcoords[1])).rgb;
+    }
+    else if(texture_id == 3)
+    {
+        return texture(TextureImage3, vec2(texcoords[0],texcoords[1])).rgb;
     }
     else
     {

@@ -51,7 +51,8 @@ int main()
     GLuint gpu_program_id = LoadShadersFromFiles();
     texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg");
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");
-    texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg");
+    texture_loader.LoadTextureImage("../../data/10124_SLR_Camera_V1_Diffuse.jpg");
+    texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg");
 
     GpuProgramController gpu_controller(gpu_program_id);
 
