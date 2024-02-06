@@ -54,7 +54,7 @@ int main()
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");
     texture_loader.LoadTextureImage("../../data/10124_SLR_Camera_V1_Diffuse.jpg");
     texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg");
-    texture_loader.LoadTextureImage("../../data/rusty_metal.jpg");
+    texture_loader.LoadTextureImage("../../data/wall_backrooms.jpg");
     texture_loader.LoadTextureImage("../../data/floor_tile.jpg");
 
     GpuProgramController gpu_controller(gpu_program_id);
@@ -97,33 +97,34 @@ int main()
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);
     planemodel1.UpdateModel();
 
-    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube, 1);
+    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube, 4);
     cubemodel1.CreateHitBox();
-    cubemodel1.SetScale(10.0f, 3.0f, 1.0f);
-    cubemodel1.SetPosition(0.0f, 0.0f, 10.0f);
+    cubemodel1.SetScale(10.0f, 1.5f, 1.0f);
+    cubemodel1.SetPosition(0.0f, 1.5f, 10.0f);
     cubemodel1.UpdateModel();
     cubemodel1.UpdateCollision();
 
-    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube, 1);
+    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube, 4);
     cubemodel2.CreateHitBox();
-    cubemodel2.SetScale(10.0f, 3.0f, 1.0f);
-    cubemodel2.SetPosition(0.0f, 0.0f, -10.0f);
+    cubemodel2.SetRotation(0.0f, -3.141592, 0.0f); // ADICIONADO PARA ARRUMAR TEXTURA
+    cubemodel2.SetScale(10.0f, 1.5f, 1.0f);
+    cubemodel2.SetPosition(0.0f, 1.5f, -10.0f);
     cubemodel2.UpdateModel();
     cubemodel2.UpdateCollision();
 
-    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube, 1);
+    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube, 4);
     cubemodel3.CreateHitBox();
-    cubemodel3.SetScale(1.0f, 3.0f, 10.0f);
-    cubemodel3.SetRotation(0.0f, -3.141592 / 2, 0.0f);
-    cubemodel3.SetPosition(10.0f, 0.0f, 0.0f);
+    cubemodel3.SetScale(1.0f, 1.5f, 10.0f);
+    cubemodel3.SetRotation(0.0f, 3 * -3.141592 / 2, 0.0f); // MODIFICADO PARA ARRUMAR TEXTURA
+    cubemodel3.SetPosition(10.0f, 1.5f, 0.0f);
     cubemodel3.UpdateModel();
     cubemodel3.UpdateCollision();
 
-    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube, 1);
+    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube, 4);
     cubemodel4.CreateHitBox();
-    cubemodel4.SetScale(1.0f, 3.0f, 10.0f);
+    cubemodel4.SetScale(1.0f, 1.5f, 10.0f);
     cubemodel4.SetRotation(0.0f, -3.141592 / 2, 0.0f);
-    cubemodel4.SetPosition(-10.0f, 0.0f, 0.0f);
+    cubemodel4.SetPosition(-10.0f, 1.5f, 0.0f);
     cubemodel4.UpdateModel();
     cubemodel4.UpdateCollision();
 

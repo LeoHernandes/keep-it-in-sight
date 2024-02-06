@@ -133,6 +133,11 @@ void Player::UpdatePlayerPosition(float deltaTime)
         velocity_vec = glm::vec4(0.0f);
 }
 
+void Player::UpdatePlayerCamera()
+{
+    
+}
+
 ///////////////
 // Constructor
 ///////////////
@@ -149,6 +154,7 @@ Player::Player()
     this->_is_pressing_S_key = false;
     this->_is_pressing_D_key = false;
     this->_is_pressing_SHIFT_key = false;
+    this->_is_pressing_F_key = false;
     this->_is_pressing_E_key = false;
     this->_lastCursorPosX = 0.0;
     this->_lastCursorPosY = 0.0;
@@ -194,6 +200,7 @@ void Player::OnUpdate(float deltaTime)
         look_at_camera->Update(position);
         break;
     case CameraMode::Free:
+        UpdatePlayerCamera();
         UpdatePlayerPosition(deltaTime);
         free_camera->Update(position, GetDeltaRunVelocity(), this->head_movement);
         break;
@@ -241,6 +248,16 @@ void Player::KeyCallback(GLFWwindow *window, int key, int scancode, int action, 
     if (key == GLFW_KEY_E && action == GLFW_RELEASE)
     {
         _is_pressing_E_key = false;
+    }
+
+    // Camera flash input
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
+        _is_pressing_F_key = true;
+    }
+    if (key == GLFW_KEY_F && action == GLFW_RELEASE)
+    {
+        _is_pressing_F_key = false;
     }
 
     // Movement inputs

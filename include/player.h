@@ -50,11 +50,13 @@ private:
     bool _is_pressing_S_key;
     bool _is_pressing_D_key;
     bool _is_pressing_SHIFT_key;
+    bool _is_pressing_F_key;
     double _lastCursorPosX, _lastCursorPosY;
 
     glm::vec4 GetPlayerAccelerationVector();
     void UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec);
     void UpdatePlayerPosition(float deltaTime);
+    void UpdatePlayerCamera();
     float GetDeltaRunVelocity();
     void LossStamina(float deltaTime);
     void RecoveryStamina(float deltaTime);
