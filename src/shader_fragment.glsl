@@ -4,12 +4,18 @@ in vec4 position_world;
 in vec4 position_model;
 in vec4 normal;
 in vec2 texcoords;
+in vec3 gouraud_shading_term;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec4 bbox_min;
 uniform vec4 bbox_max;
+
+// Which type of light interpolation should use
+#define INTERPOLATION_TYPE_GOURAUD 0
+#define INTERPOLATION_TYPE_PHONG 1
+uniform int interpolation_type;
 
 // Which texture projection should use for this object
 #define TEXTURE_PROJECTION_SPHERE 0
@@ -115,7 +121,14 @@ void main()
         // Alpha component
         color.a = 1;
 
-        color.rgb = lambert_diffuse_term + phong_specular_term;
+        if(interpolation_type == INTERPOLATION_TYPE_GOURAUD)
+        {
+            color.rgb = lambert_diffuse_term + gouraud_shading_term;
+        }
+        else
+        {
+            color.rgb = lambert_diffuse_term + phong_specular_term;
+        }
     }
 
     // Gamma correction (sRGB monitor)

@@ -1,12 +1,12 @@
 #include "entity.h"
-#include <iostream>
 
-Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object)
+Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, LightInterpolationType interpolation_type)
 {
     this->name = name;
     this->gpu_controller = gpu_controller;
     this->model = model;
     this->object = object;
+    this->interpolation_type = interpolation_type;
 }
 
 void Entity::UpdateModel()
@@ -24,26 +24,26 @@ void Entity::UpdateCollision()
 {
     switch (collision_type)
     {
-        case CollisionType::HITBOX:
-            this->hit_box->point_min = model * glm::vec4(this->object->bbox_min, 1.0f);
-            this->hit_box->point_max = model * glm::vec4(this->object->bbox_max, 1.0f);
-            AdjustHitboxPoints();
+    case CollisionType::HITBOX:
+        this->hit_box->point_min = model * glm::vec4(this->object->bbox_min, 1.0f);
+        this->hit_box->point_max = model * glm::vec4(this->object->bbox_max, 1.0f);
+        AdjustHitboxPoints();
 
-            break;
+        break;
 
-        case CollisionType::SPHEREBOX:
-            this->hit_sphere->center = glm::vec4(this->position + this->delta_position, 1.0f);
-            this->hit_sphere->radius = this->hit_sphere->original_radius * this->scale.x;
+    case CollisionType::SPHEREBOX:
+        this->hit_sphere->center = glm::vec4(this->position + this->delta_position, 1.0f);
+        this->hit_sphere->radius = this->hit_sphere->original_radius * this->scale.x;
 
-            //std::cout << "===================== " + this->name + " =====================" << std::endl;
-            //printf("center | x: %f, y: %f, z: %f \n", hit_sphere->center.x, hit_sphere->center.y, hit_sphere->center.z);
-            //printf("radius | r: %f \n\n", hit_sphere->radius + hit_sphere->delta_radius);
+        // std::cout << "===================== " + this->name + " =====================" << std::endl;
+        // printf("center | x: %f, y: %f, z: %f \n", hit_sphere->center.x, hit_sphere->center.y, hit_sphere->center.z);
+        // printf("radius | r: %f \n\n", hit_sphere->radius + hit_sphere->delta_radius);
 
-            break;
+        break;
 
-        case CollisionType::NOTHING:
+    case CollisionType::NOTHING:
 
-            break;
+        break;
     }
 }
 
@@ -107,9 +107,8 @@ void Entity::CreateHitBox()
     this->collision_type = CollisionType::HITBOX;
 
     this->hit_box = new HitBox(
-        glm::vec4(this->object->bbox_min, 1.0f), 
-        glm::vec4(this->object->bbox_max, 1.0f)
-    );
+        glm::vec4(this->object->bbox_min, 1.0f),
+        glm::vec4(this->object->bbox_max, 1.0f));
     Collisions::AddHitBox(this->hit_box);
 }
 
@@ -121,8 +120,7 @@ void Entity::CreateSphereBox()
     float radius = center.x - this->object->bbox_min.x;
 
     this->hit_sphere = new HitSphere(
-        glm::vec4(center, 1.0f), 
-        radius
-    );
+        glm::vec4(center, 1.0f),
+        radius);
     Collisions::AddHitSphere(this->hit_sphere);
 }

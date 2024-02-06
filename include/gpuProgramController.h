@@ -12,6 +12,7 @@ public:
     GLint bbox_min_uniform;
     GLint bbox_max_uniform;
     GLint texture_projection_type;
+    GLint interpolation_type;
     GLint texture_id;
 
     GpuProgramController(GLuint gpu_program_id);
