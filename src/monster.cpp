@@ -16,11 +16,15 @@ void Monster::Update(float deltaTime)
         float angle = atan2(normalized_direction_to_player_vec.x, normalized_direction_to_player_vec.z);
         this->rotation.y = angle;
 
-        this->position += glm::vec3(
-            normalized_direction_to_player_vec.x * deltaTime * VELOCITY,
-            0.0f,
-            normalized_direction_to_player_vec.z * deltaTime * VELOCITY
-        );
+        // Não faz o monstro ficar tão próximo do player
+        if (Matrices::Norm(direction_to_player_vec) > 1.0f)
+        {
+            this->position += glm::vec3(
+                normalized_direction_to_player_vec.x * deltaTime * VELOCITY,
+                0.0f,
+                normalized_direction_to_player_vec.z * deltaTime * VELOCITY
+            );
+        }
     }
     this->UpdateModel();
 

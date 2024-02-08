@@ -27,6 +27,7 @@ set(SOURCES
   src/coin.cpp
   src/camera.cpp
   src/monster.cpp
+  src/audioManager.cpp
 )
 
 cmake_minimum_required(VERSION 3.5.0)

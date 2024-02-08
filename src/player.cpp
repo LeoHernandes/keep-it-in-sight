@@ -67,6 +67,8 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
 {
     if (!Matrices::IsVectorNull(acceleration_vec))
     {
+        AudioManager::PlayAudio(this->walking_sound);
+
         glm::vec4 normalized_acceleration_vec = Matrices::Normalize(acceleration_vec);
         if (_is_pressing_SHIFT_key && has_stamina)
         {
@@ -103,6 +105,8 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
         // If there is no acceleration, apply friction on velocity vec
         if (!Matrices::IsVectorNull(this->velocity_vec))
         {
+            AudioManager::StopAudio(this->walking_sound);
+
             glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
             glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
 
@@ -128,14 +132,28 @@ void Player::UpdatePlayerPosition(float deltaTime)
     // Update player position
     glm::vec4 new_position = this->position + velocity_vec * deltaTime;
     if (!Collisions::PlayerBoxTest(new_position))
+    {
         this->position = new_position;
+    }
     else
+    {
+        AudioManager::StopAudio(this->walking_sound);
         velocity_vec = glm::vec4(0.0f);
+    }
 }
 
-void Player::UpdatePlayerCamera()
+void Player::UpdatePlayerCameraEntity(float deltaTime)
 {
-    
+    this->time_without_flash += deltaTime;
+
+    if (this->_is_pressing_F_key && this->time_without_flash >= TIME_TO_USE_FLASH_CAMERA)
+    {
+        AudioManager::PlayAudio(this->flash_camera_sound);
+        
+        // TODO: implementar a geração de vetores por aq
+
+        time_without_flash = 0.0f;
+    }
 }
 
 ///////////////
@@ -143,6 +161,9 @@ void Player::UpdatePlayerCamera()
 ///////////////
 Player::Player()
 {
+    this->walking_sound = AudioManager::MakeSound("../../data/player_walking.mp3", true, WALKING_SOUND_VOLUME);
+    this->flash_camera_sound = AudioManager::MakeSound("../../data/camera_flash.mp3", false, FLASH_CAMERA_VOLUME);
+
     this->camera_mode = CameraMode::Free;
     this->velocity_vec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     this->position = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f);
@@ -200,7 +221,7 @@ void Player::OnUpdate(float deltaTime)
         look_at_camera->Update(position);
         break;
     case CameraMode::Free:
-        UpdatePlayerCamera();
+        UpdatePlayerCameraEntity(deltaTime);
         UpdatePlayerPosition(deltaTime);
         free_camera->Update(position, GetDeltaRunVelocity(), this->head_movement);
         break;

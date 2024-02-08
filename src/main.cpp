@@ -33,6 +33,7 @@
 #include "coin.h"
 #include "camera.h"
 #include "monster.h"
+#include "audioManager.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -42,6 +43,8 @@ void SetupOpenGl();
 
 int main()
 {
+    AudioManager::Init();
+    
     TextureLoader texture_loader;
     Player player;
     GLFWwindow *window = InitializeAppWindow(&player);
@@ -191,6 +194,7 @@ int main()
         glfwPollEvents();
     }
 
+    AudioManager::Destroy();
     // Destroys and frees all GLFW resources
     glfwTerminate();
     return 0;

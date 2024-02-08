@@ -6,6 +6,7 @@
 #include "matrices.h"
 #include "collisions.h"
 #include "cubicBezier.h"
+#include "audioManager.h"
 
 // OpenGl
 #include <glad/glad.h>
@@ -24,13 +25,17 @@ class Player
 private:
     CameraMode camera_mode;
 
+    // player movement
+    Sound* walking_sound;
     glm::vec4 velocity_vec;
     const float MAX_WALK_VELOCITY = 5.0f;
     const float MAX_RUN_VELOCITY = 10.0f;
     const float WALK_ACCELERATION = 50.0f;
     const float RUN_ACCELERATION = 60.0f;
     const float FRICTION_FACTOR = 100.0f;
+    const float WALKING_SOUND_VOLUME = 0.5f;
 
+    // player stamina
     float stamina = 0.0f;
     bool has_stamina = true;
     float time_without_run = 0.0f;
@@ -38,6 +43,13 @@ private:
     const float STAMINA_RECOVERY_RATE = 10.0f;
     const float STAMINA_LOSS_RATE = 30.0f;
     const float TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA = 3.0f;
+
+    // player camera
+    Sound* flash_camera_sound;
+    float time_without_flash = 0.0f;
+    const float FLASH_CAMERA_VOLUME = 0.15f;
+    const float TIME_TO_USE_FLASH_CAMERA = 3.0f;
+
 
     CubicBezier *cubic_bezier_head_movement;
     glm::vec4 head_movement;
@@ -56,7 +68,7 @@ private:
     glm::vec4 GetPlayerAccelerationVector();
     void UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_vec);
     void UpdatePlayerPosition(float deltaTime);
-    void UpdatePlayerCamera();
+    void UpdatePlayerCameraEntity(float deltaTime);
     float GetDeltaRunVelocity();
     void LossStamina(float deltaTime);
     void RecoveryStamina(float deltaTime);
