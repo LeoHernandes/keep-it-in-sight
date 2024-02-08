@@ -95,7 +95,7 @@ vec3 GetTextureColorFromTextureId(int texture_id, TextureCoordinates text_coords
     }
     else if(texture_id == 5)
     {
-        return texture(TextureImage5, vec2(1.5*texcoords[0],1.5*texcoords[1])).rgb;
+        return texture(TextureImage5, vec2(texcoords[0],texcoords[1])).rgb;
     }
     else if(texture_id == 6)
     {
