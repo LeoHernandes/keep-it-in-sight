@@ -15,7 +15,7 @@ private:
     bool is_closing;
     float progression_time;
 
-    const float ANIMATION_TIME = 0.5f;
+    const float ANIMATION_TIME = 0.75f;
     const float MAX_DISTANCE_TO_OPEN_DOOR = 1.5f;
     const float DOOR_OPENING_ANGLE = 3.141592 / 2;
 

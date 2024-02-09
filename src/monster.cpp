@@ -5,12 +5,14 @@ Monster::Monster(GpuProgramController *gpu_controller, Object *object, Player *p
 {
     this->texture_id = texture_id;
     this->player = player;
+    AudioManager::PlayAudio(AudioManager::monster_sound);
 }
 
 void Monster::Update(float deltaTime)
 {
     glm::vec4 direction_to_player_vec = this->player->position - glm::vec4(this->position, 1.0f);
-
+    AudioManager::SetPositionAudio(AudioManager::monster_sound, direction_to_player_vec);
+    
     if (!Matrices::IsVectorNull(direction_to_player_vec))
     {
         glm::vec4 normalized_direction_to_player_vec = Matrices::Normalize(this->player->position - glm::vec4(this->position, 1.0f));

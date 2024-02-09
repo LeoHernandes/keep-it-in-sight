@@ -3,11 +3,23 @@
 #define strcasecmp strcmp // Por algum motivo isso para de dar erro de compilação
 #include <miniaudio.h>
 
-Sound* AudioManager::walking_player_sound = NULL;
+Sound* AudioManager::step_player_sound = NULL;
 Sound* AudioManager::flash_camera_sound = NULL;
+Sound* AudioManager::ambient_sound = NULL;
+Sound* AudioManager::door_sound = NULL;
+Sound* AudioManager::tired_player_sound = NULL;
+Sound* AudioManager::monster_sound = NULL;
 
-const float WALKING_SOUND_VOLUME = 0.5f;
+const float AudioManager::WALK_SOUND_VOLUME = 0.50f;
+const float AudioManager::WALK_VELOCITY_AUDIO = 1.0f;
+const float AudioManager::RUN_SOUND_VOLUME = 0.65f;
+const float AudioManager::RUN_VELOCITY_AUDIO = 2.0f;
+
 const float FLASH_CAMERA_VOLUME = 0.15f;
+const float AMBIENT_SOUND_VOLUME = 0.50f;
+const float DOOR_SOUND_VOLUME = 0.50f;
+const float TIRED_PLAYER_VOLUME = 1.75f;
+const float MONSTER_VOLUME = 0.50f;
 
 static ma_engine engine;
 
@@ -27,12 +39,23 @@ void AudioManager::Init()
         exit(1);
     }
 
-    walking_player_sound = MakeSound("../../data/player_walking.mp3", true, WALKING_SOUND_VOLUME);
+    step_player_sound = MakeSound("../../data/player_walking.mp3", true, WALK_SOUND_VOLUME);
     flash_camera_sound = MakeSound("../../data/camera_flash.mp3", false, FLASH_CAMERA_VOLUME);
+    ambient_sound = MakeSound("../../data/backrooms_ambience.mp3", true, AMBIENT_SOUND_VOLUME);
+    door_sound = MakeSound("../../data/door.mp3", false, DOOR_SOUND_VOLUME);
+    tired_player_sound = MakeSound("../../data/heavy_breathing.mp3", false, TIRED_PLAYER_VOLUME);
+    monster_sound = MakeSound("../../data/angry_beast.mp3", true, MONSTER_VOLUME);
 }
 
 void AudioManager::Destroy()
 {
+    DestroySound(step_player_sound);
+    DestroySound(flash_camera_sound);
+    DestroySound(ambient_sound);
+    DestroySound(door_sound);
+    DestroySound(tired_player_sound);
+    DestroySound(monster_sound);
+
     ma_engine_uninit(&engine);
 }
 
@@ -60,6 +83,16 @@ void AudioManager::DestroySound(Sound* sound)
 void AudioManager::SetAudioVolume(Sound *sound, float volume)
 {
     ma_sound_set_volume(&sound->audio, volume);
+}
+
+void AudioManager::SetPositionAudio(Sound *sound, glm::vec4 position)
+{
+    ma_sound_set_position(&sound->audio, position.x, position.y, position.z);
+}
+
+void AudioManager::SetAudioSpeed(Sound *sound, float speed)
+{
+    ma_sound_set_pitch(&sound->audio, speed);
 }
 
 void AudioManager::PlayAudio(Sound *sound)

@@ -162,6 +162,7 @@ int main()
     float currentTime = 0.0f;
     float deltaTime = 0.0f;
 
+    AudioManager::PlayAudio(AudioManager::ambient_sound);
     while (!glfwWindowShouldClose(window))
     {
         // Reset screen pixels data

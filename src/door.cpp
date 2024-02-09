@@ -11,13 +11,15 @@ Door::Door(GpuProgramController *gpu_controller, Object *object, Player *player,
     this->is_opening = false;
     this->is_closing = false;
     this->progression_time = 0.0f;
+
+    AudioManager::SetAudioSpeed(AudioManager::door_sound, 1/ANIMATION_TIME);
 }
 
 void Door::Update(float deltaTime)
 {
     if (this->player->_is_pressing_E_key && this->hit_box->RayAABBTest(player->position, player->free_camera->view_vector, MAX_DISTANCE_TO_OPEN_DOOR))
     {
-        if (this->progression_time <= ANIMATION_TIME)
+        if (this->progression_time <= ANIMATION_TIME && !is_closing)
             this->is_opening = true;
         else
             this->is_closing = true;
@@ -40,6 +42,8 @@ void Door::OpeningDoor(float deltaTime)
     this->progression_time += deltaTime;
     this->rotation.z = (progression_time / ANIMATION_TIME) * DOOR_OPENING_ANGLE;
     this->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
+
+    AudioManager::PlayAudio(AudioManager::door_sound);
 }
 
 void Door::ClosingDoor(float deltaTime)
@@ -50,6 +54,8 @@ void Door::ClosingDoor(float deltaTime)
     this->progression_time -= deltaTime;
     this->rotation.z = (progression_time / ANIMATION_TIME) * (3.141592 / 2);
     this->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
+
+    AudioManager::PlayAudio(AudioManager::door_sound);
 }
 
 void Door::Render()

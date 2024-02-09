@@ -38,7 +38,14 @@ void Player::LossStamina(float deltaTime)
     float new_stamina = this->stamina - STAMINA_LOSS_RATE * deltaTime;
 
     if (time_without_run >= TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA)
+    {
         this->has_stamina = true;
+        AudioManager::StopAudio(AudioManager::tired_player_sound);
+    } 
+    else
+    {
+        AudioManager::PlayAudio(AudioManager::tired_player_sound);
+    }
 
     if (new_stamina >= 0.0f)
     {
@@ -57,7 +64,14 @@ void Player::RecoveryStamina(float deltaTime)
     float new_stamina = this->stamina + STAMINA_RECOVERY_RATE * deltaTime;
 
     if (time_without_run >= TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA)
+    {
         this->has_stamina = true;
+        AudioManager::StopAudio(AudioManager::tired_player_sound);
+    } 
+    else
+    {
+        AudioManager::PlayAudio(AudioManager::tired_player_sound);
+    }
 
     if (new_stamina <= TOTAL_STAMINA)
         this->stamina = new_stamina;
@@ -67,8 +81,6 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
 {
     if (!Matrices::IsVectorNull(acceleration_vec))
     {
-        AudioManager::PlayAudio(AudioManager::walking_player_sound);
-
         glm::vec4 normalized_acceleration_vec = Matrices::Normalize(acceleration_vec);
         if (_is_pressing_SHIFT_key && has_stamina)
         {
@@ -78,10 +90,14 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
             if (current_velocity <= MAX_RUN_VELOCITY)
                 this->velocity_vec = new_velocity_vec;
 
+            AudioManager::StopAudio(AudioManager::tired_player_sound);
             LossStamina(deltaTime);
 
             this->cubic_bezier_head_movement->Update(deltaTime);
             this->head_movement = cubic_bezier_head_movement->GetPoint();
+
+            AudioManager::SetAudioVolume(AudioManager::step_player_sound, AudioManager::RUN_SOUND_VOLUME);
+            AudioManager::SetAudioSpeed(AudioManager::step_player_sound, AudioManager::RUN_VELOCITY_AUDIO);
         }
         else
         {
@@ -100,15 +116,18 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
             this->cubic_bezier_head_movement->ResetCurve();
             this->head_movement = cubic_bezier_head_movement->GetPoint();
 
+            AudioManager::SetAudioVolume(AudioManager::step_player_sound, AudioManager::WALK_SOUND_VOLUME);
+            AudioManager::SetAudioSpeed(AudioManager::step_player_sound, AudioManager::WALK_VELOCITY_AUDIO);
             RecoveryStamina(deltaTime);
         }
+        AudioManager::PlayAudio(AudioManager::step_player_sound);
     }
     else
     {
         // If there is no acceleration, apply friction on velocity vec
         if (!Matrices::IsVectorNull(this->velocity_vec))
         {
-            AudioManager::StopAudio(AudioManager::walking_player_sound);
+            AudioManager::StopAudio(AudioManager::step_player_sound);
 
             glm::vec4 normalized_velocity_vec = Matrices::Normalize(velocity_vec);
             glm::vec4 friction_vec = -normalized_velocity_vec * deltaTime * FRICTION_FACTOR;
@@ -119,6 +138,7 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
                 this->velocity_vec += friction_vec;
         }
 
+        AudioManager::StopAudio(AudioManager::tired_player_sound);
         RecoveryStamina(deltaTime);
     }
 
@@ -140,7 +160,7 @@ void Player::UpdatePlayerPosition(float deltaTime)
     }
     else
     {
-        AudioManager::StopAudio(AudioManager::walking_player_sound);
+        AudioManager::StopAudio(AudioManager::step_player_sound);
         velocity_vec = glm::vec4(0.0f);
     }
 }

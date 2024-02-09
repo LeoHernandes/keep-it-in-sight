@@ -46,7 +46,6 @@ private:
     float time_without_flash = 0.0f;
     const float TIME_TO_USE_FLASH_CAMERA = 3.0f;
 
-
     CubicBezier *cubic_bezier_head_movement;
     glm::vec4 head_movement;
     const float DELTA_HEAD_MOVEMENT_POSITION = 0.15f;
