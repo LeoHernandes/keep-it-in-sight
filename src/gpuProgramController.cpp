@@ -9,15 +9,19 @@ GpuProgramController::GpuProgramController(GLuint gpu_program_id)
     this->bbox_max_uniform = glGetUniformLocation(gpu_program_id, "bbox_max");
     this->texture_projection_type = glGetUniformLocation(gpu_program_id, "texture_projection_type");
     this->interpolation_type = glGetUniformLocation(gpu_program_id, "interpolation_type");
+    this->is_texture_skybox = glGetUniformLocation(gpu_program_id, "is_texture_skybox");
     this->texture_id = glGetUniformLocation(gpu_program_id, "texture_id");
+}
 
-    glUseProgram(gpu_program_id);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage2"), 2);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage3"), 3);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage4"), 4);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage5"), 5);
-    glUniform1i(glGetUniformLocation(gpu_program_id, "TextureImage6"), 6);
-    glUseProgram(0);
+void GpuProgramController::DrawElements(GLuint VAO_id, glm::mat4 model, TextureCoordinatesType text_coords_type, LightInterpolationType light_type, GLint tex_id, glm::vec3 bbox_min, glm::vec3 bbox_max, size_t num_indices, size_t first_index)
+{
+    glBindVertexArray(VAO_id);
+    glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(texture_projection_type, text_coords_type);
+    glUniform1i(interpolation_type, light_type);
+    glUniform1i(texture_id, tex_id);
+    glUniform4f(bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
+    glUniform4f(bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
+    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void *)(first_index * sizeof(GLuint)));
+    glBindVertexArray(0);
 }

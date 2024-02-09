@@ -5,10 +5,11 @@
 // OpenGl
 #include <glad/glad.h>
 
-enum TextureProjectionType
+enum TextureCoordinatesType
 {
     SPHERE,
-    PLANE
+    PLANE,
+    OBJ_FILE
 };
 
 class TextureLoader

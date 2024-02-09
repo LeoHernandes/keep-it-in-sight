@@ -9,13 +9,6 @@
 #include "collisions.h"
 #include "gpuProgramController.h"
 
-enum LightInterpolationType
-{
-    GOURAUD,
-    PHONG,
-    NO_LIGHT
-};
-
 class Entity
 {
 private:

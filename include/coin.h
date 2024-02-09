@@ -6,14 +6,15 @@
 #include "textureLoader.h"
 #include "cubicBezier.h"
 #include "scene.h"
+#include "lightInterpolationType.h"
 
 class Coin : public Entity
 {
 private:
-    Player*player;
-    CubicBezier* cubic_bezier_movement_coin;
+    Player *player;
+    CubicBezier *cubic_bezier_movement_coin;
     glm::vec4 coin_movement;
-    Scene* scene;
+    Scene *scene;
 
     const float ANIMATION_TIME_COIN = 3.0f;
     const glm::vec4 BEZIER_P1 = glm::vec4(0.0f, -0.3f, 0.0f, 0.0f);

@@ -23,29 +23,15 @@ uniform int interpolation_type;
 #define TEXTURE_PROJECTION_PLANE 1
 uniform int texture_projection_type;
 
-#define TEXTURE_SKYBOX 0
-uniform int texture_id;
-
-uniform sampler2D TextureImage0;
-uniform sampler2D TextureImage1;
-uniform sampler2D TextureImage2;
-uniform sampler2D TextureImage3;
-uniform sampler2D TextureImage4;
-uniform sampler2D TextureImage5;
-uniform sampler2D TextureImage6;
+uniform int is_texture_skybox;
+uniform sampler2D texture_id;
 
 out vec4 color;
 
 #define M_PI   3.14159265358979323846
 #define M_PI_2 1.57079632679489661923
 
-struct TextureCoordinates
-{
-    float u;
-    float v;
-};
-
-TextureCoordinates GetTextureCoordinatesFromSphereProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
+vec2 GetTextureCoordinatesFromSphereProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
 {
     vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
 
@@ -55,10 +41,10 @@ TextureCoordinates GetTextureCoordinatesFromSphereProjection(vec4 bbox_min, vec4
     float u = (theta + M_PI)/(2*M_PI);
     float v = (phi + M_PI_2)/M_PI;
 
-    return TextureCoordinates(u, v);
+    return vec2(u, v);
 }
 
-TextureCoordinates GetTextureCoordinatesFromPlaneProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
+vec2 GetTextureCoordinatesFromPlaneProjection(vec4 bbox_min, vec4 bbox_max, vec4 position_model)
 {
     float minx = bbox_min.x;
     float maxx = bbox_max.x;
@@ -72,39 +58,7 @@ TextureCoordinates GetTextureCoordinatesFromPlaneProjection(vec4 bbox_min, vec4 
     float u = (position_model.x - minx)/(maxx - minx);
     float v = (position_model.y - miny)/(maxy - miny);
 
-    return TextureCoordinates(u, v);
-}
-
-vec3 GetTextureColorFromTextureId(int texture_id, TextureCoordinates text_coords)
-{
-    if(texture_id == 1)
-    {
-        return texture(TextureImage1, vec2(texcoords[0],texcoords[1])).rgb;
-    }
-    else if(texture_id == 2)
-    {
-        return texture(TextureImage2, vec2(texcoords[0],texcoords[1])).rgb;
-    }
-    else if(texture_id == 3)
-    {
-        return texture(TextureImage3, vec2(texcoords[0],texcoords[1])).rgb;
-    }
-    else if(texture_id == 4)
-    {
-        return texture(TextureImage4, vec2(1*texcoords[0],10*texcoords[1])).rgb;
-    }
-    else if(texture_id == 5)
-    {
-        return texture(TextureImage5, vec2(texcoords[0],texcoords[1])).rgb;
-    }
-    else if(texture_id == 6)
-    {
-        return texture(TextureImage6, vec2(text_coords.u,text_coords.v)).rgb;
-    }
-    else
-    {
-        return vec3(0.0, 0.0, 0.0);
-    }
+    return vec2(u, v);
 }
 
 void main()
@@ -113,38 +67,34 @@ void main()
     vec4 camera_position = inverse(view) * origin;
 
     vec4 p = position_world;
-
     vec4 n = normalize(normal);
-
     // Direction of light source
     vec4 l = normalize(vec4(1.0,1.0,0.5,0.0));
-
     vec4 v = normalize(camera_position - p);
-
     // Specular light
     vec4 r = -l + 2.0 * n * dot(n, l);
 
-    TextureCoordinates text_coords;
+    vec2 custom_texcoords;
     if ( texture_projection_type == TEXTURE_PROJECTION_SPHERE )
     {
-        text_coords = GetTextureCoordinatesFromSphereProjection(bbox_min, bbox_max, position_model);
+        custom_texcoords = GetTextureCoordinatesFromSphereProjection(bbox_min, bbox_max, position_model);
     }
     else if ( texture_projection_type == TEXTURE_PROJECTION_PLANE )
     {
-        text_coords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
+        custom_texcoords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
     }
     else
     {
-        text_coords = TextureCoordinates(0.0, 0.0);
+        custom_texcoords = vec2(0.0, 0.0);
     }
 
-    if(texture_id == TEXTURE_SKYBOX)
+    if(is_texture_skybox == 1)
     {
-        color.rgb = texture(TextureImage0, vec2(text_coords.u,text_coords.v)).rgb;
+        color.rgb = texture(texture_id, custom_texcoords).rgb;
     }
     else
     {
-        vec3 Kd0 = GetTextureColorFromTextureId(texture_id, text_coords);
+        vec3 Kd0 = texture(texture_id, texcoords).rgb;
         vec3 Ks = vec3(0.8,0.8,0.8);
         float q = 32.0;
 
