@@ -5,11 +5,20 @@ TextureLoader::TextureLoader()
     this->number_of_loaded_textures = 0;
 }
 
-void TextureLoader::LoadTextureImage(const char *filename)
+void TextureLoader::LoadTextureImage(const char *filename, std::string name)
 {
+    if (texture_ids.find(name) == texture_ids.end())
+    {
+        texture_ids[name] = number_of_loaded_textures;
+    }
+    else
+    {
+        std::cerr << "[ERROR] LoadTexture: a texture of name " << name << " already exists in the game" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
     printf("Carregando imagem \"%s\"... ", filename);
 
-    // Primeiro fazemos a leitura da imagem do disco
     stbi_set_flip_vertically_on_load(true);
     int width;
     int height;
@@ -24,21 +33,17 @@ void TextureLoader::LoadTextureImage(const char *filename)
 
     printf("OK (%dx%d).\n", width, height);
 
-    // Agora criamos objetos na GPU com OpenGL para armazenar a textura
     GLuint texture_id;
     GLuint sampler_id;
     glGenTextures(1, &texture_id);
     glGenSamplers(1, &sampler_id);
 
-    // Veja slides 95-96 do documento Aula_20_Mapeamento_de_Texturas.pdf
     glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // Parâmetros de amostragem da textura.
     glSamplerParameteri(sampler_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glSamplerParameteri(sampler_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Agora enviamos a imagem lida do disco para a GPU
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
@@ -54,4 +59,19 @@ void TextureLoader::LoadTextureImage(const char *filename)
     stbi_image_free(data);
 
     this->number_of_loaded_textures += 1;
+}
+
+unsigned int TextureLoader::GetTexture(std::string name)
+{
+    auto iter = texture_ids.find(name);
+
+    if (iter == texture_ids.end())
+    {
+        std::cerr << "[ERROR] GetTexture: a texture of name " << name << " doesn't exist" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    else
+    {
+        return iter->second;
+    }
 }

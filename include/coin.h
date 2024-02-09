@@ -26,7 +26,7 @@ private:
     const float DELTA_RADIUS_COLLISION = 1.0f;
 
 public:
-    Coin(std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity(), Object *object = NULL, Player *player = NULL, Scene *scene = NULL, glm::vec3 position = glm::vec3(0.0f));
+    Coin(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, Scene *scene, glm::vec3 position, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };

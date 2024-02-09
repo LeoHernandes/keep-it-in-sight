@@ -21,7 +21,7 @@ private:
     int texture_id;
 
 public:
-    StaticEntity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, int texture_id, LightInterpolationType interpolation_type = LightInterpolationType::PHONG);
+    StaticEntity(std::string name, GpuProgramController *gpu_controller, Object *object, int texture_id, LightInterpolationType interpolation_type, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };

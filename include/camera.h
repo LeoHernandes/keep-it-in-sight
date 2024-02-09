@@ -17,7 +17,7 @@ private:
     Player *player;
 
 public:
-    Camera(std::string name, GpuProgramController *gpu_controller, glm::mat4 model = Matrices::Identity(), Object *object = NULL, Player *player = NULL);
+    Camera(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };

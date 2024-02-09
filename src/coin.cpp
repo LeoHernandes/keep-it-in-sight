@@ -1,6 +1,6 @@
 #include "coin.h"
 
-Coin::Coin(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, Player *player, Scene *scene, glm::vec3 position)
+Coin::Coin(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, Scene *scene, glm::vec3 position, glm::mat4 model)
     : Entity(name, gpu_controller, model, object, LightInterpolationType::GOURAUD)
 {
     this->player = player;

@@ -19,7 +19,7 @@ protected:
     LightInterpolationType interpolation_type;
     glm::mat4 model;
     Object *object;
-    Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, LightInterpolationType interpolation_type = LightInterpolationType::PHONG);
+    Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, LightInterpolationType interpolation_type);
 
 public:
     std::string name;

@@ -1,7 +1,7 @@
 #include "skybox.h"
 
 Skybox::Skybox(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player)
-    : Entity(name, gpu_controller, Matrices::Identity(), object)
+    : Entity(name, gpu_controller, Matrices::Identity(), object, LightInterpolationType::NO_LIGHT)
 {
     this->player = player;
 }
