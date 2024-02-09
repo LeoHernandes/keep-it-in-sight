@@ -26,14 +26,12 @@ private:
     CameraMode camera_mode;
 
     // player movement
-    Sound* walking_sound;
     glm::vec4 velocity_vec;
     const float MAX_WALK_VELOCITY = 5.0f;
     const float MAX_RUN_VELOCITY = 10.0f;
     const float WALK_ACCELERATION = 50.0f;
     const float RUN_ACCELERATION = 60.0f;
     const float FRICTION_FACTOR = 100.0f;
-    const float WALKING_SOUND_VOLUME = 0.5f;
 
     // player stamina
     float stamina = 0.0f;
@@ -45,9 +43,7 @@ private:
     const float TIME_TO_RUN_AGAIN_AFTER_USE_ALL_STAMINA = 3.0f;
 
     // player camera
-    Sound* flash_camera_sound;
     float time_without_flash = 0.0f;
-    const float FLASH_CAMERA_VOLUME = 0.15f;
     const float TIME_TO_USE_FLASH_CAMERA = 3.0f;
 
 

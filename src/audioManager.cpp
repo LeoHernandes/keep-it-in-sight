@@ -1,8 +1,13 @@
 #include "audioManager.h"
-
 #define MINIAUDIO_IMPLEMENTATION
 #define strcasecmp strcmp // Por algum motivo isso para de dar erro de compilação
 #include <miniaudio.h>
+
+Sound* AudioManager::walking_player_sound = NULL;
+Sound* AudioManager::flash_camera_sound = NULL;
+
+const float WALKING_SOUND_VOLUME = 0.5f;
+const float FLASH_CAMERA_VOLUME = 0.15f;
 
 static ma_engine engine;
 
@@ -21,6 +26,9 @@ void AudioManager::Init()
         printf("Failed to initialize audio engine.");
         exit(1);
     }
+
+    walking_player_sound = MakeSound("../../data/player_walking.mp3", true, WALKING_SOUND_VOLUME);
+    flash_camera_sound = MakeSound("../../data/camera_flash.mp3", false, FLASH_CAMERA_VOLUME);
 }
 
 void AudioManager::Destroy()

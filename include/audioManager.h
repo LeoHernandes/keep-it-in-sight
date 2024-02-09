@@ -9,6 +9,9 @@ private:
     AudioManager();
     
 public:
+    static Sound *walking_player_sound;
+    static Sound* flash_camera_sound;
+
     static void Init();
     static void Destroy();
 
