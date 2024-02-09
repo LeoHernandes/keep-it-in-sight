@@ -54,13 +54,13 @@ int main()
 
     GLuint gpu_program_id = LoadShadersFromFiles();
 
+    texture_loader.LoadTextureImage("../../data/rusty_metal.jpg", "metal");
     texture_loader.LoadTextureImage("../../data/skybox_fake_clouds.jpg", "skybox");
     texture_loader.LoadTextureImage("../../data/tc-earth_daymap_surface.jpg", "earth-map");
     texture_loader.LoadTextureImage("../../data/10124_SLR_Camera_V1_Diffuse.jpg", "camera");
     texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg", "door");
     texture_loader.LoadTextureImage("../../data/wall_backrooms.jpg", "wall");
     texture_loader.LoadTextureImage("../../data/floor_tile.jpg", "floor");
-    texture_loader.LoadTextureImage("../../data/rusty_metal.jpg", "metal");
 
     GpuProgramController gpu_controller(gpu_program_id);
 
@@ -80,7 +80,7 @@ int main()
 
     Scene scene;
 
-    Door doormodel1(&gpu_controller, &door, &player);
+    Door doormodel1(&gpu_controller, &door, &player, texture_loader.GetTexture("door"));
     doormodel1.CreateHitBox();
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
     doormodel1.SetPosition(0.0f, 0.0f, 5.0f);
@@ -88,53 +88,53 @@ int main()
     doormodel1.UpdateModel();
     doormodel1.UpdateCollision();
 
-    Coin coinmodel1(&gpu_controller, &sphere, &player, &scene, glm::vec3(-3.0f, 0.5f, 7.0f));
-    Coin coinmodel2(&gpu_controller, &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f));
-    Coin coinmodel3(&gpu_controller, &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f));
-    Coin coinmodel4(&gpu_controller, &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
+    Coin coinmodel1(&gpu_controller, &sphere, &player, &scene, glm::vec3(-3.0f, 0.5f, 7.0f), texture_loader.GetTexture("metal"));
+    Coin coinmodel2(&gpu_controller, &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f), texture_loader.GetTexture("metal"));
+    Coin coinmodel3(&gpu_controller, &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f), texture_loader.GetTexture("metal"));
+    Coin coinmodel4(&gpu_controller, &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f), texture_loader.GetTexture("metal"));
 
-    Camera cameramodel1(&gpu_controller, &camera, &player);
+    Camera cameramodel1(&gpu_controller, &camera, &player, texture_loader.GetTexture("camera"));
 
-    StaticEntity planemodel1(&gpu_controller, &plane, 5, LightInterpolationType::NO_LIGHT);
+    StaticEntity planemodel1(&gpu_controller, &plane, texture_loader.GetTexture("floor"), LightInterpolationType::NO_LIGHT);
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);
     planemodel1.UpdateModel();
 
-    StaticEntity cubemodel1(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel1(&gpu_controller, &cube, texture_loader.GetTexture("wall"), LightInterpolationType::NO_LIGHT);
     cubemodel1.CreateHitBox();
     cubemodel1.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel1.SetPosition(0.0f, 10.0f, 10.0f);
     cubemodel1.UpdateModel();
     cubemodel1.UpdateCollision();
 
-    StaticEntity cubemodel2(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel2(&gpu_controller, &cube, texture_loader.GetTexture("wall"), LightInterpolationType::NO_LIGHT);
     cubemodel2.CreateHitBox();
     cubemodel2.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel2.SetPosition(0.0f, 10.0f, -10.0f);
     cubemodel2.UpdateModel();
     cubemodel2.UpdateCollision();
 
-    StaticEntity cubemodel3(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel3(&gpu_controller, &cube, texture_loader.GetTexture("wall"), LightInterpolationType::NO_LIGHT);
     cubemodel3.CreateHitBox();
     cubemodel3.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel3.SetPosition(10.0f, 10.0f, 0.0f);
     cubemodel3.UpdateModel();
     cubemodel3.UpdateCollision();
 
-    StaticEntity cubemodel4(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel4(&gpu_controller, &cube, texture_loader.GetTexture("wall"), LightInterpolationType::NO_LIGHT);
     cubemodel4.CreateHitBox();
     cubemodel4.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel4.SetPosition(-10.0f, 10.0f, 0.0f);
     cubemodel4.UpdateModel();
     cubemodel4.UpdateCollision();
 
-    Monster monstermodel(&gpu_controller, &bunny, &player);
+    Monster monstermodel(&gpu_controller, &bunny, &player, texture_loader.GetTexture("earth-map"));
     // monstermodel.CreateHitBox();
     monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
     monstermodel.UpdateModel();
     // monstermodel.UpdateCollision();
     // player.AddMonsterHitbox(monstermodel.hit_box);
 
-    Skybox skybox(&gpu_controller, &sphere, &player);
+    Skybox skybox(&gpu_controller, &sphere, &player, texture_loader.GetTexture("skybox"));
 
     scene.AddSkybox(&skybox);
 

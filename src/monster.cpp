@@ -1,8 +1,9 @@
 #include "monster.h"
 
-Monster::Monster(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+Monster::Monster(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id, glm::mat4 model)
     : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
+    this->texture_id = texture_id;
     this->player = player;
 }
 
@@ -45,7 +46,7 @@ void Monster::Render()
         model,
         TextureCoordinatesType::SPHERE,
         interpolation_type,
-        1,
+        texture_id,
         object->bbox_min,
         object->bbox_max,
         object->num_indices,

@@ -1,8 +1,9 @@
 #include "camera.h"
 
-Camera::Camera(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+Camera::Camera(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id, glm::mat4 model)
     : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
+    this->texture_id = texture_id;
     this->player = player;
 }
 
@@ -34,7 +35,7 @@ void Camera::Render()
         model,
         TextureCoordinatesType::OBJ_FILE,
         interpolation_type,
-        2,
+        texture_id,
         object->bbox_min,
         object->bbox_max,
         object->num_indices,

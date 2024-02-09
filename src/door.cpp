@@ -1,8 +1,9 @@
 #include "door.h"
 
-Door::Door(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+Door::Door(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id, glm::mat4 model)
     : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
+    this->texture_id = texture_id;
     this->player = player;
 
     this->axis_position.x = -(this->object->bbox_min.x + this->object->bbox_min.x) / 2;
@@ -58,7 +59,7 @@ void Door::Render()
         model,
         TextureCoordinatesType::OBJ_FILE,
         interpolation_type,
-        3,
+        texture_id,
         object->bbox_min,
         object->bbox_max,
         object->num_indices,

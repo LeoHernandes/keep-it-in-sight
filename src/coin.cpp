@@ -1,8 +1,10 @@
 #include "coin.h"
 
-Coin::Coin(GpuProgramController *gpu_controller, Object *object, Player *player, Scene *scene, glm::vec3 position, glm::mat4 model)
+Coin::Coin(GpuProgramController *gpu_controller, Object *object, Player *player, Scene *scene, glm::vec3 position, int texture_id, glm::mat4 model)
     : Entity(gpu_controller, model, object, LightInterpolationType::GOURAUD)
 {
+    this->texture_id = texture_id;
+
     this->player = player;
     this->scene = scene;
     this->cubic_bezier_movement_coin = new CubicBezier(ANIMATION_TIME_COIN, BEZIER_P1, BEZIER_P2, BEZIER_P3, BEZIER_P4);
@@ -41,7 +43,7 @@ void Coin::Render()
         model,
         TextureCoordinatesType::SPHERE,
         interpolation_type,
-        6,
+        texture_id,
         object->bbox_min,
         object->bbox_max,
         object->num_indices,

@@ -9,6 +9,7 @@ class Door : public Entity
 {
 private:
     Player *player;
+    int texture_id;
 
     bool is_opening;
     bool is_closing;
@@ -22,7 +23,7 @@ private:
     void ClosingDoor(float deltaTime);
 
 public:
-    Door(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model = Matrices::Identity());
+    Door(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };

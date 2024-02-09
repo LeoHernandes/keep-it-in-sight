@@ -20,9 +20,10 @@ class Skybox : public Entity
 {
 private:
     Player *player;
+    int texture_id;
 
 public:
-    Skybox(GpuProgramController *gpu_controller, Object *object, Player *player);
+    Skybox(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id);
     void Update(float deltaTime) override;
     void Render() override;
 };
