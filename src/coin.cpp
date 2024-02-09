@@ -30,6 +30,7 @@ void Coin::Update(float deltaTime)
     {
         this->player->collected_coins += 1;
         this->scene->RemoveEntity(this);
+        AudioManager::PlayAudioWithRestart(AudioManager::coin_sound);
     }
 
     // sem alterar a hitsphere da moeda, ou seja, não chamamos o UpdateCollision

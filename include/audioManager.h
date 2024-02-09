@@ -22,6 +22,7 @@ public:
     static Sound *door_sound;
     static Sound *tired_player_sound;
     static Sound *monster_sound;
+    static Sound *coin_sound;
 
     static void Init();
     static void Destroy();
@@ -33,6 +34,7 @@ public:
     static void SetAudioSpeed(Sound *sound, float speed);
     static void SetPositionAudio(Sound *sound, glm::vec4 position);
     static void PlayAudio(Sound *sound);
+    static void PlayAudioWithRestart(Sound *sound);
     static void StopAudio(Sound *sound);
     static bool IsAudioPlaying(Sound *sound);
 };
