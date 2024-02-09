@@ -42,3 +42,8 @@ glm::vec4 CubicBezier::GetPoint()
 
     return c123 + t * (c234 - c123);
 }
+
+void CubicBezier::ResetCurve()
+{
+    this->timer = 0.0f;
+}

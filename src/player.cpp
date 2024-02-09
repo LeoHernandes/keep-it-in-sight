@@ -97,6 +97,9 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
                 this->velocity_vec += friction_vec;
             }
 
+            this->cubic_bezier_head_movement->ResetCurve();
+            this->head_movement = cubic_bezier_head_movement->GetPoint();
+
             RecoveryStamina(deltaTime);
         }
     }
@@ -119,7 +122,7 @@ void Player::UpdatePlayerVelocityVector(float deltaTime, glm::vec4 acceleration_
         RecoveryStamina(deltaTime);
     }
 
-    //printf("stamina: %f, time_without_run: %f\n", this->stamina, time_without_run);
+    // printf("stamina: %f, time_without_run: %f\n", this->stamina, time_without_run);
 }
 
 void Player::UpdatePlayerPosition(float deltaTime)
@@ -127,7 +130,7 @@ void Player::UpdatePlayerPosition(float deltaTime)
     glm::vec4 acceleration_vec = GetPlayerAccelerationVector();
     UpdatePlayerVelocityVector(deltaTime, acceleration_vec);
 
-    //printf("%d\n", Collisions::PlayerBoxTest(this->position + velocity_vec * deltaTime));
+    // printf("%d\n", Collisions::PlayerBoxTest(this->position + velocity_vec * deltaTime));
 
     // Update player position
     glm::vec4 new_position = this->position + velocity_vec * deltaTime;
@@ -149,7 +152,7 @@ void Player::UpdatePlayerCameraEntity(float deltaTime)
     if (this->_is_pressing_F_key && this->time_without_flash >= TIME_TO_USE_FLASH_CAMERA)
     {
         AudioManager::PlayAudio(this->flash_camera_sound);
-        
+
         // TODO: implementar a geração de vetores por aq
 
         time_without_flash = 0.0f;
@@ -181,7 +184,7 @@ Player::Player()
     this->_lastCursorPosY = 0.0;
 
     this->collected_coins = 0;
-    
+
     this->cubic_bezier_head_movement = new CubicBezier(ANIMATION_TIME_HEAD_MOVEMENT,
                                                        glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),
                                                        glm::vec4(0.0f, DELTA_HEAD_MOVEMENT_POSITION / 3, 0.0f, 0.0f),
