@@ -100,7 +100,7 @@ void main()
         float q = 32.0;
 
         // Diffuse light
-        vec3 lambert_diffuse_term = Kd0 * (max(0, dot(n, l)) + 0.01);
+        vec3 lambert_diffuse_term = Kd0 * (max(0.1, dot(n, l)) + 0.01);
 
         // Specular term (Blinn-Phong)          
         vec4 half_vector = normalize(v + l);

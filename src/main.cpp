@@ -98,28 +98,28 @@ int main()
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);
     planemodel1.UpdateModel();
 
-    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube, 4);
+    StaticEntity cubemodel1("cube1", &gpu_controller, Matrices::Identity(), &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel1.CreateHitBox();
     cubemodel1.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel1.SetPosition(0.0f, 10.0f, 10.0f);
     cubemodel1.UpdateModel();
     cubemodel1.UpdateCollision();
 
-    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube, 4);
+    StaticEntity cubemodel2("cube2", &gpu_controller, Matrices::Identity(), &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel2.CreateHitBox();
     cubemodel2.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel2.SetPosition(0.0f, 10.0f, -10.0f);
     cubemodel2.UpdateModel();
     cubemodel2.UpdateCollision();
 
-    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube, 4);
+    StaticEntity cubemodel3("cube3", &gpu_controller, Matrices::Identity(), &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel3.CreateHitBox();
     cubemodel3.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel3.SetPosition(10.0f, 10.0f, 0.0f);
     cubemodel3.UpdateModel();
     cubemodel3.UpdateCollision();
 
-    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube, 4);
+    StaticEntity cubemodel4("cube4", &gpu_controller, Matrices::Identity(), &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel4.CreateHitBox();
     cubemodel4.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel4.SetPosition(-10.0f, 10.0f, 0.0f);
