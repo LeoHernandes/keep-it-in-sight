@@ -1,7 +1,7 @@
 #include "camera.h"
 
-Camera::Camera(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
-    : Entity(name, gpu_controller, model, object, LightInterpolationType::PHONG)
+Camera::Camera(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+    : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
     this->player = player;
 }

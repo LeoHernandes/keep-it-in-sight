@@ -15,7 +15,7 @@ private:
     const float VELOCITY = 2.5f;
 
 public:
-    Monster(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model = Matrices::Identity());
+    Monster(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model = Matrices::Identity());
     void Update(float deltaTime) override;
     void Render() override;
 };

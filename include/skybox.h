@@ -22,7 +22,7 @@ private:
     Player *player;
 
 public:
-    Skybox(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player);
+    Skybox(GpuProgramController *gpu_controller, Object *object, Player *player);
     void Update(float deltaTime) override;
     void Render() override;
 };

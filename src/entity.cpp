@@ -1,8 +1,7 @@
 #include "entity.h"
 
-Entity::Entity(std::string name, GpuProgramController *gpu_controller, glm::mat4 model, Object *object, LightInterpolationType interpolation_type)
+Entity::Entity(GpuProgramController *gpu_controller, glm::mat4 model, Object *object, LightInterpolationType interpolation_type)
 {
-    this->name = name;
     this->gpu_controller = gpu_controller;
     this->model = model;
     this->object = object;

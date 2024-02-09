@@ -19,7 +19,7 @@ void Scene::Update(float deltaTime)
 
     for (const auto &entity : entities)
     {
-        entity.second->Update(deltaTime);
+        entity->Update(deltaTime);
     }
 }
 
@@ -30,15 +30,7 @@ void Scene::AddSkybox(Entity *skybox)
 
 void Scene::AddEntity(Entity *entity)
 {
-    if (entities.find(entity->name) == entities.end())
-    {
-        entities[entity->name] = entity;
-    }
-    else
-    {
-        std::cerr << "[ERROR] AddEntity: an entity of name " << entity->name << " already exists in the scene" << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+    entities.push_back(entity);
 }
 
 void Scene::Render()
@@ -50,11 +42,14 @@ void Scene::Render()
 
     for (const auto &entity : entities)
     {
-        entity.second->Render();
+        entity->Render();
     }
 }
 
 void Scene::RemoveEntity(Entity *entity)
 {
-    entities.erase(entity->name);
+    auto iter = std::find(entities.begin(), entities.end(), entity);
+
+    if (iter != entities.end())
+        entities.erase(iter);
 }

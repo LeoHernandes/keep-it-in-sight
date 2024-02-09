@@ -80,7 +80,7 @@ int main()
 
     Scene scene;
 
-    Door doormodel1("door1", &gpu_controller, &door, &player);
+    Door doormodel1(&gpu_controller, &door, &player);
     doormodel1.CreateHitBox();
     doormodel1.SetScale(0.01f, 0.01f, 0.01f);
     doormodel1.SetPosition(0.0f, 0.0f, 5.0f);
@@ -88,53 +88,53 @@ int main()
     doormodel1.UpdateModel();
     doormodel1.UpdateCollision();
 
-    Coin coinmodel1("coin1", &gpu_controller, &sphere, &player, &scene, glm::vec3(-3.0f, 0.5f, 7.0f));
-    Coin coinmodel2("coin2", &gpu_controller, &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f));
-    Coin coinmodel3("coin3", &gpu_controller, &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f));
-    Coin coinmodel4("coin4", &gpu_controller, &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
+    Coin coinmodel1(&gpu_controller, &sphere, &player, &scene, glm::vec3(-3.0f, 0.5f, 7.0f));
+    Coin coinmodel2(&gpu_controller, &sphere, &player, &scene, glm::vec3(0.0f, 0.5f, 7.0f));
+    Coin coinmodel3(&gpu_controller, &sphere, &player, &scene, glm::vec3(3.0f, 0.5f, 7.0f));
+    Coin coinmodel4(&gpu_controller, &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
 
-    Camera cameramodel1("camera1", &gpu_controller, &camera, &player);
+    Camera cameramodel1(&gpu_controller, &camera, &player);
 
-    StaticEntity planemodel1("plane1", &gpu_controller, &plane, 5, LightInterpolationType::NO_LIGHT);
+    StaticEntity planemodel1(&gpu_controller, &plane, 5, LightInterpolationType::NO_LIGHT);
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);
     planemodel1.UpdateModel();
 
-    StaticEntity cubemodel1("cube1", &gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel1(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel1.CreateHitBox();
     cubemodel1.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel1.SetPosition(0.0f, 10.0f, 10.0f);
     cubemodel1.UpdateModel();
     cubemodel1.UpdateCollision();
 
-    StaticEntity cubemodel2("cube2", &gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel2(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel2.CreateHitBox();
     cubemodel2.SetScale(10.0f, 10.0f, 1.0f);
     cubemodel2.SetPosition(0.0f, 10.0f, -10.0f);
     cubemodel2.UpdateModel();
     cubemodel2.UpdateCollision();
 
-    StaticEntity cubemodel3("cube3", &gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel3(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel3.CreateHitBox();
     cubemodel3.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel3.SetPosition(10.0f, 10.0f, 0.0f);
     cubemodel3.UpdateModel();
     cubemodel3.UpdateCollision();
 
-    StaticEntity cubemodel4("cube4", &gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
+    StaticEntity cubemodel4(&gpu_controller, &cube, 4, LightInterpolationType::NO_LIGHT);
     cubemodel4.CreateHitBox();
     cubemodel4.SetScale(1.0f, 10.0f, 10.0f);
     cubemodel4.SetPosition(-10.0f, 10.0f, 0.0f);
     cubemodel4.UpdateModel();
     cubemodel4.UpdateCollision();
 
-    Monster monstermodel("monster", &gpu_controller, &bunny, &player);
+    Monster monstermodel(&gpu_controller, &bunny, &player);
     // monstermodel.CreateHitBox();
     monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
     monstermodel.UpdateModel();
     // monstermodel.UpdateCollision();
     // player.AddMonsterHitbox(monstermodel.hit_box);
 
-    Skybox skybox("skybox", &gpu_controller, &sphere, &player);
+    Skybox skybox(&gpu_controller, &sphere, &player);
 
     scene.AddSkybox(&skybox);
 

@@ -2,8 +2,8 @@
 #include <iostream>
 #include "player.h"
 
-StaticEntity::StaticEntity(std::string name, GpuProgramController *gpu_controller, Object *object, int texture_id, LightInterpolationType interpolation_type, glm::mat4 model)
-    : Entity(name, gpu_controller, model, object, interpolation_type)
+StaticEntity::StaticEntity(GpuProgramController *gpu_controller, Object *object, int texture_id, LightInterpolationType interpolation_type, glm::mat4 model)
+    : Entity(gpu_controller, model, object, interpolation_type)
 {
     this->texture_id = texture_id;
 }

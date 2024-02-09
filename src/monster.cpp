@@ -1,7 +1,7 @@
 #include "monster.h"
 
-Monster::Monster(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
-    : Entity(name, gpu_controller, model, object, LightInterpolationType::PHONG)
+Monster::Monster(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+    : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
     this->player = player;
 }

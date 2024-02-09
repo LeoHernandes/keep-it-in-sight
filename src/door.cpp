@@ -1,7 +1,7 @@
 #include "door.h"
 
-Door::Door(std::string name, GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
-    : Entity(name, gpu_controller, model, object, LightInterpolationType::PHONG)
+Door::Door(GpuProgramController *gpu_controller, Object *object, Player *player, glm::mat4 model)
+    : Entity(gpu_controller, model, object, LightInterpolationType::PHONG)
 {
     this->player = player;
 
