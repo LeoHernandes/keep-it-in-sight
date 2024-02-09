@@ -61,6 +61,7 @@ int main()
     texture_loader.LoadTextureImage("../../data/10057_wooden_door_v1_diffuse.jpg", "door");
     texture_loader.LoadTextureImage("../../data/wall_backrooms.jpg", "wall");
     texture_loader.LoadTextureImage("../../data/floor_tile.jpg", "floor");
+    texture_loader.LoadTextureImage("../../data/monster.jpg", "monster");
 
     GpuProgramController gpu_controller(gpu_program_id);
 
@@ -77,6 +78,7 @@ int main()
     Object camera("../../data/10124_SLR_Camera_SG_V1_Iteration2.obj");
     Object plane("../../data/plane.obj");
     Object cube("../../data/cube.obj");
+    Object monster("../../data/monster.obj");
 
     Scene scene;
 
@@ -127,9 +129,9 @@ int main()
     cubemodel4.UpdateModel();
     cubemodel4.UpdateCollision();
 
-    Monster monstermodel(&gpu_controller, &bunny, &player, texture_loader.GetTexture("earth-map"));
-    // monstermodel.CreateHitBox();
-    monstermodel.SetPosition(10.0f, 1.0f, 10.0f);
+    Monster monstermodel(&gpu_controller, &monster, &player, texture_loader.GetTexture("monster"));
+    monstermodel.SetScale(0.015f, 0.015f, 0.015f);
+    monstermodel.SetPosition(10.0f, 0.0f, 10.0f);
     monstermodel.UpdateModel();
     // monstermodel.UpdateCollision();
     // player.AddMonsterHitbox(monstermodel.hit_box);

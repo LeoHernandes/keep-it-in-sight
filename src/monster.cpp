@@ -44,7 +44,7 @@ void Monster::Render()
     gpu_controller->DrawElements(
         object->vertex_array_object_id,
         model,
-        TextureCoordinatesType::SPHERE,
+        TextureCoordinatesType::OBJ_FILE,
         interpolation_type,
         texture_id,
         object->bbox_min,

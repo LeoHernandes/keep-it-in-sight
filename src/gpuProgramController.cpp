@@ -35,7 +35,7 @@ void GpuProgramController::DrawSkybox(GLuint VAO_id, glm::mat4 model, GLint tex_
     glUniformMatrix4fv(model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(texture_coordinates_type, TextureCoordinatesType::SPHERE);
     glUniform1i(is_texture_skybox, 1);
-    glUniform1i(texture_id, 0);
+    glUniform1i(texture_id, tex_id);
     glUniform4f(bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
     glUniform4f(bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
     glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void *)(first_index * sizeof(GLuint)));
