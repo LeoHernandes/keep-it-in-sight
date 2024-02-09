@@ -132,6 +132,17 @@ glm::mat4 Matrices::Rotate(float angle, glm::vec4 axis)
         0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+glm::mat4 Matrices::FaceDirection(glm::vec4 source_direction, glm::vec4 target_direction)
+{
+    float angle_cos = Matrices::DotProduct(source_direction, target_direction);
+    float rotation_angle = (float)acos(angle_cos);
+
+    glm::vec4 rotation_axis = Matrices::CrossProduct(source_direction, target_direction);
+    glm::vec4 normalized_rotation_axis = Matrices::Normalize(rotation_axis);
+
+    return Matrices::Rotate(rotation_angle, normalized_rotation_axis);
+}
+
 glm::vec4 Matrices::CrossProduct(glm::vec4 u, glm::vec4 v)
 {
     float u1 = u.x;

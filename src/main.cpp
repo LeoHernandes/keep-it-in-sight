@@ -44,7 +44,7 @@ void SetupOpenGl();
 int main()
 {
     AudioManager::Init();
-    
+
     TextureLoader texture_loader;
     Player player;
     GLFWwindow *window = InitializeAppWindow(&player);
@@ -93,9 +93,6 @@ int main()
     Coin coinmodel4("coin4", &gpu_controller, Matrices::Identity(), &sphere, &player, &scene, glm::vec3(6.0f, 0.5f, 7.0f));
 
     Camera cameramodel1("camera1", &gpu_controller, Matrices::Identity(), &camera, &player);
-    cameramodel1.SetScale(0.002f, 0.002f, 0.002f);
-    cameramodel1.SetPosition(-10.0f, 1.0f, 2.0f);
-    cameramodel1.UpdateModel();
 
     StaticEntity planemodel1("plane1", &gpu_controller, Matrices::Identity(), &plane, 5, LightInterpolationType::NO_LIGHT);
     planemodel1.SetScale(10.0f, 1.0f, 10.0f);

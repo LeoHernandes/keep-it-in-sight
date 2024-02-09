@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
@@ -28,6 +29,7 @@ public:
     static bool IsVectorNull(glm::vec4 vector);
     static glm::vec4 Normalize(glm::vec4 vector);
     static glm::mat4 Rotate(float angle, glm::vec4 axis);
+    static glm::mat4 FaceDirection(glm::vec4 source_direction, glm::vec4 target_direction);
     static glm::vec4 CrossProduct(glm::vec4 u, glm::vec4 v);
     static float DotProduct(glm::vec4 u, glm::vec4 v);
     static glm::mat4 CameraView(glm::vec4 position_c, glm::vec4 view_vector, glm::vec4 up_vector);

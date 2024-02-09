@@ -9,11 +9,11 @@
 #include "entity.h"
 #include "player.h"
 
-#define M_PI_2 1.57079632679489661923
-
 class Camera : public Entity
 {
 private:
+    glm::vec4 INITIAL_FOWARD_VECTOR = glm::vec4(0.0f, -1.0, 0.0f, 0.0f);
+    glm::vec4 INITIAL_SIDE_VECTOR = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     Player *player;
 
 public:

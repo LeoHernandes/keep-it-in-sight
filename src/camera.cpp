@@ -8,12 +8,23 @@ Camera::Camera(std::string name, GpuProgramController *gpu_controller, glm::mat4
 
 void Camera::Update(float deltaTime)
 {
+    glm::vec4 player_view_vector = Matrices::Normalize(player->free_camera->view_vector);
+    glm::vec4 player_side_vec = Matrices::Normalize(Matrices::CrossProduct(player->free_camera->up_vector, player_view_vector));
 
-    this->position = this->player->position + this->player->free_camera->view_vector * 0.8f;
-    this->position.y = 0.6f;
-    this->SetRotation(-M_PI_2, 0.0f, this->player->free_camera->view_angle_theta);
+    glm::vec4 down_vector = Matrices::CrossProduct(player_side_vec, player_view_vector);
+    glm::vec4 position = this->player->position -
+                         (player_side_vec * 0.2f) +
+                         (down_vector * 0.25f) +
+                         (player_view_vector * 0.6f);
+    glm::mat4 translation = Matrices::Translate(position.x, position.y, position.z);
 
-    this->UpdateModel();
+    glm::mat4 scale = Matrices::Scale(0.002f, 0.002f, 0.002f);
+
+    glm::mat4 rotate_foward = Matrices::FaceDirection(INITIAL_FOWARD_VECTOR, player_view_vector);
+    glm::vec4 new_side_vector = Matrices::Normalize(rotate_foward * INITIAL_SIDE_VECTOR);
+    glm::mat4 rotate_side = Matrices::FaceDirection(new_side_vector, player_side_vec);
+
+    this->model = translation * rotate_side * rotate_foward * scale;
 }
 
 void Camera::Render()
