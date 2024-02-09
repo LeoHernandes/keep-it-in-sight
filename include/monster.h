@@ -11,10 +11,17 @@ class Monster : public Entity
 {
 private:
     Player *player;
-
-    const float VELOCITY = 2.5f;
-
     int texture_id;
+
+    float time_without_stun;
+    bool afraid;
+
+    const float VELOCITY_ANGRY = 2.5f;
+    const float VELOCITY_AFRAID = 5.0f;
+    const float STUN_TIME = 1.5f;
+    const float STUN_RESIST_TIME = 5.0f;
+
+    void VerifyAfraid();
 
 public:
     Monster(GpuProgramController *gpu_controller, Object *object, Player *player, int texture_id, glm::mat4 model = Matrices::Identity());

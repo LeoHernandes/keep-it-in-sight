@@ -5,7 +5,28 @@ Monster::Monster(GpuProgramController *gpu_controller, Object *object, Player *p
 {
     this->texture_id = texture_id;
     this->player = player;
+
+    this->afraid = false;
+    this->time_without_stun = 0.0f;
+
     AudioManager::PlayAudio(AudioManager::monster_sound);
+}
+
+void Monster::VerifyAfraid()
+{
+    if (this->player->hit_monster_with_flash_camera)
+    {
+        this->player->hit_monster_with_flash_camera = false;
+        
+        if (time_without_stun >= STUN_RESIST_TIME)
+        {
+            time_without_stun = 0.0f;
+            afraid = true;
+        }
+    }
+
+    if (time_without_stun >= STUN_TIME)
+        afraid = false;
 }
 
 void Monster::Update(float deltaTime)
@@ -16,29 +37,41 @@ void Monster::Update(float deltaTime)
     if (!Matrices::IsVectorNull(direction_to_player_vec))
     {
         glm::vec4 normalized_direction_to_player_vec = Matrices::Normalize(this->player->position - glm::vec4(this->position, 1.0f));
-        float angle = atan2(normalized_direction_to_player_vec.x, normalized_direction_to_player_vec.z);
-        this->rotation.y = angle;
+        float normal_angle = atan2(normalized_direction_to_player_vec.x, normalized_direction_to_player_vec.z);
+        float inv_angle = atan2(-normalized_direction_to_player_vec.x, -normalized_direction_to_player_vec.z);
 
-        // Não faz o monstro ficar tão próximo do player
-        if (Matrices::Norm(direction_to_player_vec) > 1.0f)
+        VerifyAfraid();
+
+        if (afraid)
         {
-            this->position += glm::vec3(
-                normalized_direction_to_player_vec.x * deltaTime * VELOCITY,
+            this->rotation.y = inv_angle;
+            this->position -= glm::vec3(
+                normalized_direction_to_player_vec.x * deltaTime * VELOCITY_AFRAID,
                 0.0f,
-                normalized_direction_to_player_vec.z * deltaTime * VELOCITY);
+                normalized_direction_to_player_vec.z * deltaTime * VELOCITY_AFRAID
+            );
+        }
+        else
+        {
+            this->rotation.y = normal_angle;
+
+            // Faz o monstro não ficar tão próximo do player
+            if (Matrices::Norm(direction_to_player_vec) > 1.0f)
+            {
+                this->position += glm::vec3(
+                    normalized_direction_to_player_vec.x * deltaTime * VELOCITY_ANGRY,
+                    0.0f,
+                    normalized_direction_to_player_vec.z * deltaTime * VELOCITY_ANGRY
+                );
+            }
         }
     }
+
+    time_without_stun += deltaTime;
+    // printf("time_without_stun: %f \n", time_without_stun);
+
     this->UpdateModel();
-
-    /////////////////// QUANDO TIVER HITBOX ///////////////////
-    /*
-    this->UpdateCollision();
-
-    if (this->hit_box->PointAABBTest(this->player->position))
-    {
-        //printf("COLISAO COM O BIXO!\n");
-    }
-    */
+    this->UpdateCollision();    
 }
 
 void Monster::Render()

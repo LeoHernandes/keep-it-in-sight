@@ -130,11 +130,12 @@ int main()
     cubemodel4.UpdateCollision();
 
     Monster monstermodel(&gpu_controller, &monster, &player, texture_loader.GetTexture("monster"));
+    monstermodel.CreateHitBox();
     monstermodel.SetScale(0.015f, 0.015f, 0.015f);
     monstermodel.SetPosition(10.0f, 0.0f, 10.0f);
     monstermodel.UpdateModel();
-    // monstermodel.UpdateCollision();
-    // player.AddMonsterHitbox(monstermodel.hit_box);
+    monstermodel.UpdateCollision();
+    player.AddMonsterHitbox(monstermodel.hit_box);
 
     Skybox skybox(&gpu_controller, &sphere, &player, texture_loader.GetTexture("skybox"));
 

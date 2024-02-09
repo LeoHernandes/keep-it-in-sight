@@ -173,7 +173,9 @@ void Player::UpdatePlayerCameraEntity(float deltaTime)
     {
         AudioManager::PlayAudio(AudioManager::flash_camera_sound);
 
-        // TODO: implementar a geração de vetores por aq
+        // TODO: implementar a geração de vetores por aqui
+        if (this->monster_hitbox->RayAABBTest(this->position, this->free_camera->view_vector, MAX_DISTANCE_FLASH_CAMERA))
+            this->hit_monster_with_flash_camera = true;
 
         time_without_flash = 0.0f;
     }
@@ -201,6 +203,7 @@ Player::Player()
     this->_lastCursorPosY = 0.0;
 
     this->collected_coins = 0;
+    this->hit_monster_with_flash_camera = false;
 
     this->cubic_bezier_head_movement = new CubicBezier(ANIMATION_TIME_HEAD_MOVEMENT,
                                                        glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),

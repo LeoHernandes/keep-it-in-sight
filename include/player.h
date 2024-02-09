@@ -45,6 +45,7 @@ private:
     // player camera
     float time_without_flash = 0.0f;
     const float TIME_TO_USE_FLASH_CAMERA = 3.0f;
+    const float MAX_DISTANCE_FLASH_CAMERA = 10.0f;
 
     CubicBezier *cubic_bezier_head_movement;
     glm::vec4 head_movement;
@@ -76,6 +77,7 @@ public:
     HitBox *monster_hitbox;
     glm::vec4 position;
     int collected_coins;
+    bool hit_monster_with_flash_camera;
 
     Player();
     void AddFreeCamera(FreeCamera *camera);
