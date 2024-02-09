@@ -32,7 +32,7 @@ void Camera::Render()
     gpu_controller->DrawElements(
         object->vertex_array_object_id,
         model,
-        TextureCoordinatesType::PLANE,
+        TextureCoordinatesType::OBJ_FILE,
         LightInterpolationType::PHONG,
         2,
         object->bbox_min,

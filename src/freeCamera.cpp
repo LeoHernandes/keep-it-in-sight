@@ -28,6 +28,5 @@ void FreeCamera::Update(glm::vec4 player_position, float delta_run_velocity, glm
     this->field_of_view = MIN_FIELD_OF_VIEW + (MAX_FIELD_OF_VIEW - MIN_FIELD_OF_VIEW) * delta_run_velocity;
     glm::mat4 projection = Matrices::Perspective(this->field_of_view, screen_ratio, nearplane, farplane);
 
-    glUniformMatrix4fv(gpu_controller->view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(gpu_controller->projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
+    gpu_controller->SendPlayerCameraMatrices(view, projection);
 }

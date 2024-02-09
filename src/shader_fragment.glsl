@@ -21,7 +21,8 @@ uniform int interpolation_type;
 // Which texture projection should use for this object
 #define TEXTURE_PROJECTION_SPHERE 0
 #define TEXTURE_PROJECTION_PLANE 1
-uniform int texture_projection_type;
+#define TEXTURE_OBJ_FILE 2
+uniform int texture_coordinates_type;
 
 uniform int is_texture_skybox;
 uniform sampler2D texture_id;
@@ -74,18 +75,18 @@ void main()
     // Specular light
     vec4 r = -l + 2.0 * n * dot(n, l);
 
-    vec2 custom_texcoords;
-    if ( texture_projection_type == TEXTURE_PROJECTION_SPHERE )
+    vec2 custom_texcoords = vec2(0.0, 0.0);
+    if ( texture_coordinates_type == TEXTURE_PROJECTION_SPHERE )
     {
         custom_texcoords = GetTextureCoordinatesFromSphereProjection(bbox_min, bbox_max, position_model);
     }
-    else if ( texture_projection_type == TEXTURE_PROJECTION_PLANE )
+    else if ( texture_coordinates_type == TEXTURE_PROJECTION_PLANE )
     {
         custom_texcoords = GetTextureCoordinatesFromPlaneProjection(bbox_min, bbox_max, position_model);
     }
-    else
+    else if ( texture_coordinates_type == TEXTURE_OBJ_FILE )
     {
-        custom_texcoords = vec2(0.0, 0.0);
+        custom_texcoords = texcoords;
     }
 
     if(is_texture_skybox == 1)
@@ -94,7 +95,7 @@ void main()
     }
     else
     {
-        vec3 Kd0 = texture(texture_id, texcoords).rgb;
+        vec3 Kd0 = texture(texture_id, custom_texcoords).rgb;
         vec3 Ks = vec3(0.8,0.8,0.8);
         float q = 32.0;
 

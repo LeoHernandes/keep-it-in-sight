@@ -29,6 +29,5 @@ void LookAtCamera::Update(glm::vec4 player_position)
     float field_of_view = 3.141592 / 3.0f;
     glm::mat4 projection = Matrices::Perspective(field_of_view, screen_ratio, nearplane, farplane);
 
-    glUniformMatrix4fv(gpu_controller->view_uniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(gpu_controller->projection_uniform, 1, GL_FALSE, glm::value_ptr(projection));
+    gpu_controller->SendPlayerCameraMatrices(view, projection);
 }
