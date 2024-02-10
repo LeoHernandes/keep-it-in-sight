@@ -10,6 +10,7 @@ Sound* AudioManager::door_sound = NULL;
 Sound* AudioManager::tired_player_sound = NULL;
 Sound* AudioManager::monster_sound = NULL;
 Sound* AudioManager::coin_sound = NULL;
+Sound* AudioManager::fear_monster_sound = NULL;
 
 const float AudioManager::WALK_SOUND_VOLUME = 0.50f;
 const float AudioManager::WALK_VELOCITY_AUDIO = 1.0f;
@@ -21,6 +22,7 @@ const float AMBIENT_SOUND_VOLUME = 0.50f;
 const float DOOR_SOUND_VOLUME = 0.50f;
 const float TIRED_PLAYER_VOLUME = 1.75f;
 const float MONSTER_VOLUME = 0.50f;
+const float FEAR_MONSTER_VOLUME = 0.20f;
 const float COIN_VOLUME = 0.15f;
 
 static ma_engine engine;
@@ -48,6 +50,7 @@ void AudioManager::Init()
     tired_player_sound = MakeSound("../../data/heavy_breathing.mp3", false, TIRED_PLAYER_VOLUME);
     monster_sound = MakeSound("../../data/angry_beast.mp3", true, MONSTER_VOLUME);
     coin_sound = MakeSound("../../data/coin.mp3", false, COIN_VOLUME);
+    fear_monster_sound = MakeSound("../../data/beast_roar.mp3", false, FEAR_MONSTER_VOLUME);
 }
 
 void AudioManager::Destroy()
@@ -59,6 +62,7 @@ void AudioManager::Destroy()
     DestroySound(tired_player_sound);
     DestroySound(monster_sound);
     DestroySound(coin_sound);
+    DestroySound(fear_monster_sound);
 
     ma_engine_uninit(&engine);
 }

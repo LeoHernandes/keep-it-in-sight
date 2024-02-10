@@ -23,6 +23,7 @@ public:
     static Sound *tired_player_sound;
     static Sound *monster_sound;
     static Sound *coin_sound;
+    static Sound *fear_monster_sound;
 
     static void Init();
     static void Destroy();

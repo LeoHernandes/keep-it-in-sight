@@ -22,6 +22,7 @@ void Monster::VerifyAfraid()
         {
             time_without_stun = 0.0f;
             afraid = true;
+            AudioManager::PlayAudio(AudioManager::fear_monster_sound);
         }
     }
 
