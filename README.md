@@ -86,7 +86,7 @@ Na aplicação isso é feito através dos objetos virtuais de esferas e cubos, e
 
 Na imagem abaixo nota-se que são criadas quatro intâncias diferentes que usam o mesmo objeto, no caso a esfera.
 
-![Imagem mostrando o código](image.png)
+![Imagem mostrando o código](https://github.com/LeoHernandes/keep-it-in-sight/assets/72423032/64059173-cdba-446d-9219-821fdbddeb06)
 
 ### Três tipos de testes de intersecção
 
