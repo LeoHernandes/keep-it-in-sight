@@ -14,10 +14,15 @@ Mentenha o monstro à vista e fotografe-o enquanto coleta todas as esferas para 
 
 O jogo pode ser compilado tanto para Windows quanto para Linux utilizando um arquivo de configuração de CMake.
 
-Para compilar no Windows, rode o comando
+Para compilar no `Windows`, rode o comando:
 
 ```shell
 cmake --build {PATH_DO_JOGO}/build --config Debug --target main -j 10 --
+```
+
+Para compilato no `Linux`, rode o comando:
+```shell
+cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_C_COMPILER:FILEPATH=${PATH_TO_GCC} -DCMAKE_CXX_COMPILER:FILEPATH=${PATH_TO_G++} -S${PATH_TO_PROJECT_ROOT} -B${PATH_TO_PROJECT_BUILD_FOLDER} -G "Unix Makefiles"
 ```
 
 ## Jogabilidade
