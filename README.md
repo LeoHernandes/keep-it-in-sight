@@ -66,21 +66,27 @@ Não fizemos o uso de ferramentas desse tipo em nenhum processo do desenvolvimen
 
 ### Malhas poligonais complexas
 
-A aplicação possui um modelo geométrico da câmera do player, a qual possui complexidade bem próxima ao modelo "cow.obj". [blablabla].
+A aplicação possui modelos geométricos bem complexos com milhares de vértices:
+
+- A entidade da câmera fotográfica é construída a partir de um arquivo `.obj` de `2.43mb`
+- A entidade do monstro é construída a partir de um arquivo `.obj` de `2.01mb`
 
 ### Transformações geométricas controladas pelo usuário
 
-Implementado através da porta, a qual se o usuário chegar perto o suficiente, e apertar E, a porta rotaciona em um ângulo de 90º. O processo de desenvolvimento não foi muito complicado, porém precisava das colisões implementadas.
+Implementado através da porta.
+Se o usuário estiver perto o suficiente e pressionar a tecla `E`, a porta rotaciona em um ângulo de 90º. O processo de desenvolvimento não foi muito complicado, porém precisava das colisões implementadas.
 
 ### Câmera livre e câmera look-at
 
-O jogo inicia com a câmera livre, porém pode haver a troca através da tecla M. [blablabla].
+Os dois tipos de câmeras foram implementadas seguindo o que foi aprendido no `Laboratório 2`, com a única exceção de que o ponto fixo ao qual a câmera look-at aponta se modifica de acordo com a posição do jogador após se mover no modo de câmera livre.
 
 ### Instâncias de objetos
 
-Na aplicação isso é feito através dos objetos virtuais de moedas e cubos, esses últimos utilizados para fazer as paredes. [blablabla]. Na imagem abaixo nota-se que são criadas duas intâncias diferentes que usam o mesmo objeto, no caso o cubo.
+Na aplicação isso é feito através dos objetos virtuais de esferas e cubos, esses últimos utilizados para fazer as paredes.
 
-![Imagem mostrando o código](https://i.ibb.co/473YCPn/codigo1.png)
+Na imagem abaixo nota-se que são criadas quatro intâncias diferentes que usam o mesmo objeto, no caso a esfera.
+
+![Imagem mostrando o código](image.png)
 
 ### Três tipos de testes de intersecção
 
@@ -94,24 +100,45 @@ Essa etapa do desenvolvimento foi um pouco demorada e complicada, o problema nã
 
 ### Modelos de Iluminação Difusa e Blinn-Phong
 
-Usado em todos os objetos da aplicação. A implementação foi relativamente simples, pois os laboratórios 4 e 5 foram uma base boa para tal.
+Usado em todos os objetos da aplicação. A implementação foi baseada nos laboratórios 4 e 5, adicionando as pequenas alterações da iluminação `Blinn-Phong` com o cálculo do `half vector`.
 
 ### Modelos de Interpolação de Phong e Gouraud
 
-O modelo de interpolação de Phong foi aplicado em todos os objetos, tirando as moedas que utilizam interpolação de Gourand. [blablabla].
+O modelo de interpolação de Phong foi aplicado em todos os objetos com exceção das esferas (moedas) que utilizam interpolação de Gouraud.
+
+Cada objeto, ao chamar a função para enviar seus dados à GPU para ser renderizado, pode escolher qual tipo de iluminação quer:
+
+- Phong: iluminação interpolada por `pixel`
+- Gouraud: iluminação interpolada por `vértice`
+- Sem especularidade: apenas a iluminação difusa com sombreamento, como no caso do chão e das paredes
 
 ![Interpolação de Phong na porta](https://i.ibb.co/Vgq9CqP/door.png)
 ![Interpolação de Gouraud na moeda](https://i.ibb.co/WK2Jpp3/coin.png)
 
 ### Mapeamento de texturas em todos os objetos
 
-Todos os objetos da aplicação possuem mapeamento de texturas. [blablabla].
+Todos os objetos da aplicação possuem mapeamento de texturas.
+
+Cada objeto pode escolher qual textura e qual o tipo de cálculo de coordenadas de texturas que irá utilizar ao ser renderizado.
+
+Mantemos controle dos `ids` de cada textura carregada no código por meio de um dicionário que mapeia `nome` para `id`. Cada objeto pode encontrar o identificador de sua textura por meio desse dicionário e enviá-lo para GPU.
+
+Além disso, é possível escolher como a textura será mapeada no objeto:
+
+- Projeção esférica: como no caso da skybox e nas moedas, as coordenadas de textura são calculadas dessa forma
+- Projeção em plano: passou a não ser usada mais em nenhum objeto, mas optamos deixar como opção para futuras decisões
+- Projeção de acordo com arquivo `.obj`: no restante dos objetos da aplicação, armazenamos em memória as coordenadas de textura definidas no arquibo `.obj` e utilizamos na GPU. Caso as coordenadas extrapolem os limites, utilzamos o paramêtro `GL_REPEAT` para deixar a aplicação mais agradável.
 
 ![Imagem mostrando as texturas sendo usadas na aplicação](https://i.ibb.co/NN8qTGW/jogo.png)
 
 ### Movimentação com curva Bézier cúbica
 
-Dois objetos utilizam movimentação com curva de Bézier cúbica, a câmera livre que é movimentada pra cima e pra baixo quando o jogador corre, e as moedas que fazem um movimento de espiral. Não tivemos dificuldade nessa etapa, pois era só se guiar pelas fórmulas fornecidas durante as aulas.
+Dois objetos utilizam movimentação com curva de Bézier cúbica:
+
+- A câmera livre é movimentada pra cima e pra baixo quando o jogador corre, simulando o movimento da cabeça do personagem
+- As moedas fazem um movimento de espiral enquanto não são coletadas.
+
+Não tivemos dificuldade nessa etapa, pois nos guiamos pelas fórmulas fornecidas durante as aulas.
 
 ### Animações baseadas no tempo ($\Delta t$)
 
@@ -119,4 +146,6 @@ Tudo os objetos animados são baseados no $\Delta t$, para assim, independente d
 
 ### Funcionalidades adicionais
 
-Uma funcionalidade adicional implementada foi a geração de diversos sons para a aplicação, o que acaba dando bem mais dinâmismo. Foi utilizada a biblioteca miniaudio.h para tal, [blablabla].
+- `Áudio`: a geração de diversos sons para a aplicação deixa o jogo bem mais dinâmico. Para isso foi utilizada a biblioteca miniaudio, por conta da sua baixa complexidade para ser utilizada, resultando num processo relativemente tranquilo.
+- `Movimentação`: utilizamos vetores de aceleração, velocidade e atrito para simular uma movimentação mais suave para o jogador. Tudo é baseado em animações no tempo, incluindo interpolação no aumento do valor de `FOV` (field of view) da câmera quando o personagem corre, dando a sensação de rapidez.
+- `Posicionamento da entidade da câmera`: para simular o personagem segurando a câmera fotográfica, foi necessário utilizar rotações mais complexas (fórmula de Rodrigues) para orientá-la de acordo com a direção de visão do jogador.
